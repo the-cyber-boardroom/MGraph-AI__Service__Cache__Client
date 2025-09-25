@@ -1,9 +1,9 @@
 import pytest
 from osbot_utils.utils.Misc                                        import list_set
 from osbot_fast_api_serverless.deploy.Deploy__Serverless__Fast_API import DEFAULT__ERROR_MESSAGE__WHEN_FAST_API_IS_OK
-from mgraph_ai_service_cache__client.config                                 import LAMBDA_DEPENDENCIES__FAST_API_SERVERLESS
-from mgraph_ai_service_cache__client.utils.Version                          import version__mgraph_ai_service_cache__client
-from mgraph_ai_service_cache__client.utils.deploy.Deploy__Service           import Deploy__Service
+from mgraph_ai_service_cache_client.config                         import LAMBDA_DEPENDENCIES__FAST_API_SERVERLESS
+from mgraph_ai_service_cache_client.utils.Version                  import version__mgraph_ai_service_cache_client
+from mgraph_ai_service_cache_client.utils.deploy.Deploy__Service   import Deploy__Service
 
 
 class test_Deploy__Service__base():     # Base class for deployment tests - override stage in subclasses
@@ -35,7 +35,7 @@ class test_Deploy__Service__base():     # Base class for deployment tests - over
         assert self.deploy_fast_api.invoke().get('errorMessage') == DEFAULT__ERROR_MESSAGE__WHEN_FAST_API_IS_OK
 
     def test_5__invoke__function_url(self):
-        version = {'version': version__mgraph_ai_service_cache__client}
+        version = {'version': version__mgraph_ai_service_cache_client}
         assert self.deploy_fast_api.invoke__function_url('/info/health') == {'status': 'ok'}
 
     # def test_6__delete(self):

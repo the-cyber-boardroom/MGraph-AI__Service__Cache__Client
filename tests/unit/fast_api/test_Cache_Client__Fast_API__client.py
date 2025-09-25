@@ -1,20 +1,19 @@
 from unittest                                                         import TestCase
 from fastapi                                                          import FastAPI
 from osbot_fast_api.api.Fast_API                                      import ENV_VAR__FAST_API__AUTH__API_KEY__NAME, ENV_VAR__FAST_API__AUTH__API_KEY__VALUE
-from osbot_local_stack.local_stack.Local_Stack                        import Local_Stack
 from osbot_utils.utils.Env                                            import get_env
 from starlette.testclient                                             import TestClient
 from osbot_fast_api_serverless.utils.testing.skip_tests               import skip__if_not__in_github_actions
-from mgraph_ai_service_cache__client.fast_api.Service__Fast_API                import Service__Fast_API
-from mgraph_ai_service_cache__client.fast_api.routes.Routes__Info              import ROUTES_PATHS__INFO, ROUTES_INFO__HEALTH__RETURN_VALUE
-from tests.unit.Service__Fast_API__Test_Objs                          import setup__service_fast_api_test_objs, Service__Fast_API__Test_Objs, TEST_API_KEY__NAME
+from mgraph_ai_service_cache_client.fast_api.Cache_Client__Fast_API   import Cache_Client__Fast_API
+from mgraph_ai_service_cache_client.fast_api.routes.Routes__Info      import ROUTES_PATHS__INFO, ROUTES_INFO__HEALTH__RETURN_VALUE
+from tests.unit.Cache_Client__Fast_API__Test_Objs import setup__cache_client__fast_api_test_objs, TEST_API_KEY__NAME, Cache_Client__Fast_API__Test_Objs
 
 
-class test_Service__Fast_API__client(TestCase):
+class test_Cache_Client__Fast_API__client(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        with setup__service_fast_api_test_objs() as _:
+        with setup__cache_client__fast_api_test_objs() as _:
             cls.service_fast_api_test_objs         = _
             cls.fast_api                           = cls.service_fast_api_test_objs.fast_api
             cls.client                             = cls.service_fast_api_test_objs.fast_api__client
@@ -22,11 +21,10 @@ class test_Service__Fast_API__client(TestCase):
 
     def test__init__(self):
         with self.service_fast_api_test_objs as _:
-            assert type(_)                  is Service__Fast_API__Test_Objs
-            assert type(_.fast_api        ) is Service__Fast_API
+            assert type(_)                  is Cache_Client__Fast_API__Test_Objs
+            assert type(_.fast_api        ) is Cache_Client__Fast_API
             assert type(_.fast_api__app   ) is FastAPI
             assert type(_.fast_api__client) is TestClient
-            assert type(_.local_stack     ) is Local_Stack
             assert self.fast_api            == _.fast_api
             assert self.client              == _.fast_api__client
 

@@ -1,4 +1,4 @@
-from mgraph_ai_service_cache__client import package_name
+from mgraph_ai_service_cache_client import package_name
 
 SERVICE_NAME                             = package_name
 FAST_API__TITLE                          = "MGraph AI Service Cache Client"
