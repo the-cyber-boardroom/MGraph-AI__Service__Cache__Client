@@ -5,7 +5,7 @@ from osbot_utils.utils.Env                                            import get
 from starlette.testclient                                             import TestClient
 from mgraph_ai_service_cache_client.fast_api.Cache_Client__Fast_API   import Cache_Client__Fast_API
 from mgraph_ai_service_cache_client.fast_api.routes.Routes__Info      import ROUTES_PATHS__INFO, ROUTES_INFO__HEALTH__RETURN_VALUE
-from tests.unit.Cache_Client__Fast_API__Test_Objs import setup__cache_client__fast_api_test_objs, TEST_API_KEY__NAME, Cache_Client__Fast_API__Test_Objs
+from tests.unit.Cache_Client__Fast_API__Test_Objs                     import setup__cache_client__fast_api_test_objs, TEST_API_KEY__NAME, Cache_Client__Fast_API__Test_Objs
 
 
 class test_Cache_Client__Fast_API__client(TestCase):
