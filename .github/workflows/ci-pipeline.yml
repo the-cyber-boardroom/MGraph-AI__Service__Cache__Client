@@ -32,7 +32,7 @@ on:
         required: false
 
 env:
-  PACKAGE_NAME: 'mgraph_ai_service_cache__client'
+  PACKAGE_NAME: 'mgraph_ai_service_cache_client'
 
 jobs:
   run-tests:
@@ -40,11 +40,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Start Local Stack
-        uses: owasp-sbot/OSBot-GitHub-Actions/.github/actions/docker__local-stack@dev
-        with:
-          LOCAL_STACK_SERVICES: 's3,lambda,iam,logs'
 
       - name: "run-tests"
         uses: owasp-sbot/OSBot-GitHub-Actions/.github/actions/pytest__run-tests@dev
