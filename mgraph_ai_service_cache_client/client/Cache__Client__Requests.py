@@ -18,7 +18,11 @@ class Cache__Client__Requests(Type_Safe):
         return get_env(ENV_VAR__AUTH__TARGET_SERVER__CACHE_SERVICE__KEY_VALUE)
 
     def auth_headers(self):
-        return { self.auth__key_name(): self.auth__key_value() }
+        key_name  =  self.auth__key_name()
+        key_value = self.auth__key_value()
+        if key_name and key_value:
+            return { key_name: key_value }
+        return {}
 
     def headers(self):
         return { **self.auth_headers() }                                    # location to add more requests headers (if needed)
