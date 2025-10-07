@@ -278,6 +278,38 @@ files = [
 typing-extensions = "*"
 
 [[package]]
+name = "memory-fs"
+version = "0.35.0"
+description = "Memory-FS"
+optional = false
+python-versions = "<4.0,>=3.12"
+groups = ["main"]
+files = [
+    {file = "memory_fs-0.35.0-py3-none-any.whl", hash = "sha256:b188fab2e6f0f2a2586fa336d7135fbdecdf97084f681f37eff7fe5f0902359f"},
+    {file = "memory_fs-0.35.0.tar.gz", hash = "sha256:b0fd0e01351e680c47445a49bf1de0401a09a86cd19ce8cea7ae843dfbfc5940"},
+]
+
+[package.dependencies]
+osbot-utils = "*"
+
+[[package]]
+name = "mgraph-ai-service-cache"
+version = "0.5.68"
+description = "MGraph-AI__Service__Cache"
+optional = false
+python-versions = "<4.0,>=3.12"
+groups = ["main"]
+files = [
+    {file = "mgraph_ai_service_cache-0.5.68-py3-none-any.whl", hash = "sha256:843de7f34de71ca14df24812eec80149b1473d0af0e941bf544f4c43e805e4be"},
+    {file = "mgraph_ai_service_cache-0.5.68.tar.gz", hash = "sha256:bf8d0f9e3a2b4f0cb037a08e4131280ec69688f3241755d417aa6c98798eb66f"},
+]
+
+[package.dependencies]
+memory_fs = "*"
+mgraph-ai-service-cache-client = "*"
+osbot-fast-api-serverless = "*"
+
+[[package]]
 name = "osbot-aws"
 version = "2.39.6"
 description = "OWASP Security Bot - AWS"
@@ -653,4 +685,4 @@ standard = ["colorama (>=0.4)", "httptools (>=0.6.3)", "python-dotenv (>=0.13)",
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "20fbb4667c340f827cf51723368ab89feae0f56b1b8a631f303cc74c6edc22fe"
+content-hash = "3251bba4f962734f81396e92f7408843f96c6fff057f170ece3c542bfd992346"
