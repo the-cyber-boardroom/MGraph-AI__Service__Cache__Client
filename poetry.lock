@@ -34,18 +34,18 @@ trio = ["trio (>=0.31.0)"]
 
 [[package]]
 name = "boto3"
-version = "1.40.46"
+version = "1.40.47"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "boto3-1.40.46-py3-none-any.whl", hash = "sha256:0dfdc13992ceac1ef36a3ab0ac281cd4a45210a53181dc9a71afabfc1db889fe"},
-    {file = "boto3-1.40.46.tar.gz", hash = "sha256:3676767a03d84544b01b3390a2bbdc3b98479223661e90f0ba0b22f4d3f0cb9f"},
+    {file = "boto3-1.40.47-py3-none-any.whl", hash = "sha256:33b291200cbb042ca8faac0b52a5d460850712641930d32335b75bc65e88653c"},
+    {file = "boto3-1.40.47.tar.gz", hash = "sha256:c0ea31655c41b3f9bf46bc370520eafc081ba4c3e79fa564b60e976663abf7e7"},
 ]
 
 [package.dependencies]
-botocore = ">=1.40.46,<1.41.0"
+botocore = ">=1.40.47,<1.41.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.14.0,<0.15.0"
 
@@ -54,14 +54,14 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.40.46"
+version = "1.40.47"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "botocore-1.40.46-py3-none-any.whl", hash = "sha256:d2c8e0d9ba804d6fd9b942db0aa3e6cfbdd9aab86581b472ee97809b6e5103e0"},
-    {file = "botocore-1.40.46.tar.gz", hash = "sha256:4b0c0efdba788117ef365bf930c0be7300fa052e5e195ea3ed53ab278fc6d7b1"},
+    {file = "botocore-1.40.47-py3-none-any.whl", hash = "sha256:0845c5bc49fc9d45938ff3609df7ec1eff0d26c1a4edcd03e16ad2194c3a9a56"},
+    {file = "botocore-1.40.47.tar.gz", hash = "sha256:8eb950046ba8afc99dedb0268282b4f9a61bca2c7a6415036bff2beee5e180ca"},
 ]
 
 [package.dependencies]
@@ -295,14 +295,14 @@ osbot-utils = "*"
 
 [[package]]
 name = "osbot-fast-api"
-version = "0.27.0"
+version = "0.28.0"
 description = "OWASP Security Bot - Fast API"
 optional = false
 python-versions = "<4.0,>=3.11"
 groups = ["main"]
 files = [
-    {file = "osbot_fast_api-0.27.0-py3-none-any.whl", hash = "sha256:cc013608c4210ad4f6ca08fbb553f22063f3a3ca622b1994bd1f39b6af9a7d4c"},
-    {file = "osbot_fast_api-0.27.0.tar.gz", hash = "sha256:9694e9802b48e35da284bdc04ae1335ac99536f5eb4d58454268463c448350be"},
+    {file = "osbot_fast_api-0.28.0-py3-none-any.whl", hash = "sha256:e457279ad3519d9903dbd53e8fafef8ba501590dba90488b9d18b0809d2790d2"},
+    {file = "osbot_fast_api-0.28.0.tar.gz", hash = "sha256:53cd30a2aec0c266e7787f579a8bee6bd02d1b59be0e6f2c2a9df1bb81dccbcd"},
 ]
 
 [package.dependencies]
@@ -313,14 +313,14 @@ uvicorn = "*"
 
 [[package]]
 name = "osbot-fast-api-serverless"
-version = "1.22.0"
+version = "1.23.0"
 description = "OSBot-Fast-API-Serverless"
 optional = false
 python-versions = "<4.0,>=3.12"
 groups = ["main"]
 files = [
-    {file = "osbot_fast_api_serverless-1.22.0-py3-none-any.whl", hash = "sha256:125a0b6784cb200179ca0d8c597e1766952fa0a29c5ecee585b40aaebe4ddc47"},
-    {file = "osbot_fast_api_serverless-1.22.0.tar.gz", hash = "sha256:c25606359e7ca43fe2e8a96ee385f6f5e1bc1d6fe71ce5956d064533c2c2c059"},
+    {file = "osbot_fast_api_serverless-1.23.0-py3-none-any.whl", hash = "sha256:65b27ccbaca5d828509a9e16278887282d02cd88aef0e38ebc22cababbe62316"},
+    {file = "osbot_fast_api_serverless-1.23.0.tar.gz", hash = "sha256:24b13dbd1fc6cbac10c8387133b1f482a85d6c13da726c3deaac3dbd32182384"},
 ]
 
 [package.dependencies]
