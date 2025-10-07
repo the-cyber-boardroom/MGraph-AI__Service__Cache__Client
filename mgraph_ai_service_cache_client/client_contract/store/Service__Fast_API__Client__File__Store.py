@@ -1,5 +1,7 @@
 from typing                                                                          import Any, Optional, Dict
 from osbot_utils.type_safe.Type_Safe                                                 import Type_Safe
+from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id import Safe_Str__Id
+
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Strategy import Enum__Cache__Store__Strategy
 
 
@@ -10,10 +12,17 @@ class Service__Fast_API__Client__File__Store(Type_Safe):
     def requests(self):                                                             # Access the unified request handler
         return self._client.requests()
 
-    def store__string(self, strategy: Enum__Cache__Store__Strategy, namespace: str) -> Dict:                              # Auto-generated from endpoint post__store__string
+    #def store__string(self, strategy: Enum__Cache__Store__Strategy, namespace: str) -> Dict:                             # todo: BUG, missing body in method param
+    def store__string(self, strategy  : Enum__Cache__Store__Strategy,
+                            #namespace : str,                                           # todo: BUG namespace is Safe_Str__Id
+                            namespace: Safe_Str__Id                 ,
+                            body : str
+                      ) -> Dict:                                                    # Auto-generated from endpoint post__store__string
                                                                                     # Build path
-        path = f"/{{namespace}}/{{strategy}}/store/string"
-        body = None
+        #path = f"/{{namespace}}/{{strategy}}/store/string"                         # todo: BUG used {{namespace}} instead of {namespace}
+        path = f"/{namespace}/{strategy}/store/string"
+
+        #body = None                                                                # todo: BUG name was None
                                                                                     # Execute request
         result = self.requests.execute(
             method = "POST",

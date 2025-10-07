@@ -1,13 +1,15 @@
-from unittest                                                                 import TestCase
-from osbot_fast_api.utils.Fast_API_Server                                     import Fast_API_Server
-from osbot_fast_api_serverless.fast_api.Serverless__Fast_API__Config          import Serverless__Fast_API__Config
-from osbot_utils.helpers.duration.decorators.capture_duration                 import capture_duration
-from osbot_utils.testing.__ import __
-from osbot_utils.utils.Http                                                   import GET_json
-from mgraph_ai_service_cache.fast_api.Service__Fast_API                       import Service__Fast_API
-from mgraph_ai_service_cache.utils.Version                                    import version__mgraph_ai_service_cache
-from mgraph_ai_service_cache_client.client_contract.Service__Fast_API__Client import Service__Fast_API__Client
-from mgraph_ai_service_cache_client.client_contract.Service__Fast_API__Client__Config import Service__Fast_API__Client__Config
+from unittest                                                                           import TestCase
+from osbot_fast_api.utils.Fast_API_Server                                               import Fast_API_Server
+from osbot_fast_api_serverless.fast_api.Serverless__Fast_API__Config                    import Serverless__Fast_API__Config
+from osbot_utils.helpers.duration.decorators.capture_duration                           import capture_duration
+from osbot_utils.testing.__                                                             import __
+from osbot_utils.utils.Http                                                             import GET_json
+from osbot_utils.utils.Objects                                                          import obj
+from mgraph_ai_service_cache.fast_api.Service__Fast_API                                 import Service__Fast_API
+from mgraph_ai_service_cache.utils.Version                                              import version__mgraph_ai_service_cache
+from mgraph_ai_service_cache_client.client_contract.Service__Fast_API__Client           import Service__Fast_API__Client
+from mgraph_ai_service_cache_client.client_contract.Service__Fast_API__Client__Config   import Service__Fast_API__Client__Config
+from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Strategy    import Enum__Cache__Store__Strategy
 
 
 class test_Service__Fast_API__Client__local(TestCase):
@@ -55,3 +57,37 @@ class test_Service__Fast_API__Client__local(TestCase):
                                    'name'       : 'mgraph_ai_service_cache'        ,
                                    'status'     : 'operational'                    ,
                                    'version'    : version__mgraph_ai_service_cache }
+
+    def test_admin_storage(self):
+        with self.fast_api_client.admin_storage() as _:
+            assert _.bucket_name() == {'bucket-name': 'NA'}
+            assert _.folders    () == '[]'                            # BUG, this should be a valid json object
+
+    def test_storage(self):
+        with self.fast_api_client.store() as _:
+            strategy   = Enum__Cache__Store__Strategy.DIRECT
+            namespace  = 'pytests'
+            body       = 'this is a test value'
+
+            result     = _.store__string(strategy=strategy,
+                                         namespace=namespace,
+                                         body=body)
+
+            cache_id   = result.get('cache_id')
+            cache_hash = result.get('cache_hash')
+
+            expected   = __(cache_id   = cache_id                                     ,
+                            cache_hash = cache_hash                                   ,
+                            namespace  = namespace                                   ,
+                            paths      = __( data    = [ f'{namespace}/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json'         ,
+                                                         f'{namespace}/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.config'   ,
+                                                         f'{namespace}/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.metadata' ],
+                                             by_hash = [ f'{namespace}/refs/by-hash/{cache_hash[0:2]}/{cache_hash[2:4]}/{cache_hash}.json'       ,
+                                                         f'{namespace}/refs/by-hash/{cache_hash[0:2]}/{cache_hash[2:4]}/{cache_hash}.json.config',
+                                                         f'{namespace}/refs/by-hash/{cache_hash[0:2]}/{cache_hash[2:4]}/{cache_hash}.json.metadata'],
+                                             by_id   = [ f'{namespace}/refs/by-id/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json'             ,
+                                                         f'{namespace}/refs/by-id/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.config'       ,
+                                                         f'{namespace}/refs/by-id/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.metadata' ] ),
+                            size       = len(body.encode('utf-8')) + 2 )
+
+            assert obj(result) == expected
