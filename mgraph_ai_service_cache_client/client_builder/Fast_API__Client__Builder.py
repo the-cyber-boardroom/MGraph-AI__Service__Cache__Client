@@ -1,22 +1,13 @@
-from osbot_fast_api.client.Fast_API__Client__Generator  import Fast_API__Client__Generator
-from osbot_utils.type_safe.Type_Safe                    import Type_Safe
-from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id import Safe_Str__Id
-from osbot_utils.type_safe.primitives.domains.web.safe_str.Safe_Str__Url import Safe_Str__Url
-from osbot_utils.type_safe.type_safe_core.decorators.type_safe import type_safe
-from osbot_utils.utils.Env import get_env
+from osbot_fast_api.client.Fast_API__Client__Generator                                               import Fast_API__Client__Generator
+from osbot_utils.type_safe.Type_Safe                                                                 import Type_Safe
+from osbot_utils.type_safe.type_safe_core.decorators.type_safe                                       import type_safe
+from osbot_utils.utils.Env                                                                           import get_env
+from mgraph_ai_service_cache.fast_api.Service__Fast_API                                              import Service__Fast_API
+from mgraph_ai_service_cache_client                                                                  import client_contract
+from mgraph_ai_service_cache_client.client_contract.Service__Fast_API__Client                        import Service__Fast_API__Client
+from mgraph_ai_service_cache_client.schemas.client_builder.Schema__Fast_API__Client__Server__Details import Schema__Fast_API__Client__Server__Details
+from mgraph_ai_service_cache_client.schemas.consts.consts__Cache_Client                              import ENV_VAR__AUTH__TARGET_SERVER__CACHE_SERVICE__KEY_VALUE, ENV_VAR__AUTH__TARGET_SERVER__CACHE_SERVICE__KEY_NAME, ENV_VAR__URL__TARGET_SERVER__CACHE_SERVICE
 
-from mgraph_ai_service_cache.fast_api.Service__Fast_API import Service__Fast_API
-from mgraph_ai_service_cache_client                     import client_contract
-from mgraph_ai_service_cache_client.client_contract.Service__Fast_API__Client import Service__Fast_API__Client
-from mgraph_ai_service_cache_client.schemas.consts.consts__Cache_Client import ENV_VAR__AUTH__TARGET_SERVER__CACHE_SERVICE__KEY_VALUE, ENV_VAR__AUTH__TARGET_SERVER__CACHE_SERVICE__KEY_NAME, \
-    ENV_VAR__URL__TARGET_SERVER__CACHE_SERVICE
-
-
-class Schema__Fast_API__Client__Server__Details(Type_Safe):
-    api_key        : Safe_Str__Id
-    api_key_header : Safe_Str__Id
-    base_url       : Safe_Str__Url
-    configured     : bool
 
 class Fast_API__Client__Builder(Type_Safe):
 
