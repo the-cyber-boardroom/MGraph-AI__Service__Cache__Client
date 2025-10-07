@@ -13,7 +13,7 @@ from .namespace.Service__Fast_API__Client__Namespace          import Service__Fa
 from .admin_storage.Service__Fast_API__Client__Admin__Storage import Service__Fast_API__Client__Admin__Storage
 from .server.Service__Fast_API__Client__Server                import Service__Fast_API__Client__Server
 from .info.Service__Fast_API__Client__Info                    import Service__Fast_API__Client__Info
-#from .auth.Service__Fast_API__Client__Auth                  import Service__Fast_API__Client__Auth
+#from .auth.Service__Fast_API__Client__Auth                  import Service__Fast_API__Client__Auth     # todo see why this is added here (but file is not created on disk)
 
 class Service__Fast_API__Client(Type_Safe):
     config   : Service__Fast_API__Client__Config

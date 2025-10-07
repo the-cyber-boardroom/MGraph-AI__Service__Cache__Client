@@ -13,7 +13,8 @@ class Service__Fast_API__Client__Requests__Result(Type_Safe):
     json        : Optional[Dict] = None
     text        : Optional[str]  = None
     content     : bytes          = b""
-    headers     : Dict[str, str] = {}
+    #headers     : Dict[str, str] = {}                                              # BUG: we can't do this with Type_Safe (this will be allocated on __init__)
+    headers     : Dict[str, str]
     path        : str            = ""
 
 class Service__Fast_API__Client__Requests(Type_Safe):
