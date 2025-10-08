@@ -45,10 +45,14 @@ class Service__Fast_API__Client__File__Store(Type_Safe):
                                                                                     # Return response data
         return result.json if result.json else result.text
 
-    def store__json(self, strategy: Enum__Cache__Store__Strategy, namespace: str) -> Dict:                              # Auto-generated from endpoint post__store__json
-                                                                                    # Build path
-        path = f"/{{namespace}}/{{strategy}}/store/json"
-        body = None
+    #def store__json(self, strategy: Enum__Cache__Store__Strategy, namespace: str) -> Dict:                              # BUG: missing body, namespace should be Safe_Str__Id
+    def store__json(self, strategy : Enum__Cache__Store__Strategy,
+                          namespace: Safe_Str__Id,
+                          body     : Dict
+                      )-> Dict:
+        #path = f"/{{namespace}}/{{strategy}}/store/json"                           # BUG: used {{
+        path = f"/{namespace}/{strategy}/store/json"                            # Build path
+        #body = None                                                                # BUG: body was None
                                                                                     # Execute request
         result = self.requests.execute(
             method = "POST",

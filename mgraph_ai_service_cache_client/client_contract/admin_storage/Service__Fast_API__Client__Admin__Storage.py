@@ -10,7 +10,7 @@ class Service__Fast_API__Client__Admin__Storage(Type_Safe):
 
     def bucket_name(self) -> Dict:                              # Auto-generated from endpoint get__bucket_name
                                                                                     # Build path
-        path = "admin/storage/bucket-name"
+        path = "/admin/storage/bucket-name"
         body = None
                                                                                     # Execute request
         result = self.requests.execute(

@@ -4,7 +4,7 @@ from osbot_fast_api_serverless.fast_api.Serverless__Fast_API__Config            
 from osbot_utils.helpers.duration.decorators.capture_duration                           import capture_duration
 from osbot_utils.testing.__                                                             import __
 from osbot_utils.utils.Http                                                             import GET_json, url_join_safe
-from osbot_utils.utils.Misc                                                             import list_set
+from osbot_utils.utils.Misc                                                             import list_set, is_guid
 from osbot_utils.utils.Objects                                                          import obj
 from mgraph_ai_service_cache.fast_api.Service__Fast_API                                 import Service__Fast_API
 from mgraph_ai_service_cache.utils.Version                                              import version__mgraph_ai_service_cache
@@ -22,7 +22,8 @@ class test_Service__Fast_API__Client__local(TestCase):
             cls.serverless_config       = Serverless__Fast_API__Config(enable_api_key=False)
             cls.cache_service__fast_api = Service__Fast_API(config=cls.serverless_config).setup()
             cls.fast_api_server         = Fast_API_Server(app=cls.cache_service__fast_api.app())
-            cls.server_url              = cls.fast_api_server.url()
+            cls.server_url              = cls.fast_api_server.url().rstrip("/")                              # note: the trailing / was causing issues with the auto-generated request code
+
 
             cls.server_config           = Service__Fast_API__Client__Config(base_url=cls.server_url, verify_ssl=False)
             cls.fast_api_client         = Service__Fast_API__Client        (config=cls.server_config)
@@ -199,6 +200,8 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
             cache_id   = result.get('cache_id')
             cache_hash = result.get('cache_hash')
 
+            assert is_guid(cache_id) is True
+
             expected   = __(cache_id   = cache_id                                     ,
                             cache_hash = cache_hash                                   ,
                             namespace  = namespace                                   ,
@@ -216,12 +219,16 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
             assert obj(result) == expected
 
 
-    # def test_storage__store__json(self):
-    #     with self.fast_api_client.store() as _:
-    #         strategy   = Enum__Cache__Store__Strategy.DIRECT
-    #         namespace  = 'pytests'
-    #         body       = {'answer': 42 }
-    #
-    #         result     = _.store__json(strategy   = strategy  ,
-    #                                    namespace  = namespace ,
-    #                                    body       = body      )
+    def test_storage__store__json(self):
+        with self.fast_api_client.store() as _:
+            strategy   = Enum__Cache__Store__Strategy.DIRECT
+            namespace  = 'pytests'
+            body       = {'answer': 42 }
+
+            result     = _.store__json(strategy   = strategy  ,
+                                       namespace  = namespace ,
+                                       body       = body      )
+            assert type(result) is dict
+            assert is_guid(result.get('cache_id')) is True
+            assert result.get('namespace'        ) == namespace
+            assert result.get('size'             ) == 18
