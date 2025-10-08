@@ -102,7 +102,8 @@ class Service__Fast_API__Client__File__Retrieve(Type_Safe):
 
     def retrieve__cache_id__json(self, cache_id: str, namespace: str) -> Dict:                              # Auto-generated from endpoint get__retrieve__cache_id__json
                                                                                     # Build path
-        path = f"/{{namespace}}/retrieve/{{cache_id}}/json"
+        #path = f"/{{namespace}}/retrieve/{{cache_id}}/json"                        # used {{
+        path = f"/{namespace}/retrieve/{cache_id}/json"
         body = None
                                                                                     # Execute request
         result = self.requests.execute(
@@ -115,7 +116,8 @@ class Service__Fast_API__Client__File__Retrieve(Type_Safe):
 
     def retrieve__cache_id__binary(self, cache_id: str, namespace: str) -> Dict:                              # Auto-generated from endpoint get__retrieve__cache_id__binary
                                                                                     # Build path
-        path = f"/{{namespace}}/retrieve/{{cache_id}}/binary"
+        #path = f"/{{namespace}}/retrieve/{{cache_id}}/binary"                      # todo: BUG: used {{
+        path = f"/{namespace}/retrieve/{cache_id}/binary"
         body = None
                                                                                     # Execute request
         result = self.requests.execute(
@@ -124,7 +126,8 @@ class Service__Fast_API__Client__File__Retrieve(Type_Safe):
             body   = body
         )
                                                                                     # Return response data
-        return result.json if result.json else result.text
+        #return result.json if result.json else result.text                         # todo: BUG returned this
+        return result.content                                                       #       and since this is binary we need to return the result.content
 
     def retrieve__hash__cache_hash__string(self, cache_hash: str, namespace: str) -> Dict:                              # Auto-generated from endpoint get__retrieve__hash__cache_hash__string
                                                                                     # Build path

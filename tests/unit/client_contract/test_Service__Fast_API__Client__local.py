@@ -4,7 +4,7 @@ from osbot_fast_api_serverless.fast_api.Serverless__Fast_API__Config            
 from osbot_utils.helpers.duration.decorators.capture_duration                           import capture_duration
 from osbot_utils.testing.__                                                             import __
 from osbot_utils.utils.Http                                                             import GET_json, url_join_safe
-from osbot_utils.utils.Misc                                                             import list_set, is_guid, random_string
+from osbot_utils.utils.Misc import list_set, is_guid, random_string, random_bytes
 from osbot_utils.utils.Objects                                                          import obj
 from mgraph_ai_service_cache.fast_api.Service__Fast_API                                 import Service__Fast_API
 from mgraph_ai_service_cache.utils.Version                                              import version__mgraph_ai_service_cache
@@ -264,5 +264,40 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
 
         assert is_guid(cache_id) is True
         assert retrieve__result  == an_string
+
+
+    def test_retrieve__json(self):
+        strategy   = Enum__Cache__Store__Strategy.DIRECT
+        namespace  = 'pytests'
+        an_json    = {'answer' : random_string('this is a random value') }
+
+        with self.fast_api_client.store() as _:
+            store__result = _.store__json(strategy=strategy, namespace=namespace, body=an_json)
+            cache_id      = store__result.get('cache_id')
+
+
+        with self.fast_api_client.retrieve() as _:
+            retrieve__result = _.retrieve__cache_id__json(cache_id=cache_id, namespace=namespace)
+
+        assert is_guid(cache_id)      is True
+        assert type(retrieve__result) is dict
+        assert retrieve__result       == an_json
+
+    def test_retrieve__bytes(self):
+        strategy   = Enum__Cache__Store__Strategy.DIRECT
+        namespace  = 'pytests'
+        an_binary  = random_bytes()
+
+        with self.fast_api_client.store() as _:
+            store__result = _.store__binary(strategy=strategy, namespace=namespace, body=an_binary)
+            cache_id      = store__result.get('cache_id')
+
+
+        with self.fast_api_client.retrieve() as _:
+            retrieve__result = _.retrieve__cache_id__binary(cache_id=cache_id, namespace=namespace)
+
+        assert is_guid(cache_id)      is True
+        assert type(retrieve__result) is bytes
+        assert retrieve__result       == an_binary
 
 
