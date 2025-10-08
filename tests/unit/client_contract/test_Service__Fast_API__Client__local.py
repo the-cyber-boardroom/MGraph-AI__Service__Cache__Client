@@ -4,7 +4,7 @@ from osbot_fast_api_serverless.fast_api.Serverless__Fast_API__Config            
 from osbot_utils.helpers.duration.decorators.capture_duration                           import capture_duration
 from osbot_utils.testing.__                                                             import __
 from osbot_utils.utils.Http                                                             import GET_json, url_join_safe
-from osbot_utils.utils.Misc                                                             import list_set, is_guid
+from osbot_utils.utils.Misc                                                             import list_set, is_guid, random_string
 from osbot_utils.utils.Objects                                                          import obj
 from mgraph_ai_service_cache.fast_api.Service__Fast_API                                 import Service__Fast_API
 from mgraph_ai_service_cache.utils.Version                                              import version__mgraph_ai_service_cache
@@ -12,6 +12,8 @@ from mgraph_ai_service_cache_client.client_contract.Service__Fast_API__Client   
 from mgraph_ai_service_cache_client.client_contract.Service__Fast_API__Client__Config   import Service__Fast_API__Client__Config
 from mgraph_ai_service_cache_client.client_contract.Service__Fast_API__Client__Requests import Service__Fast_API__Client__Requests, Service__Fast_API__Client__Requests__Result
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Strategy    import Enum__Cache__Store__Strategy
+
+from osbot_utils.utils.Dev import pprint
 
 
 class test_Service__Fast_API__Client__local(TestCase):
@@ -232,3 +234,35 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
             assert is_guid(result.get('cache_id')) is True
             assert result.get('namespace'        ) == namespace
             assert result.get('size'             ) == 18
+
+    def test_storage__store__binary(self):
+        with self.fast_api_client.store() as _:
+            strategy   = Enum__Cache__Store__Strategy.DIRECT
+            namespace  = 'pytests'
+            body       = b"these are some bytes!"
+
+            result     = _.store__binary(strategy   = strategy  ,
+                                         namespace  = namespace ,
+                                         body       = body      )
+
+            assert type(result) is dict
+            assert is_guid(result.get('cache_id')) is True
+            assert result.get('namespace'        ) == namespace
+            assert result.get('size'             ) == 21
+
+    def test_retrieve__string(self):
+        strategy   = Enum__Cache__Store__Strategy.DIRECT
+        namespace  = 'pytests'
+        an_string  = random_string('this is a random value')
+
+        with self.fast_api_client.store() as _:
+            store__result = _.store__string(strategy=strategy, namespace=namespace, body=an_string)
+            cache_id      = store__result.get('cache_id')
+
+        with self.fast_api_client.retrieve() as _:
+            retrieve__result = _.retrieve__cache_id__string(cache_id=cache_id, namespace=namespace)
+
+        assert is_guid(cache_id) is True
+        assert retrieve__result  == an_string
+
+

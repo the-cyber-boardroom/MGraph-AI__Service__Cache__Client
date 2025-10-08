@@ -88,7 +88,8 @@ class Service__Fast_API__Client__File__Retrieve(Type_Safe):
 
     def retrieve__cache_id__string(self, cache_id: str, namespace: str) -> Dict:                              # Auto-generated from endpoint get__retrieve__cache_id__string
                                                                                     # Build path
-        path = f"/{{namespace}}/retrieve/{{cache_id}}/string"
+        #path = f"/{{namespace}}/retrieve/{{cache_id}}/string"                      # todo: BUG: used {{
+        path = f"/{namespace}/retrieve/{cache_id}/string"
         body = None
                                                                                     # Execute request
         result = self.requests.execute(

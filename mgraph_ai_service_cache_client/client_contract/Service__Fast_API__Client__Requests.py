@@ -102,7 +102,11 @@ class Service__Fast_API__Client__Requests(Type_Safe):
         url         = f"{self.config.base_url}{path}"
         method_func = getattr(self._session, method.lower())
         if body:
-            return method_func(url, json=body, headers=headers)
+            if type(body) is bytes:                                                 # todo: BUG need to support submitting bytes like how we are doing here
+                headers["Content-Type"]=  "application/octet-stream"                #       we also need to set this content header
+                return method_func(url, data=body, headers=headers)                 #
+            else:                                                                   #
+                return method_func(url, json=body, headers=headers)
         else:
             return method_func(url, headers=headers)
 

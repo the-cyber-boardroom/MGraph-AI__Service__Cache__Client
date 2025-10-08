@@ -75,12 +75,15 @@ class Service__Fast_API__Client__File__Store(Type_Safe):
                                                                                     # Return response data
         return result.json if result.json else result.text
 
-    def store__binary(self, strategy: Enum__Cache__Store__Strategy, namespace: str) -> Dict:                              # Auto-generated from endpoint post__store__binary
-                                                                                    # Build path
-        path = f"/{{namespace}}/{{strategy}}/store/binary"
-        body = None
-                                                                                    # Execute request
-        result = self.requests.execute(
+    #def store__binary(self, strategy: Enum__Cache__Store__Strategy, namespace: str) -> Dict:                              # todo: same prob as the store__string and store__json
+    def store__binary(self, strategy : Enum__Cache__Store__Strategy,
+                            namespace: Safe_Str__Id                ,
+                            body     : bytes
+                       ) -> Dict:
+        #path = f"/{{namespace}}/{{strategy}}/store/binary"                          # Build path
+        path = f"/{namespace}/{strategy}/store/binary"                          # Build path
+        #body = None
+        result = self.requests.execute(                                             # Execute request
             method = "POST",
             path   = path,
             body   = body
