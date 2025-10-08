@@ -10,7 +10,7 @@ class Service__Fast_API__Client__Data__Retrieve(Type_Safe):
 
     def data__json__with__id(self, cache_id: str, namespace: str, data_file_id: str) -> Dict:                              # Auto-generated from endpoint get__data__json__with__id
                                                                                     # Build path
-        path = f"/{{namespace}}/cache/{{cache_id}}/data/json/{{data_file_id}}"
+        path = f"/{namespace}/cache/{cache_id}/data/json/{data_file_id}"
         body = None
                                                                                     # Execute request
         result = self.requests.execute(
@@ -23,7 +23,7 @@ class Service__Fast_API__Client__Data__Retrieve(Type_Safe):
 
     def data__json__with__id_and_key(self, cache_id: str, namespace: str, data_key: str, data_file_id: str) -> Dict:                              # Auto-generated from endpoint get__data__json__with__id_and_key
                                                                                     # Build path
-        path = f"/{{namespace}}/cache/{{cache_id}}/data/json/{data_key:path}/{{data_file_id}}"
+        path = f"/{namespace}/cache/{cache_id}/data/json/{data_key}/{data_file_id}"
         body = None
                                                                                     # Execute request
         result = self.requests.execute(
@@ -36,7 +36,7 @@ class Service__Fast_API__Client__Data__Retrieve(Type_Safe):
 
     def data__string__with__id(self, cache_id: str, namespace: str, data_file_id: str) -> Dict:                              # Auto-generated from endpoint get__data__string__with__id
                                                                                     # Build path
-        path = f"/{{namespace}}/cache/{{cache_id}}/data/string/{{data_file_id}}"
+        path = f"/{namespace}/cache/{cache_id}/data/string/{data_file_id}"
         body = None
                                                                                     # Execute request
         result = self.requests.execute(
@@ -49,7 +49,7 @@ class Service__Fast_API__Client__Data__Retrieve(Type_Safe):
 
     def data__string__with__id_and_key(self, cache_id: str, namespace: str, data_key: str, data_file_id: str) -> Dict:                              # Auto-generated from endpoint get__data__string__with__id_and_key
                                                                                     # Build path
-        path = f"/{{namespace}}/cache/{{cache_id}}/data/string/{data_key:path}/{{data_file_id}}"
+        path = f"/{namespace}/cache/{cache_id}/data/string/{data_key}/{data_file_id}"
         body = None
                                                                                     # Execute request
         result = self.requests.execute(
@@ -62,7 +62,7 @@ class Service__Fast_API__Client__Data__Retrieve(Type_Safe):
 
     def data__binary__with__id(self, cache_id: str, namespace: str, data_file_id: str) -> Dict:                              # Auto-generated from endpoint get__data__binary__with__id
                                                                                     # Build path
-        path = f"/{{namespace}}/cache/{{cache_id}}/data/binary/{{data_file_id}}"
+        path = f"/{namespace}/cache/{cache_id}/data/binary/{data_file_id}"
         body = None
                                                                                     # Execute request
         result = self.requests.execute(
@@ -70,12 +70,12 @@ class Service__Fast_API__Client__Data__Retrieve(Type_Safe):
             path   = path,
             body   = body
         )
-                                                                                    # Return response data
-        return result.json if result.json else result.text
+        return result.content
+        #return result.json if result.json else result.text                         # Return response data
 
     def data__binary__with__id_and_key(self, cache_id: str, namespace: str, data_key: str, data_file_id: str) -> Dict:                              # Auto-generated from endpoint get__data__binary__with__id_and_key
                                                                                     # Build path
-        path = f"/{{namespace}}/cache/{{cache_id}}/data/binary/{data_key:path}/{{data_file_id}}"
+        path = f"/{namespace}/cache/{cache_id}/data/binary/{data_key}/{data_file_id}"
         body = None
                                                                                     # Execute request
         result = self.requests.execute(
@@ -83,5 +83,5 @@ class Service__Fast_API__Client__Data__Retrieve(Type_Safe):
             path   = path,
             body   = body
         )
-                                                                                    # Return response data
-        return result.json if result.json else result.text
+        return result.content
+        return result.json if result.json else result.text                          # Return response data

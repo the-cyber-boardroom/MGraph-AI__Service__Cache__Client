@@ -2,9 +2,9 @@ from unittest                                                                   
 from osbot_fast_api.utils.Fast_API_Server                                               import Fast_API_Server
 from osbot_fast_api_serverless.fast_api.Serverless__Fast_API__Config                    import Serverless__Fast_API__Config
 from osbot_utils.helpers.duration.decorators.capture_duration                           import capture_duration
-from osbot_utils.testing.__ import __, __SKIP__
+from osbot_utils.testing.__                                                             import __, __SKIP__
 from osbot_utils.utils.Http                                                             import GET_json, url_join_safe
-from osbot_utils.utils.Misc import list_set, is_guid, random_string, random_bytes
+from osbot_utils.utils.Misc                                                             import list_set, is_guid, random_string, random_bytes
 from osbot_utils.utils.Objects                                                          import obj
 from mgraph_ai_service_cache.fast_api.Service__Fast_API                                 import Service__Fast_API
 from mgraph_ai_service_cache.utils.Version                                              import version__mgraph_ai_service_cache
@@ -454,3 +454,139 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                                                                file_size           = len(data_binary),
                                                                namespace           = 'pytests',
                                                                timestamp           = __SKIP__ )
+
+    def test_store_and_retrieve__data__string(self):
+        strategy     = Enum__Cache__Store__Strategy.DIRECT
+        namespace    = 'pytests'
+        an_string    = random_string('this is a random value')
+        data_key     = 'some/data/key'
+        data_file_id = 'an-data-file-id'
+        data_string_1  = random_string('this is some data')
+        data_string_2  = random_string('this is some data')
+        data_string_3  = random_string('this is some data')
+
+        # Store cache and data
+        with self.fast_api_client.store() as _:
+            store__result = _.store__string(strategy=strategy, namespace=namespace, body=an_string)
+            cache_id      = store__result.get('cache_id')
+
+
+        with self.fast_api_client.data_store() as _:
+            # Test basic storage (auto-generated file_id)
+            store_string__result    = _.data__store_string(cache_id=cache_id, namespace=namespace, body=data_string_1)
+            store_string__file_id   = store_string__result.get('file_id')
+
+            # Test storage with specific file_id
+            _.data__store_string__with__id(cache_id=cache_id, namespace=namespace, data_file_id=data_file_id, body=data_string_2)
+
+            # Test storage with both key and file_id
+            _.data__store_string__with__id_and_key(cache_id=cache_id, namespace=namespace, data_key=data_key, data_file_id=data_file_id, body=data_string_3)
+
+
+        # Retrieve data
+        with self.fast_api_client.data().retrieve() as _:
+
+            # Retrieve with auto-generated file_id
+            retrieve_string__result = _.data__string__with__id(cache_id=cache_id, namespace=namespace, data_file_id=store_string__file_id)
+
+            # Retrieve with specific file_id
+            retrieve_string__with_id__result = _.data__string__with__id(cache_id=cache_id, namespace=namespace, data_file_id=data_file_id)
+
+            # Retrieve with specific file_id and data_key
+            retrieve_string__with_id_and_key__result = _.data__string__with__id_and_key(cache_id=cache_id, namespace=namespace, data_key=data_key, data_file_id=data_file_id)
+
+        # Assertions
+        assert is_guid(cache_id)                             is True
+        assert retrieve_string__result                       == data_string_1
+        assert retrieve_string__with_id__result              == data_string_2
+        assert retrieve_string__with_id_and_key__result      == data_string_3
+
+
+    def test_store_and_retrieve__data__json(self):
+        strategy     = Enum__Cache__Store__Strategy.DIRECT
+        namespace    = 'pytests'
+        an_string    = random_string('this is a random value')
+        data_key     = 'some/data/key'
+        data_file_id = 'an-data-file-id'
+        data_json_1  = {'answer': random_string('random answer'), 'number': 42}
+        data_json_2  = {'answer': random_string('random answer'), 'number': 42}
+        data_json_3  = {'answer': random_string('random answer'), 'number': 42}
+
+        # Store cache and data
+        with self.fast_api_client.store() as _:
+            store__result = _.store__string(strategy=strategy, namespace=namespace, body=an_string)
+            cache_id      = store__result.get('cache_id')
+
+        with self.fast_api_client.data_store() as _:
+            # Test basic storage (auto-generated file_id)
+            store_json__result  = _.data__store_json(cache_id=cache_id, namespace=namespace, body=data_json_1)
+            store_json__file_id = store_json__result.get('file_id')
+
+            # Test storage with specific file_id
+            _.data__store_json__with__id(cache_id=cache_id, namespace=namespace, data_file_id=data_file_id, body=data_json_2)
+
+            # Test storage with both key and file_id
+            _.data__store_json__with__id_and_key(cache_id=cache_id, namespace=namespace, data_key=data_key, data_file_id=data_file_id, body=data_json_3)
+
+        # Retrieve data
+        with self.fast_api_client.data().retrieve() as _:
+            # Retrieve with auto-generated file_id
+            retrieve_json__result = _.data__json__with__id(cache_id=cache_id, namespace=namespace, data_file_id=store_json__file_id)
+
+            # Retrieve with specific file_id
+            retrieve_json__with_id__result = _.data__json__with__id(cache_id=cache_id, namespace=namespace, data_file_id=data_file_id)
+
+            # Retrieve with both key and file_id
+            retrieve_json__with_id_and_key__result = _.data__json__with__id_and_key(cache_id=cache_id, namespace=namespace, data_key=data_key, data_file_id=data_file_id)
+
+        # Assertions
+        assert is_guid(cache_id)                         is True
+        assert type(retrieve_json__result)               is dict
+        assert retrieve_json__result                     == data_json_1
+        assert retrieve_json__with_id__result            == data_json_2
+        assert retrieve_json__with_id_and_key__result    == data_json_3
+
+
+    def test_store_and_retrieve__data__binary(self):
+        strategy       = Enum__Cache__Store__Strategy.DIRECT
+        namespace      = 'pytests'
+        an_string      = random_string('this is a random value')
+        data_key       = 'some/data/key'
+        data_file_id   = 'an-data-file-id'
+        data_binary_1  = random_bytes()
+        data_binary_2  = random_bytes()
+        data_binary_3  = random_bytes()
+
+        # Store cache and data
+        with self.fast_api_client.store() as _:
+            store__result = _.store__string(strategy=strategy, namespace=namespace, body=an_string)
+            cache_id      = store__result.get('cache_id')
+
+        with self.fast_api_client.data_store() as _:
+            # Test basic storage (auto-generated file_id)
+            store_binary__result  = _.data__store_binary(cache_id=cache_id, namespace=namespace, body=data_binary_1)
+            store_binary__file_id = store_binary__result.get('file_id')
+
+            # Test storage with specific file_id
+            _.data__store_binary__with__id(cache_id=cache_id, namespace=namespace, data_file_id=data_file_id, body=data_binary_2)
+
+            # Test storage with both key and file_id
+            _.data__store_binary__with__id_and_key(cache_id=cache_id, namespace=namespace, data_key=data_key, data_file_id=data_file_id, body=data_binary_3)
+
+        # Retrieve data
+        with self.fast_api_client.data().retrieve() as _:
+            # Retrieve with auto-generated file_id
+            retrieve_binary__result = _.data__binary__with__id(cache_id=cache_id, namespace=namespace, data_file_id=store_binary__file_id)
+
+            # Retrieve with specific file_id
+            retrieve_binary__with_id__result = _.data__binary__with__id(cache_id=cache_id, namespace=namespace, data_file_id=data_file_id)
+
+            # Retrieve with both key and file_id
+            retrieve_binary__with_id_and_key__result = _.data__binary__with__id_and_key(cache_id=cache_id, namespace=namespace, data_key=data_key, data_file_id=data_file_id)
+
+        # Assertions
+        assert is_guid(cache_id)                             is True
+        assert type(retrieve_binary__result)                 is bytes
+        assert retrieve_binary__result                       == data_binary_1
+        assert retrieve_binary__with_id__result              == data_binary_2
+        assert retrieve_binary__with_id_and_key__result      == data_binary_3
