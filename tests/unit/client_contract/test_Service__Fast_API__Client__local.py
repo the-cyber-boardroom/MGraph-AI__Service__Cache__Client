@@ -352,3 +352,105 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                                                                namespace           = 'pytests'                     ,
                                                                timestamp           = __SKIP__ )
 
+
+    def test_store__data__json(self):
+        strategy     = Enum__Cache__Store__Strategy.DIRECT
+        namespace    = 'pytests'
+        an_string    = random_string('this is a random value')
+        data_key     = 'some/data/key'
+        data_file_id = 'an-data-file-id'
+        data_json    = {'answer': 42, 'question': 'what is the meaning of life?' + random_string()}
+
+        with self.fast_api_client.store() as _:
+            store__result = _.store__string(strategy=strategy, namespace=namespace, body=an_string)
+            cache_id      = store__result.get('cache_id')
+
+        with self.fast_api_client.data_store() as _:
+            store_json__result                 = _.data__store_json(cache_id=cache_id, namespace=namespace, body=data_json)
+            store_json__file_id                = store_json__result.get('file_id')
+
+            store_json__with_id__result        = _.data__store_json__with__id(cache_id=cache_id, namespace=namespace, data_file_id=data_file_id, body=data_json)
+
+            store_json__with_id_and_key_result = _.data__store_json__with__id_and_key(cache_id=cache_id, namespace=namespace, data_key=data_key, data_file_id=data_file_id, body=data_json)
+
+
+        assert obj(store_json__result) == __(cache_id            = cache_id,
+                                             data_files_created  = [ f'pytests/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}/data/{store_json__file_id}.json' ],
+                                             data_key            = '',
+                                             data_type           = 'json',
+                                             extension           = 'json',
+                                             file_id             = store_json__file_id,
+                                             file_size           = 76       ,
+                                             namespace           = 'pytests',
+                                             timestamp           = __SKIP__ )
+
+        assert obj(store_json__with_id__result) == __(cache_id            = cache_id,
+                                                      data_files_created  = [ f'pytests/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}/data/an-data-file-id.json' ],
+                                                      data_key            = '',
+                                                      data_type           = 'json',
+                                                      extension           = 'json',
+                                                      file_id             = 'an-data-file-id',
+                                                      file_size           = 76       ,
+                                                      namespace           = 'pytests',
+                                                      timestamp           = __SKIP__ )
+
+        assert obj(store_json__with_id_and_key_result) == __(cache_id            = cache_id,
+                                                             data_files_created  = [ f'pytests/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}/data/some/data/key/an-data-file-id.json' ],
+                                                             data_key            = 'some/data/key',
+                                                             data_type           = 'json',
+                                                             extension           = 'json',
+                                                             file_id             = 'an-data-file-id',
+                                                             file_size           = 76       ,
+                                                             namespace           = 'pytests',
+                                                             timestamp           = __SKIP__ )
+
+
+    def test_store__data__binary(self):
+        strategy     = Enum__Cache__Store__Strategy.DIRECT
+        namespace    = 'pytests'
+        an_string    = random_string('this is a random value')
+        data_key     = 'some/data/key'
+        data_file_id = 'an-data-file-id'
+        data_binary  = random_bytes()
+
+        with self.fast_api_client.store() as _:
+            store__result = _.store__string(strategy=strategy, namespace=namespace, body=an_string)
+            cache_id      = store__result.get('cache_id')
+
+        with self.fast_api_client.data_store() as _:
+            store_binary__result                 = _.data__store_binary(cache_id=cache_id, namespace=namespace, body=data_binary)
+            store_binary__file_id                = store_binary__result.get('file_id')
+
+            store_binary__with_id__result        = _.data__store_binary__with__id(cache_id=cache_id, namespace=namespace, data_file_id=data_file_id, body=data_binary)
+
+            store_binary__with_id_and_key_result = _.data__store_binary__with__id_and_key(cache_id=cache_id, namespace=namespace, data_key=data_key, data_file_id=data_file_id, body=data_binary)
+
+        assert obj(store_binary__result) == __(cache_id            = cache_id,
+                                               data_files_created  = [ f'pytests/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}/data/{store_binary__file_id}.bin' ],
+                                               data_key            = '',
+                                               data_type           = 'binary',
+                                               extension           = 'bin',
+                                               file_id             = store_binary__file_id,
+                                               file_size           = len(data_binary),
+                                               namespace           = 'pytests',
+                                               timestamp           = __SKIP__ )
+
+        assert obj(store_binary__with_id__result) == __(cache_id            = cache_id,
+                                                        data_files_created  = [ f'pytests/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}/data/an-data-file-id.bin' ],
+                                                        data_key            = '',
+                                                        data_type           = 'binary',
+                                                        extension           = 'bin',
+                                                        file_id             = 'an-data-file-id',
+                                                        file_size           = len(data_binary),
+                                                        namespace           = 'pytests',
+                                                        timestamp           = __SKIP__ )
+
+        assert obj(store_binary__with_id_and_key_result) == __(cache_id            = cache_id,
+                                                               data_files_created  = [ f'pytests/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}/data/some/data/key/an-data-file-id.bin' ],
+                                                               data_key            = 'some/data/key',
+                                                               data_type           = 'binary',
+                                                               extension           = 'bin',
+                                                               file_id             = 'an-data-file-id',
+                                                               file_size           = len(data_binary),
+                                                               namespace           = 'pytests',
+                                                               timestamp           = __SKIP__ )
