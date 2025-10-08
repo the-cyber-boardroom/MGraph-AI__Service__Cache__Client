@@ -2,7 +2,7 @@ from unittest                                                                   
 from osbot_fast_api.utils.Fast_API_Server                                               import Fast_API_Server
 from osbot_fast_api_serverless.fast_api.Serverless__Fast_API__Config                    import Serverless__Fast_API__Config
 from osbot_utils.helpers.duration.decorators.capture_duration                           import capture_duration
-from osbot_utils.testing.__                                                             import __
+from osbot_utils.testing.__ import __, __SKIP__
 from osbot_utils.utils.Http                                                             import GET_json, url_join_safe
 from osbot_utils.utils.Misc import list_set, is_guid, random_string, random_bytes
 from osbot_utils.utils.Objects                                                          import obj
@@ -300,4 +300,55 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
         assert type(retrieve__result) is bytes
         assert retrieve__result       == an_binary
 
+    def test_store__data__string(self):
+        strategy     = Enum__Cache__Store__Strategy.DIRECT
+        namespace    = 'pytests'
+        an_string    = random_string('this is a random value')
+        data_key     = 'some/data/key'
+        data_file_id = 'an-data-file-id'
+        data_string  = 'this is some data'
+
+        with self.fast_api_client.store() as _:
+            store__result = _.store__string(strategy=strategy, namespace=namespace, body=an_string)
+            cache_id      = store__result.get('cache_id')
+
+        with self.fast_api_client.data_store() as _:
+            store_string__result                 = _.data__store_string(cache_id=cache_id, namespace=namespace, body=data_string)
+            store_string__file_id                = store_string__result.get('file_id')
+
+            store_string__with_id__result        = _.data__store_string__with__id(cache_id=cache_id, namespace=namespace, data_file_id=data_file_id, body=data_string)
+
+            store_string__with_id_and_key_result = _.data__store_string__with__id_and_key(cache_id=cache_id, namespace=namespace, data_key=data_key, data_file_id=data_file_id, body=data_string)
+
+
+
+        assert obj(store_string__result) == __(cache_id            = cache_id                                    ,
+                                               data_files_created  = [ f'pytests/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}/data/{store_string__file_id}.txt' ],
+                                               data_key            = ''                                          ,
+                                               data_type           = 'string'                                    ,
+                                               extension           = 'txt'                                       ,
+                                               file_id             = store_string__file_id                       ,
+                                               file_size           = 17                                          ,
+                                               namespace           = 'pytests'                                   ,
+                                               timestamp           = __SKIP__ )
+
+        assert obj(store_string__with_id__result) == __(cache_id            = cache_id                                    ,
+                                                        data_files_created  = [ f'pytests/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}/data/an-data-file-id.txt' ],
+                                                        data_key            = ''                                  ,
+                                                        data_type           = 'string'                            ,
+                                                        extension           = 'txt'                               ,
+                                                        file_id             = 'an-data-file-id'                   ,
+                                                        file_size           = 17                                  ,
+                                                        namespace           = 'pytests'                           ,
+                                                        timestamp           = __SKIP__ )
+
+        assert obj(store_string__with_id_and_key_result) == __(cache_id            = cache_id                                    ,
+                                                               data_files_created  = [ f'pytests/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}/data/some/data/key/an-data-file-id.txt' ],
+                                                               data_key            = 'some/data/key'               ,
+                                                               data_type           = 'string'                      ,
+                                                               extension           = 'txt'                         ,
+                                                               file_id             = 'an-data-file-id'             ,
+                                                               file_size           = 17                            ,
+                                                               namespace           = 'pytests'                     ,
+                                                               timestamp           = __SKIP__ )
 
