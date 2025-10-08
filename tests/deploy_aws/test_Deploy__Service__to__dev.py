@@ -1,5 +1,0 @@
-from unittest                                    import TestCase
-from tests.deploy_aws.test_Deploy__Service__base import test_Deploy__Service__base
-
-class test_Deploy__Service__to__dev(test_Deploy__Service__base, TestCase):
-    stage = 'dev'
