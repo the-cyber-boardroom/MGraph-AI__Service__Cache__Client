@@ -31,16 +31,19 @@ class Service__Fast_API__Client__File__Store(Type_Safe):
                                                                                     # Return response data
         return result.json if result.json else result.text
 
-    def store__string__cache_key(self, namespace: str, strategy: Enum__Cache__Store__Strategy, cache_key: str, file_id: Optional[str] = None) -> Dict:                              # Auto-generated from endpoint post__store__string__cache_key
+    def store__string__cache_key(self, namespace: str                           ,
+                                       strategy : Enum__Cache__Store__Strategy  ,
+                                       cache_key: str                           ,
+                                       body     : str                           ,
+                                       file_id  : str   = ''
+                                  ) -> Dict:                              # Auto-generated from endpoint post__store__string__cache_key
                                                                                     # Build path
-        path = f"/{{namespace}}/{{strategy}}/store/string/{cache_key:path}"
-        body = None
+        path = f"/{namespace}/{strategy}/store/string/{cache_key}?file_id={file_id}"
+        #body = None
                                                                                     # Execute request
-        result = self.requests.execute(
-            method = "POST",
-            path   = path,
-            body   = body
-        )
+        result = self.requests.execute(method = "POST",
+                                       path   = path  ,
+                                       body   = body  )
                                                                                     # Return response data
         return result.json if result.json else result.text
 
@@ -61,16 +64,18 @@ class Service__Fast_API__Client__File__Store(Type_Safe):
                                                                                     # Return response data
         return result.json if result.json else result.text
 
-    def store__json__cache_key(self, namespace: str, strategy: Enum__Cache__Store__Strategy, cache_key: str, file_id: Optional[str] = None) -> Dict:                              # Auto-generated from endpoint post__store__json__cache_key
+    def store__json__cache_key(self, namespace: str,
+                                     strategy : Enum__Cache__Store__Strategy,
+                                     cache_key: str,
+                                     body     : dict ,
+                                     file_id  : str  = '') -> Dict:                              # Auto-generated from endpoint post__store__json__cache_key
                                                                                     # Build path
-        path = f"/{{namespace}}/{{strategy}}/store/json/{cache_key:path}"
-        body = None
+        path = f"/{namespace}/{strategy}/store/json/{cache_key}?file_id={file_id}"
+        #body = None
                                                                                     # Execute request
-        result = self.requests.execute(
-            method = "POST",
-            path   = path,
-            body   = body
-        )
+        result = self.requests.execute(method = "POST",
+                                      path   = path,
+                                      body   = body)
                                                                                     # Return response data
         return result.json if result.json else result.text
 
@@ -90,10 +95,14 @@ class Service__Fast_API__Client__File__Store(Type_Safe):
                                                                                     # Return response data
         return result.json if result.json else result.text
 
-    def store__binary__cache_key(self, namespace: str, strategy: Enum__Cache__Store__Strategy, cache_key: str, file_id: Optional[str] = None) -> Dict:                              # Auto-generated from endpoint post__store__binary__cache_key
+    def store__binary__cache_key(self, namespace: str,
+                                       strategy: Enum__Cache__Store__Strategy,
+                                       cache_key: str,
+                                       body = bytes ,
+                                       file_id: str = '') -> Dict:                              # Auto-generated from endpoint post__store__binary__cache_key
                                                                                     # Build path
-        path = f"/{{namespace}}/{{strategy}}/store/binary/{cache_key:path}"
-        body = None
+        path = f"/{namespace}/{strategy}/store/binary/{cache_key}?file_id={file_id}"
+        #body = None
                                                                                     # Execute request
         result = self.requests.execute(
             method = "POST",
