@@ -13,7 +13,7 @@ class test_Cache__Client__Health_Checks(TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        pytest.skip("test requires live server which is current in a crashed state (due to missing schema dependency")
+        #pytest.skip("test requires live server which is current in a crashed state (due to missing schema dependency")
         load_dotenv()                                               # todo: remove once we have main test class for the non-fastapi client api
         cls.client_health_checks = Cache__Client__Health_Checks()
 

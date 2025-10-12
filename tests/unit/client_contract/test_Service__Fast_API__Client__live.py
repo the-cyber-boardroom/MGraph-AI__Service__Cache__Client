@@ -16,7 +16,7 @@ class test_Service__Fast_API__Client__live(TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        pytest.skip("test requires live server which is current in a crashed state (due to missing schema dependency")
+        #pytest.skip("test requires live server which is current in a crashed state (due to missing schema dependency")
         cls.fast_api_client         = Service__Fast_API__Client()
         cls.fast_api_client_builder = Fast_API__Client__Builder()
         cls.server_details          = cls.fast_api_client_builder.server_details()
