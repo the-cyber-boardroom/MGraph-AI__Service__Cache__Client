@@ -1,4 +1,6 @@
 from unittest                                                                                         import TestCase
+
+import pytest
 from osbot_utils.testing.__                                                                           import __, __SKIP__
 from osbot_utils.utils.Env                                                                            import load_dotenv
 from mgraph_ai_service_cache_client.client.Cache__Client__Config                                      import Cache__Client__Config
@@ -11,6 +13,7 @@ class test_Cache__Client__Health_Checks(TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
+        pytest.skip("test requires live server which is current in a crashed state (due to missing schema dependency")
         load_dotenv()                                               # todo: remove once we have main test class for the non-fastapi client api
         cls.client_health_checks = Cache__Client__Health_Checks()
 
