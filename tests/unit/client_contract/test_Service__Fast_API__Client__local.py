@@ -614,33 +614,57 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
             assert retrieve_result == body
 
 
-    def test_storage__store__json__with_cache_key(self):
-        """Test storing JSON data with a cache_key parameter"""
+    def test_storage__store__json__with_cache_key(self):        # Test storing JSON data with a cache_key parameter
         with self.fast_api_client.store() as _:
             strategy   = Enum__Cache__Store__Strategy.DIRECT
             namespace  = 'pytests'
             cache_key  = 'test/json/cache/key'
             body       = {'answer': 42, 'question': 'meaning of life', 'cache_key': cache_key}
 
-            result     = _.store__json__cache_key(
-                namespace  = namespace,
-                strategy   = strategy,
-                cache_key  = cache_key,
-                body       = body
-            )
+            result     = _.store__json__cache_key(namespace  = namespace,
+                                                  strategy   = strategy ,
+                                                  cache_key  = cache_key,
+                                                  body       = body     )
 
             cache_id   = result.get('cache_id')
+            cache_hash = result.get('cache_hash')
+            assert cache_hash               == "224b0b70739c9b17"
+            assert is_guid(cache_id)        is True
+            assert result.get('namespace')  == namespace
+            assert result.get('size')       == len(str(body).encode('utf-8')) + 2 + 6
 
-            assert is_guid(cache_id) is True
-            assert result.get('namespace') == namespace
-            assert result.get('size') == len(str(body).encode('utf-8')) + 2 + 6
-
-            # Verify retrieval
-            retrieve_result = self.fast_api_client.retrieve().retrieve__cache_id__json(
-                cache_id=cache_id,
-                namespace=namespace
-            )
+            retrieve_result = self.fast_api_client.retrieve().retrieve__cache_id__json(cache_id  = cache_id ,       # Verify retrieval
+                                                                                       namespace = namespace)
             assert retrieve_result == body
+
+    def test_storage__store__json__with_cache_key__and__json_field_path(self):        # Test storing JSON data with a cache_key parameter
+        with self.fast_api_client.store() as _:
+            strategy        = Enum__Cache__Store__Strategy.DIRECT
+            namespace       = 'pytests'
+            cache_key       = 'test/json/cache/key'
+            body            = {'answer': 42, 'question': 'meaning of life', 'cache_key': cache_key}
+            json_field_path = "answer"
+
+            result     = _.store__json__cache_key(namespace       = namespace      ,
+                                                  strategy        = strategy       ,
+                                                  cache_key       = cache_key      ,
+                                                  body            = body           ,
+                                                  json_field_path = json_field_path)
+
+            cache_id   = result.get('cache_id')
+            cache_hash = result.get('cache_hash')
+            assert cache_hash               == "73475cb40a568e8d"
+            assert is_guid(cache_id)        is True
+            assert result.get('namespace')  == namespace
+            assert result.get('size')       == len(str(body).encode('utf-8')) + 2 + 6
+
+            retrieve_result_1 = self.fast_api_client.retrieve().retrieve__cache_id__json  (cache_id  = cache_id ,       # Verify retrieval
+                                                                                           namespace = namespace)
+            retrieve_result_2 = self.fast_api_client.retrieve().retrieve__hash__cache_hash(cache_hash  = cache_hash ,       # Verify retrieval
+                                                                                           namespace = namespace)
+            assert retrieve_result_1             == body
+            assert retrieve_result_2.get('data') == body
+
 
 
     def test_storage__store__binary__with_cache_key(self):

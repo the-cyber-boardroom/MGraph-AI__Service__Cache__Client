@@ -68,9 +68,11 @@ class Service__Fast_API__Client__File__Store(Type_Safe):
                                      strategy : Enum__Cache__Store__Strategy,
                                      cache_key: str,
                                      body     : dict ,
-                                     file_id  : str  = '') -> Dict:                              # Auto-generated from endpoint post__store__json__cache_key
+                                     file_id  : str  = '',
+                                     json_field_path = ''               # todo: added new json_field_path
+                                 ) -> Dict:                          # Auto-generated from endpoint post__store__json__cache_key
                                                                                     # Build path
-        path = f"/{namespace}/{strategy}/store/json/{cache_key}?file_id={file_id}"
+        path = f"/{namespace}/{strategy}/store/json/{cache_key}?file_id={file_id}&json_field_path={json_field_path}"
         #body = None
                                                                                     # Execute request
         result = self.requests.execute(method = "POST",
