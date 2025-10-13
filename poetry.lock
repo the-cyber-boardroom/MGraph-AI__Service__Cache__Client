@@ -237,14 +237,14 @@ files = [
 
 [[package]]
 name = "idna"
-version = "3.10"
+version = "3.11"
 description = "Internationalized Domain Names in Applications (IDNA)"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "idna-3.10-py3-none-any.whl", hash = "sha256:946d195a0d259cbba61165e88e65941f16e9b36ea6ddb97f00452bae8b1287d3"},
-    {file = "idna-3.10.tar.gz", hash = "sha256:12f65c9b470abda6dc35cf8e63cc574b1c52b11df2c86030af0ac09b01b13ea9"},
+    {file = "idna-3.11-py3-none-any.whl", hash = "sha256:771a87f49d9defaf64091e6e6fe9c18d4833f140bd19464795bc32d966ca37ea"},
+    {file = "idna-3.11.tar.gz", hash = "sha256:795dafcc9c04ed0c1fb032c2aa73654d8e8c5023a7df64a53f39190ada629902"},
 ]
 
 [package.extras]
@@ -294,14 +294,14 @@ osbot-utils = "*"
 
 [[package]]
 name = "mgraph-ai-service-cache"
-version = "0.5.72"
+version = "0.5.74"
 description = "MGraph-AI__Service__Cache"
 optional = false
 python-versions = "<4.0,>=3.12"
 groups = ["main"]
 files = [
-    {file = "mgraph_ai_service_cache-0.5.72-py3-none-any.whl", hash = "sha256:a39a85e0f2a8e89e1fbffca51c104a4a4a2a7552264121eda44c4f339e756be8"},
-    {file = "mgraph_ai_service_cache-0.5.72.tar.gz", hash = "sha256:b9886eaa5b7376a4f299a91846d0fc51f969950351240dfd81a595f067f7d443"},
+    {file = "mgraph_ai_service_cache-0.5.74-py3-none-any.whl", hash = "sha256:cf86b2826ce9ccfce14865599b464c3b2201e785185860d668a4cafdb26f558b"},
+    {file = "mgraph_ai_service_cache-0.5.74.tar.gz", hash = "sha256:6648b8b36c17f026af5c16e143477de51d0aaae8c737f7bc7ff24cae6f123ae6"},
 ]
 
 [package.dependencies]
