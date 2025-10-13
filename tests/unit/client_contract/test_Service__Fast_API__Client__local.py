@@ -6,7 +6,7 @@ from osbot_utils.testing.__                                                     
 from osbot_utils.utils.Http                                                             import GET_json, url_join_safe
 from osbot_utils.utils.Misc                                                             import list_set, is_guid, random_string, random_bytes
 from osbot_utils.utils.Objects                                                          import obj
-from mgraph_ai_service_cache.fast_api.Service__Fast_API                                 import Service__Fast_API
+from mgraph_ai_service_cache.fast_api.Cache_Service__Fast_API                           import Cache_Service__Fast_API
 from mgraph_ai_service_cache.utils.Version                                              import version__mgraph_ai_service_cache
 from mgraph_ai_service_cache_client.client_contract.Service__Fast_API__Client           import Service__Fast_API__Client
 from mgraph_ai_service_cache_client.client_contract.Service__Fast_API__Client__Config   import Service__Fast_API__Client__Config
@@ -20,7 +20,7 @@ class test_Service__Fast_API__Client__local(TestCase):
     def setUpClass(cls) -> None:
         with capture_duration() as duration:
             cls.serverless_config       = Serverless__Fast_API__Config(enable_api_key=False)
-            cls.cache_service__fast_api = Service__Fast_API(config=cls.serverless_config).setup()
+            cls.cache_service__fast_api = Cache_Service__Fast_API(config=cls.serverless_config).setup()
             cls.fast_api_server         = Fast_API_Server(app=cls.cache_service__fast_api.app())
             cls.server_url              = cls.fast_api_server.url().rstrip("/")                              # note: the trailing / was causing issues with the auto-generated request code
 
@@ -70,7 +70,7 @@ class test_Service__Fast_API__Client__local(TestCase):
     <head>
     <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css">
     <link rel="shortcut icon" href="https://fastapi.tiangolo.com/img/favicon.png">
-    <title>Service__Fast_API - Swagger UI</title>
+    <title>Cache_Service__Fast_API - Swagger UI</title>
     </head>
     <body>
     <div id="swagger-ui">
