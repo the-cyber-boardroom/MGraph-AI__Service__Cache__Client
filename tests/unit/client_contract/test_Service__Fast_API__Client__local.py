@@ -3,9 +3,9 @@ from osbot_fast_api.utils.Fast_API_Server                                       
 from osbot_fast_api_serverless.fast_api.Serverless__Fast_API__Config                    import Serverless__Fast_API__Config
 from osbot_utils.helpers.duration.decorators.capture_duration                           import capture_duration
 from osbot_utils.testing.__                                                             import __, __SKIP__
+from osbot_utils.testing.__helpers                                                      import obj
 from osbot_utils.utils.Http                                                             import GET_json, url_join_safe
 from osbot_utils.utils.Misc                                                             import list_set, is_guid, random_string, random_bytes
-from osbot_utils.utils.Objects                                                          import obj
 from mgraph_ai_service_cache.fast_api.Cache_Service__Fast_API                           import Cache_Service__Fast_API
 from mgraph_ai_service_cache.utils.Version                                              import version__mgraph_ai_service_cache
 from mgraph_ai_service_cache_client.client_contract.Service__Fast_API__Client           import Service__Fast_API__Client
