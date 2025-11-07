@@ -9,8 +9,5 @@ pytest-cov
 httpx
 requests
 
-# for tests that need access to the latest version of the cache code
-git+https://github.com/the-cyber-boardroom/MGraph-AI__Service__Cache.git@dev
-
 # for local-stack support
 osbot_local_stack
