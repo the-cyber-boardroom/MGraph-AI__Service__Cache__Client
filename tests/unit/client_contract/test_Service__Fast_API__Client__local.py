@@ -108,12 +108,12 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
 
             assert list_set(paths) == [  '/admin/storage/bucket-name',
                                          '/admin/storage/file/bytes/{path}',
+                                         '/admin/storage/file/delete/{path}',
                                          '/admin/storage/file/exists/{path}',
                                          '/admin/storage/file/json/{path}',
                                          '/admin/storage/files/all/{path}',
-                                         '/admin/storage/files/parent-path',
-                                         '/admin/storage/folders',
-                                         '/admin/storage/{path}',
+                                         '/admin/storage/files/in/{path}',
+                                         '/admin/storage/folders/{path}',
                                          '/auth/set-auth-cookie',
                                          '/auth/set-cookie-form',
                                          '/info/health',
@@ -185,7 +185,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
     def test_admin_storage(self):
         with self.fast_api_client.admin_storage() as _:
             assert _.bucket_name() == {'bucket-name': 'NA'}
-            assert _.folders    () == '[]'                            # BUG, this should be a valid json object
+            assert _.folders    () == []
 
     def test_storage__store__string(self):
         with self.fast_api_client.store() as _:

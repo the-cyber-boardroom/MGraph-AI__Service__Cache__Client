@@ -3,7 +3,7 @@ from unittest                                                                   
 from osbot_utils.utils.Objects                                                             import base_classes
 from osbot_utils.type_safe.Type_Safe                                                       import Type_Safe
 from osbot_utils.type_safe.primitives.domains.files.safe_str.Safe_Str__File__Path          import Safe_Str__File__Path
-from mgraph_ai_service_cache_client.schemas.cache.zip.Schema__Zip__Batch__Operation               import Schema__Zip__Batch__Operation
+from mgraph_ai_service_cache_client.schemas.cache.zip.Schema__Zip__Batch__Operation        import Schema__Zip__Batch__Operation
 
 
 class test_Schema__Zip__Batch__Operation(TestCase):

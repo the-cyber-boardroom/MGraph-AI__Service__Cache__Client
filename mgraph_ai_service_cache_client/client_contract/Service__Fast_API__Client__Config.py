@@ -1,7 +1,7 @@
-from osbot_utils.type_safe.Type_Safe import Type_Safe
-from osbot_utils.type_safe.primitives.domains.web.safe_str.Safe_Str__Url import Safe_Str__Url
+from osbot_utils.type_safe.Type_Safe                                            import Type_Safe
+from osbot_utils.type_safe.primitives.domains.web.safe_str.Safe_Str__Url        import Safe_Str__Url
 from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id import Safe_Str__Id
-from typing import Optional
+from typing                                                                     import Optional
 
 class Service__Fast_API__Client__Config(Type_Safe):
     base_url        : Safe_Str__Url = "http://localhost:8000"                      # Default to local
