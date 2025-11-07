@@ -1,14 +1,13 @@
-from unittest                                                                                    import TestCase
-from osbot_utils.testing.__                                                                      import __
-from osbot_utils.utils.Objects                                                                   import base_classes
-from osbot_utils.type_safe.Type_Safe                                                             import Type_Safe
-from osbot_utils.type_safe.type_safe_core.collections.Type_Safe__List                            import Type_Safe__List
-from mgraph_ai_service_cache_client.schemas.cache.zip.Schema__Cache__Zip__Batch__Request                import (Schema__Cache__Zip__Batch__Request,
-                                                                                                         Schema__Zip__Batch__Operation)
+from unittest                                                                                           import TestCase
+from osbot_utils.testing.__                                                                             import __
+from osbot_utils.utils.Objects                                                                          import base_classes
+from osbot_utils.type_safe.Type_Safe                                                                    import Type_Safe
+from osbot_utils.type_safe.type_safe_core.collections.Type_Safe__List                                   import Type_Safe__List
+from mgraph_ai_service_cache_client.schemas.cache.zip.Schema__Cache__Zip__Batch__Request                import Schema__Cache__Zip__Batch__Request,Schema__Zip__Batch__Operation
 from mgraph_ai_service_cache_client.schemas.cache.consts__Cache_Service                                 import DEFAULT_CACHE__NAMESPACE
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Strategy                    import Enum__Cache__Store__Strategy
-from osbot_utils.type_safe.primitives.domains.identifiers.Random_Guid                            import Random_Guid
-from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id                  import Safe_Str__Id
+from osbot_utils.type_safe.primitives.domains.identifiers.Random_Guid                                   import Random_Guid
+from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id                         import Safe_Str__Id
 from mgraph_ai_service_cache_client.schemas.cache.zip.safe_str.Safe_Str__Cache__Zip__Operation__Pattern import Safe_Str__Cache__Zip__Operation__Pattern
 
 

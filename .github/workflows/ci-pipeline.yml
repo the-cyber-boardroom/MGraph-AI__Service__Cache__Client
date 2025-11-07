@@ -45,6 +45,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install cache service without submodules (this doesn't work inside requirements-test.txt)
+        run: |
+          git clone --filter=blob:none --no-recurse-submodules https://github.com/the-cyber-boardroom/MGraph-AI__Service__Cache.git /tmp/cache-service
+          cd /tmp/cache-service
+          git checkout dev
+          pip install .
+
       - name: "run-tests"
         uses: owasp-sbot/OSBot-GitHub-Actions/.github/actions/pytest__run-tests@dev
         with:

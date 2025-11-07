@@ -1,6 +1,5 @@
 # for main app
 osbot-fast-api-serverless
-mgraph_ai_service_cache
 
 # for pytest
 pytest

@@ -3,9 +3,9 @@ from unittest                                                                   
 from osbot_utils.testing.__                                                                import __
 from osbot_utils.utils.Objects                                                             import base_classes
 from osbot_utils.type_safe.Type_Safe                                                       import Type_Safe
-from mgraph_ai_service_cache_client.schemas.cache.zip.Schema__Cache__Zip__Store__Request          import Schema__Cache__Zip__Store__Request
-from mgraph_ai_service_cache_client.schemas.cache.consts__Cache_Service                           import DEFAULT_CACHE__NAMESPACE
-from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Strategy              import Enum__Cache__Store__Strategy
+from mgraph_ai_service_cache_client.schemas.cache.zip.Schema__Cache__Zip__Store__Request   import Schema__Cache__Zip__Store__Request
+from mgraph_ai_service_cache_client.schemas.cache.consts__Cache_Service                    import DEFAULT_CACHE__NAMESPACE
+from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Strategy       import Enum__Cache__Store__Strategy
 from osbot_utils.type_safe.primitives.domains.files.safe_str.Safe_Str__File__Path          import Safe_Str__File__Path
 from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id            import Safe_Str__Id
 
