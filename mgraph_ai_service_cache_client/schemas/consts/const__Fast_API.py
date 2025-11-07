@@ -1,4 +1,4 @@
-from fastapi                                                     import Path
+from fastapi                                                            import Path
 from mgraph_ai_service_cache_client.schemas.cache.consts__Cache_Service import DEFAULT_CACHE__NAMESPACE, DEFAULT_CACHE__STORE__STRATEGY
 
 FAST_API__PARAM__NAMESPACE                  = Path(..., example=DEFAULT_CACHE__NAMESPACE      )      # note: although we get a warning, examples is not currently working
