@@ -1,4 +1,4 @@
-from typing import Any, Optional, Dict
+from typing                          import Any, Optional, Dict
 from osbot_utils.type_safe.Type_Safe import Type_Safe
 
 class Service__Fast_API__Client__Namespace(Type_Safe):

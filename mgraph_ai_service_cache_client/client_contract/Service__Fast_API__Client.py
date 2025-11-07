@@ -1,18 +1,19 @@
-from osbot_utils.type_safe.Type_Safe                          import Type_Safe
-from osbot_utils.decorators.methods.cache_on_self             import cache_on_self
-from .Service__Fast_API__Client__Config                       import Service__Fast_API__Client__Config
-from .Service__Fast_API__Client__Requests                     import Service__Fast_API__Client__Requests
-from .store.Service__Fast_API__Client__File__Store            import Service__Fast_API__Client__File__Store
-from .retrieve.Service__Fast_API__Client__File__Retrieve      import Service__Fast_API__Client__File__Retrieve
-from .exists.Service__Fast_API__Client__File__Exists          import Service__Fast_API__Client__File__Exists
-from .delete.Service__Fast_API__Client__File__Delete          import Service__Fast_API__Client__File__Delete
-from .data_store.Service__Fast_API__Client__Data__Store       import Service__Fast_API__Client__Data__Store
-from .data.Service__Fast_API__Client__Data                    import Service__Fast_API__Client__Data
-from .zip.Service__Fast_API__Client__Zip                      import Service__Fast_API__Client__Zip
-from .namespace.Service__Fast_API__Client__Namespace          import Service__Fast_API__Client__Namespace
-from .admin_storage.Service__Fast_API__Client__Admin__Storage import Service__Fast_API__Client__Admin__Storage
-from .server.Service__Fast_API__Client__Server                import Service__Fast_API__Client__Server
-from .info.Service__Fast_API__Client__Info                    import Service__Fast_API__Client__Info
+from osbot_utils.type_safe.Type_Safe                            import Type_Safe
+from osbot_utils.decorators.methods.cache_on_self               import cache_on_self
+from .Service__Fast_API__Client__Config                         import Service__Fast_API__Client__Config
+from .Service__Fast_API__Client__Requests                       import Service__Fast_API__Client__Requests
+from .namespaces.Service__Fast_API__Client__Namespace           import Service__Fast_API__Client__Namespaces
+from .store.Service__Fast_API__Client__File__Store              import Service__Fast_API__Client__File__Store
+from .retrieve.Service__Fast_API__Client__File__Retrieve        import Service__Fast_API__Client__File__Retrieve
+from .exists.Service__Fast_API__Client__File__Exists            import Service__Fast_API__Client__File__Exists
+from .delete.Service__Fast_API__Client__File__Delete            import Service__Fast_API__Client__File__Delete
+from .data_store.Service__Fast_API__Client__Data__Store         import Service__Fast_API__Client__Data__Store
+from .data.Service__Fast_API__Client__Data                      import Service__Fast_API__Client__Data
+from .zip.Service__Fast_API__Client__Zip                        import Service__Fast_API__Client__Zip
+from .namespace.Service__Fast_API__Client__Namespace            import Service__Fast_API__Client__Namespace
+from .admin_storage.Service__Fast_API__Client__Admin__Storage   import Service__Fast_API__Client__Admin__Storage
+from .server.Service__Fast_API__Client__Server                  import Service__Fast_API__Client__Server
+from .info.Service__Fast_API__Client__Info                      import Service__Fast_API__Client__Info
 #from .auth.Service__Fast_API__Client__Auth                  import Service__Fast_API__Client__Auth     # todo see why this is added here (but file is not created on disk)
 
 class Service__Fast_API__Client(Type_Safe):
@@ -59,6 +60,10 @@ class Service__Fast_API__Client(Type_Safe):
     @cache_on_self
     def namespace(self) -> Service__Fast_API__Client__Namespace:                               # Access namespace operations
         return Service__Fast_API__Client__Namespace(_client=self)
+
+    @cache_on_self
+    def namespaces(self) -> Service__Fast_API__Client__Namespaces:                               # Access namespace operations
+        return Service__Fast_API__Client__Namespaces(_client=self)
 
     @cache_on_self
     def admin_storage(self) -> Service__Fast_API__Client__Admin__Storage:                               # Access admin_storage operations
