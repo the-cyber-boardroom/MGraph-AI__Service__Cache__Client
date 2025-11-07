@@ -1,6 +1,5 @@
 # for main app
 osbot-fast-api-serverless
-mgraph_ai_service_cache
 
 # for pytest
 pytest
@@ -9,6 +8,9 @@ pytest-cov
 # for fastapi testing
 httpx
 requests
+
+# for tests that need access to the latest version of the cache code
+git+https://github.com/the-cyber-boardroom/MGraph-AI__Service__Cache.git@dev
 
 # for local-stack support
 osbot_local_stack
