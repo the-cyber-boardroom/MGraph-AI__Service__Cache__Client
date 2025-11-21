@@ -1,6 +1,9 @@
 import requests
 from typing                                                                                                             import Any, Optional, Dict, Union, List
+
+
 from osbot_utils.type_safe.Type_Safe                                                                                    import Type_Safe
+from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client__Config                     import Cache__Service__Fast_API__Client__Config
 from mgraph_ai_service_cache_client.client.requests.schemas.Schema__Cache__Service__Fast_API__Client__Requests__Result  import Schema__Cache__Service__Fast_API__Client__Requests__Result
 from mgraph_ai_service_cache_client.client.requests.schemas.enums.Enum__Client__Mode                                    import Enum__Client__Mode
 
@@ -8,7 +11,7 @@ from mgraph_ai_service_cache_client.client.requests.schemas.enums.Enum__Client__
 
 
 class Cache__Service__Fast_API__Client__Requests(Type_Safe):
-    config       : Any                                                             # Service__Fast_API__Client__Config
+    config       : Cache__Service__Fast_API__Client__Config                               # Service__Fast_API__Client__Config
     mode         : Enum__Client__Mode         = Enum__Client__Mode.REMOTE
     _app         : Optional[Any]              = None                               # FastAPI app for in-memory
     #_server      : Optional[Any]              = None                               # Fast_API_Server for local
