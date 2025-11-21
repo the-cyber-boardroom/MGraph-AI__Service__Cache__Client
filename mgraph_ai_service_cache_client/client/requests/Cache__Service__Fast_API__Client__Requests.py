@@ -80,7 +80,10 @@ class Cache__Service__Fast_API__Client__Requests(Type_Safe):
                          ):                                                        # Execute using FastAPI TestClient
         method_func = getattr(self.test_client(), method.lower())
         if body:
-            return method_func(path, json=body, headers=headers)
+            if type(body) is bytes:
+                return method_func(path, data=body, headers=headers)
+            else:
+                return method_func(path, json=body, headers=headers)
         else:
             return method_func(path, headers=headers)
 

@@ -12,6 +12,7 @@ from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_
 from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client__Config import Cache__Service__Fast_API__Client__Config
 from mgraph_ai_service_cache_client.client.requests.Cache__Service__Fast_API__Client__Requests      import Cache__Service__Fast_API__Client__Requests, Schema__Cache__Service__Fast_API__Client__Requests__Result
 from mgraph_ai_service_cache_client.client.requests.schemas.enums.Enum__Client__Mode                import Enum__Client__Mode
+from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Store__Response import Schema__Cache__Store__Response
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Strategy                import Enum__Cache__Store__Strategy
 from mgraph_ai_service_cache_client.utils.Version                                                   import version__mgraph_ai_service_cache_client
 
@@ -248,10 +249,10 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                                          namespace  = namespace ,
                                          body       = body      )
 
-            assert type(result) is dict
-            assert is_guid(result.get('cache_id')) is True
-            assert result.get('namespace'        ) == namespace
-            assert result.get('size'             ) == 21
+            assert type(result) is Schema__Cache__Store__Response
+            assert is_guid(result.cache_id) is True
+            assert result.namespace         == namespace
+            assert result.size              == 21
 
     def test_retrieve__string(self):
         strategy   = Enum__Cache__Store__Strategy.DIRECT

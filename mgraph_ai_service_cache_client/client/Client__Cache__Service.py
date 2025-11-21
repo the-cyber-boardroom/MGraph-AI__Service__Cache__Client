@@ -1,9 +1,8 @@
-from fastapi import FastAPI
-from osbot_utils.decorators.methods.cache_on_self import cache_on_self
+from fastapi                                                                                        import FastAPI
+from osbot_utils.decorators.methods.cache_on_self                                                   import cache_on_self
 from osbot_utils.type_safe.Type_Safe                                                                import Type_Safe
-from osbot_utils.type_safe.type_safe_core.decorators.type_safe import type_safe
-
-from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client import Cache__Service__Fast_API__Client
+from osbot_utils.type_safe.type_safe_core.decorators.type_safe                                      import type_safe
+from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client         import Cache__Service__Fast_API__Client
 from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client__Config import Cache__Service__Fast_API__Client__Config
 
 # todo: question: should this be called Client__Cache_Service (would make sense when we have multiple of these happening at the same time:

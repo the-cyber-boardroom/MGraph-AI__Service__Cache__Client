@@ -1,11 +1,7 @@
 from unittest                                                                                                       import TestCase
-from osbot_utils.helpers.duration.decorators.capture_duration                                                       import capture_duration
 from osbot_utils.testing.__                                                                                         import __, __SKIP__
-from osbot_fast_api_serverless.fast_api.Serverless__Fast_API__Config                                                import Serverless__Fast_API__Config
-from mgraph_ai_service_cache.fast_api.Cache_Service__Fast_API                                                       import Cache_Service__Fast_API
-from mgraph_ai_service_cache_client.client.Client__Cache__Service import Client__Cache__Service
+from mgraph_ai_service_cache_client.client.Client__Cache__Service                                                   import Client__Cache__Service
 from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client                         import Cache__Service__Fast_API__Client
-from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client__Config                 import Cache__Service__Fast_API__Client__Config
 from mgraph_ai_service_cache_client.client.client_contract.admin_storage.Service__Fast_API__Client__Admin__Storage  import Service__Fast_API__Client__Admin__Storage
 from mgraph_ai_service_cache_client.client.requests.Cache__Service__Fast_API__Client__Requests                      import Cache__Service__Fast_API__Client__Requests
 from mgraph_ai_service_cache_client.client.requests.schemas.enums.Enum__Client__Mode                                import Enum__Client__Mode

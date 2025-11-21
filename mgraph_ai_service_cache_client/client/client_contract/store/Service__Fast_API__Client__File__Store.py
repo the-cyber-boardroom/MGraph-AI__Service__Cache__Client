@@ -1,6 +1,8 @@
 from typing                                                                          import Any, Optional, Dict
 from osbot_utils.type_safe.Type_Safe                                                 import Type_Safe
 from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id      import Safe_Str__Id
+
+from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Store__Response import Schema__Cache__Store__Response
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Strategy import Enum__Cache__Store__Strategy
 
 
@@ -16,7 +18,7 @@ class Service__Fast_API__Client__File__Store(Type_Safe):
                             #namespace : str,                                           # todo: BUG namespace is Safe_Str__Id
                             namespace: Safe_Str__Id                 ,
                             body : str
-                      ) -> Dict:                                                    # Auto-generated from endpoint post__store__string
+                      ) -> Schema__Cache__Store__Response:                                                    # Auto-generated from endpoint post__store__string
                                                                                     # Build path
         #path = f"/{{namespace}}/{{strategy}}/store/string"                         # todo: BUG used {{namespace}} instead of {namespace}
         path = f"/{namespace}/{strategy}/store/string"
@@ -28,7 +30,7 @@ class Service__Fast_API__Client__File__Store(Type_Safe):
             path   = path,
             body   = body
         )
-                                                                                    # Return response data
+        return Schema__Cache__Store__Response.from_json(result.json)                # Return response data
         return result.json if result.json else result.text
 
     def store__string__cache_key(self, namespace: str                           ,
@@ -45,7 +47,8 @@ class Service__Fast_API__Client__File__Store(Type_Safe):
                                        path   = path  ,
                                        body   = body  )
                                                                                     # Return response data
-        return result.json if result.json else result.text
+        return Schema__Cache__Store__Response.from_json(result.json)
+        #return result.json if result.json else result.text
 
     #def store__json(self, strategy: Enum__Cache__Store__Strategy, namespace: str) -> Dict:                              # BUG: missing body, namespace should be Safe_Str__Id
     def store__json(self, strategy : Enum__Cache__Store__Strategy,
@@ -61,8 +64,8 @@ class Service__Fast_API__Client__File__Store(Type_Safe):
             path   = path,
             body   = body
         )
-                                                                                    # Return response data
-        return result.json if result.json else result.text
+        return Schema__Cache__Store__Response.from_json(result.text)              # Return response data
+        #return result.json if result.json else result.text
 
     def store__json__cache_key(self, namespace: str,
                                      strategy : Enum__Cache__Store__Strategy,
@@ -70,7 +73,7 @@ class Service__Fast_API__Client__File__Store(Type_Safe):
                                      body     : dict ,
                                      file_id  : str  = '',
                                      json_field_path = ''               # todo: added new json_field_path
-                                 ) -> Dict:                          # Auto-generated from endpoint post__store__json__cache_key
+                                 ) -> Schema__Cache__Store__Response:                          # Auto-generated from endpoint post__store__json__cache_key
                                                                                     # Build path
         path = f"/{namespace}/{strategy}/store/json/{cache_key}?file_id={file_id}&json_field_path={json_field_path}"
         #body = None
@@ -78,24 +81,21 @@ class Service__Fast_API__Client__File__Store(Type_Safe):
         result = self.requests.execute(method = "POST",
                                       path   = path,
                                       body   = body)
-                                                                                    # Return response data
-        return result.json if result.json else result.text
+        return Schema__Cache__Store__Response.from_json(result.text)                # Return response data
+        #return result.json if result.json else result.text
 
     #def store__binary(self, strategy: Enum__Cache__Store__Strategy, namespace: str) -> Dict:                              # todo: same prob as the store__string and store__json
     def store__binary(self, strategy : Enum__Cache__Store__Strategy,
                             namespace: Safe_Str__Id                ,
                             body     : bytes
-                       ) -> Dict:
+                       ) -> Schema__Cache__Store__Response:
         #path = f"/{{namespace}}/{{strategy}}/store/binary"                          # Build path
         path = f"/{namespace}/{strategy}/store/binary"                          # Build path
         #body = None
-        result = self.requests.execute(                                             # Execute request
-            method = "POST",
-            path   = path,
-            body   = body
-        )
-                                                                                    # Return response data
-        return result.json if result.json else result.text
+        result = self.requests.execute(method = "POST",                             # Execute request
+                                       path   = path  ,
+                                       body   = body  )
+        return Schema__Cache__Store__Response.from_json(result.json)                # Return response data
 
     def store__binary__cache_key(self, namespace: str,
                                        strategy: Enum__Cache__Store__Strategy,
@@ -111,5 +111,5 @@ class Service__Fast_API__Client__File__Store(Type_Safe):
             path   = path,
             body   = body
         )
-                                                                                    # Return response data
-        return result.json if result.json else result.text
+        return Schema__Cache__Store__Response.from_json(result.json)                # Return response data
+        #return result.json if result.json else result.text
