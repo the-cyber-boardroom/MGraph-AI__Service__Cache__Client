@@ -1,3 +1,4 @@
+import pytest
 from unittest                                                                            import TestCase
 from osbot_utils.testing.__                                                              import __
 from osbot_utils.utils.Env                                                               import get_env
@@ -14,7 +15,9 @@ class test_Service__Fast_API__Client__live(TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        #pytest.skip("test requires live server which is current in a crashed state (due to missing schema dependency")
+        if get_env(ENV_VAR__URL__TARGET_SERVER__CACHE_SERVICE) is None:
+            pytest.skip("Test needs URL__TARGET_SERVER__CACHE_SERVICE env var set")
+
         cls.fast_api_client         = Service__Fast_API__Client()
         cls.fast_api_client_builder = Fast_API__Client__Builder()
         cls.server_details          = cls.fast_api_client_builder.server_details()
@@ -27,6 +30,7 @@ class test_Service__Fast_API__Client__live(TestCase):
         api_key        = get_env(ENV_VAR__AUTH__TARGET_SERVER__CACHE_SERVICE__KEY_VALUE)
         api_key_header = get_env(ENV_VAR__AUTH__TARGET_SERVER__CACHE_SERVICE__KEY_NAME )
         base_url       = get_env(ENV_VAR__URL__TARGET_SERVER__CACHE_SERVICE            )
+
         with self.fast_api_client as _:
             assert type(_)         == Service__Fast_API__Client
             assert _.config.obj()  == __(base_url        = base_url               ,

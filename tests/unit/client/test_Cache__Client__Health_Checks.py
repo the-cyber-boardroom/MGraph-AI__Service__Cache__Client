@@ -1,12 +1,12 @@
-from unittest                                                                                         import TestCase
-
 import pytest
+from unittest                                                                                         import TestCase
 from osbot_utils.testing.__                                                                           import __, __SKIP__
-from osbot_utils.utils.Env                                                                            import load_dotenv
+from osbot_utils.utils.Env                                                                            import load_dotenv, get_env
 from mgraph_ai_service_cache_client.client.Cache__Client__Config                                      import Cache__Client__Config
 from mgraph_ai_service_cache_client.client.Cache__Client__Health_Checks                               import Cache__Client__Health_Checks
 from mgraph_ai_service_cache_client.schemas.client.health_checks.Client__Check__Target_Server__Auth   import Client__Check__Target_Server__Auth
 from mgraph_ai_service_cache_client.schemas.client.health_checks.Client__Check__Target_Server__Status import Client__Check__Target_Server__Status
+from mgraph_ai_service_cache_client.schemas.consts.consts__Cache_Client                               import ENV_VAR__URL__TARGET_SERVER__CACHE_SERVICE
 
 
 class test_Cache__Client__Health_Checks(TestCase):
@@ -32,6 +32,8 @@ class test_Cache__Client__Health_Checks(TestCase):
                                       timestamp     = __SKIP__                     )
 
     def test_check__target_server__auth(self):
+        if get_env(ENV_VAR__URL__TARGET_SERVER__CACHE_SERVICE) is None:
+            pytest.skip("Test needs URL__TARGET_SERVER__CACHE_SERVICE env var set")
         with self.client_health_checks as _:
             result = _.check__target_server__auth()
             assert type(result) is Client__Check__Target_Server__Auth
