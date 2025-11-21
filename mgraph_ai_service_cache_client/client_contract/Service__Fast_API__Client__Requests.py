@@ -6,7 +6,7 @@ from osbot_utils.type_safe.Type_Safe import Type_Safe
 class Enum__Client__Mode(str, Enum):
     REMOTE       = "remote"                                                        # HTTP calls to deployed service
     IN_MEMORY    = "in_memory"                                                     # FastAPI TestClient (same process)
-    LOCAL_SERVER = "local_server"                                                  # Fast_API_Server (local HTTP)
+    #LOCAL_SERVER = "local_server"                                                  # Fast_API_Server (local HTTP)
 
 class Service__Fast_API__Client__Requests__Result(Type_Safe):
     status_code : int
@@ -22,7 +22,7 @@ class Service__Fast_API__Client__Requests(Type_Safe):
     config       : Any                                                             # Service__Fast_API__Client__Config
     mode         : Enum__Client__Mode         = Enum__Client__Mode.REMOTE
     _app         : Optional[Any]              = None                               # FastAPI app for in-memory
-    _server      : Optional[Any]              = None                               # Fast_API_Server for local
+    #_server      : Optional[Any]              = None                               # Fast_API_Server for local
     _test_client : Optional[Any]              = None                               # TestClient for in-memory
     _session     : Optional[requests.Session] = None                               # Session for remote
 
@@ -37,12 +37,12 @@ class Service__Fast_API__Client__Requests(Type_Safe):
             from fastapi.testclient import TestClient
             self._test_client = TestClient(self._app)
 
-        elif self._server:                                                         # Local server mode
-            self.mode = Enum__Client__Mode.LOCAL_SERVER
-            from osbot_fast_api.utils.Fast_API_Server import Fast_API_Server
-            if not isinstance(self._server, Fast_API_Server):
-                self._server = Fast_API_Server(app=self._server)
-                self._server.start()
+        # elif self._server:                                                         # Local server mode
+        #     self.mode = Enum__Client__Mode.LOCAL_SERVER
+        #     from osbot_fast_api.utils.Fast_API_Server import Fast_API_Server
+        #     if not isinstance(self._server, Fast_API_Server):
+        #         self._server = Fast_API_Server(app=self._server)
+        #         self._server.start()
 
         else:                                                                      # Remote mode
             self.mode     = Enum__Client__Mode.REMOTE
@@ -64,8 +64,8 @@ class Service__Fast_API__Client__Requests(Type_Safe):
                                                                                     # Execute based on mode
         if self.mode == Enum__Client__Mode.IN_MEMORY:
             response = self._execute_in_memory(method, path, body, request_headers)
-        elif self.mode == Enum__Client__Mode.LOCAL_SERVER:
-            response = self._execute_local_server(method, path, body, request_headers)
+        # elif self.mode == Enum__Client__Mode.LOCAL_SERVER:
+        #     response = self._execute_local_server(method, path, body, request_headers)
         else:
             response = self._execute_remote(method, path, body, request_headers)
                                                                                     # Convert to unified result
@@ -82,17 +82,17 @@ class Service__Fast_API__Client__Requests(Type_Safe):
         else:
             return method_func(path, headers=headers)
 
-    def _execute_local_server(self, method  : str  ,                               # HTTP method
-                                   path     : str  ,                               # Endpoint path
-                                   body     : Any  ,                               # Request body
-                                   headers  : Dict                                 # Headers
-                            ):                                                     # Execute using local Fast_API_Server
-        url         = f"{self._server.url()}{path}"
-        method_func = getattr(requests, method.lower())
-        if body:
-            return method_func(url, json=body, headers=headers)
-        else:
-            return method_func(url, headers=headers)
+    # def _execute_local_server(self, method  : str  ,                               # HTTP method
+    #                                path     : str  ,                               # Endpoint path
+    #                                body     : Any  ,                               # Request body
+    #                                headers  : Dict                                 # Headers
+    #                         ):                                                     # Execute using local Fast_API_Server
+    #     url         = f"{self._server.url()}{path}"
+    #     method_func = getattr(requests, method.lower())
+    #     if body:
+    #         return method_func(url, json=body, headers=headers)
+    #     else:
+    #         return method_func(url, headers=headers)
 
     def _execute_remote(self, method  : str  ,                                     # HTTP method
                              path     : str  ,                                     # Endpoint path

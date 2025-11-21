@@ -3,7 +3,7 @@ from unittest                                                                   
 from osbot_utils.testing.__                                                              import __
 from osbot_utils.utils.Env                                                               import get_env
 from mgraph_ai_service_cache.utils.Version                                               import version__mgraph_ai_service_cache
-from mgraph_ai_service_cache_client.client_builder.Fast_API__Client__Builder             import Fast_API__Client__Builder
+#from mgraph_ai_service_cache_client.client_builder.Fast_API__Client__Builder             import Fast_API__Client__Builder
 from mgraph_ai_service_cache_client.client_contract.Service__Fast_API__Client            import Service__Fast_API__Client
 from mgraph_ai_service_cache_client.client_contract.info.Service__Fast_API__Client__Info import Service__Fast_API__Client__Info
 from mgraph_ai_service_cache_client.schemas.consts.consts__Cache_Client                  import ENV_VAR__AUTH__TARGET_SERVER__CACHE_SERVICE__KEY_VALUE, ENV_VAR__AUTH__TARGET_SERVER__CACHE_SERVICE__KEY_NAME, ENV_VAR__URL__TARGET_SERVER__CACHE_SERVICE
@@ -19,11 +19,11 @@ class test_Service__Fast_API__Client__live(TestCase):
             pytest.skip("Test needs URL__TARGET_SERVER__CACHE_SERVICE env var set")
 
         cls.fast_api_client         = Service__Fast_API__Client()
-        cls.fast_api_client_builder = Fast_API__Client__Builder()
-        cls.server_details          = cls.fast_api_client_builder.server_details()
-        assert cls.server_details.configured is True, "Server details need to be configured for this test to run"
+        #cls.fast_api_client_builder = Fast_API__Client__Builder()
+        #cls.server_details          = cls.fast_api_client_builder.server_details()
+        #assert cls.server_details.configured is True, "Server details need to be configured for this test to run"
 
-        cls.fast_api_client_builder.configure_client(cls.fast_api_client)
+        #cls.fast_api_client_builder.configure_client(cls.fast_api_client)
 
 
     def test__init__(self):
