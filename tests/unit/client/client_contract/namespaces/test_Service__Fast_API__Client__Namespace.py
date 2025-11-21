@@ -5,21 +5,24 @@ from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_
 from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client__Config        import Cache__Service__Fast_API__Client__Config
 from mgraph_ai_service_cache_client.client.client_contract.namespaces.Service__Fast_API__Client__Namespace import Service__Fast_API__Client__Namespaces
 from mgraph_ai_service_cache_client.client.requests.Cache__Service__Fast_API__Client__Requests             import Cache__Service__Fast_API__Client__Requests
+from tests.unit.Cache_Client__Fast_API__Test_Objs                                                          import client_cache_service
 
 
 class test_Service__Fast_API__Client__Namespace(TestCase):
     @classmethod
     def setUpClass(cls) -> None:                                                 # Setup in-memory FastAPI client for testing
 
-        cls.serverless_config       = Serverless__Fast_API__Config              (enable_api_key = False                            )
-        cls.cache_service__fast_api = Cache_Service__Fast_API                   (config         = cls.serverless_config            ).setup()
-        cls.server_config           = Cache__Service__Fast_API__Client__Config  ()
-        cls.requests                = Cache__Service__Fast_API__Client__Requests(config    = cls.server_config                ,
-                                                                                 _app      = cls.cache_service__fast_api.app())
-        cls.fast_api_client         = Cache__Service__Fast_API__Client          (config    = cls.server_config,
-                                                                                 _requests = cls.requests)
-        cls.cache_service           = cls.cache_service__fast_api.cache_service
-        cls.namespaces              = cls.fast_api_client.namespaces()
+        # cls.serverless_config       = Serverless__Fast_API__Config              (enable_api_key = False                            )
+        # cls.cache_service__fast_api = Cache_Service__Fast_API                   (config         = cls.serverless_config            ).setup()
+        # cls.server_config           = Cache__Service__Fast_API__Client__Config  ()
+        # cls.requests                = Cache__Service__Fast_API__Client__Requests(config    = cls.server_config                ,
+        #                                                                          _app      = cls.cache_service__fast_api.app())
+        # cls.fast_api_client         = Cache__Service__Fast_API__Client          (config    = cls.server_config,
+        #                                                                          _requests = cls.requests)
+        # cls.cache_service           = cls.cache_service__fast_api.cache_service
+
+        cls.client_cache_service, cls.cache_service    = client_cache_service()
+        cls.namespaces                                 = cls.client_cache_service.namespaces()
 
     def test__setUpClass(self):
         with self.namespaces as _:

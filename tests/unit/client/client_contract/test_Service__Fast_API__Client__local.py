@@ -11,6 +11,7 @@ from mgraph_ai_service_cache.utils.Version                                      
 from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client         import Cache__Service__Fast_API__Client
 from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client__Config import Cache__Service__Fast_API__Client__Config
 from mgraph_ai_service_cache_client.client.requests.Cache__Service__Fast_API__Client__Requests      import Cache__Service__Fast_API__Client__Requests, Schema__Cache__Service__Fast_API__Client__Requests__Result
+from mgraph_ai_service_cache_client.client.requests.schemas.enums.Enum__Client__Mode                import Enum__Client__Mode
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Strategy                import Enum__Cache__Store__Strategy
 from mgraph_ai_service_cache_client.utils.Version                                                   import version__mgraph_ai_service_cache_client
 
@@ -26,7 +27,8 @@ class test_Service__Fast_API__Client__local(TestCase):
             cls.server_url              = cls.fast_api_server.url().rstrip("/")                              # note: the trailing / was causing issues with the auto-generated request code
 
 
-            cls.server_config           = Cache__Service__Fast_API__Client__Config(base_url=cls.server_url)
+            cls.server_config           = Cache__Service__Fast_API__Client__Config(base_url = cls.server_url           ,
+                                                                                   mode     = Enum__Client__Mode.REMOTE)
             cls.fast_api_client         = Cache__Service__Fast_API__Client        (config=cls.server_config)
 
             cls.fast_api_server.start()
@@ -49,16 +51,18 @@ class test_Service__Fast_API__Client__local(TestCase):
             assert _.config.obj() == __(base_url       = self.server_url                        ,
                                        api_key         = None                                   ,
                                        api_key_header  = None                                   ,
+                                       fast_api_app    = None                                   ,
+                                       mode            = 'remote'                               ,
                                        timeout         = 30                                     ,
                                        service_name    ='Cache__Service__Fast_API'              ,
                                        service_version = version__mgraph_ai_service_cache_client)
 
     def test__direct__docs(self):
         with self.fast_api_client.info() as _:
-            assert type(_._client          ) is Cache__Service__Fast_API__Client
-            assert type(_._client._requests) is Cache__Service__Fast_API__Client__Requests
+            assert type(_._client           ) is Cache__Service__Fast_API__Client
+            assert type(_._client.requests()) is Cache__Service__Fast_API__Client__Requests
 
-        with self.fast_api_client.info()._client._requests as _:
+        with self.fast_api_client.info()._client.requests() as _:
             kwargs = dict(method = 'GET',
                           path   = '/docs')
             response = _.execute(**kwargs)
@@ -98,7 +102,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
             assert response.text == expected_html__docs
 
     def test__direct__openapi_json(self):
-        with self.fast_api_client.info()._client._requests as _:
+        with self.fast_api_client.info()._client.requests() as _:
             kwargs = dict(method = 'GET',
                           path   = '/openapi.json')
             response = _.execute(**kwargs)

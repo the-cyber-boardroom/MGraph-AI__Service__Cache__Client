@@ -1,14 +1,11 @@
 from typing                                                                                                  import Any, Dict, List
 from osbot_utils.type_safe.Type_Safe                                                                         import Type_Safe
-from mgraph_ai_service_cache_client.schemas.routes.admin.Schema__Routes__Admin__Storage__Files_All__Response import Schema__Routes__Admin__Storage__Files_All__Response
+from mgraph_ai_service_cache_client.client.requests.Cache__Service__Fast_API__Client__Requests                import Cache__Service__Fast_API__Client__Requests
+from mgraph_ai_service_cache_client.schemas.routes.admin.Schema__Routes__Admin__Storage__Files_All__Response  import Schema__Routes__Admin__Storage__Files_All__Response
 
 
 class Service__Fast_API__Client__Admin__Storage(Type_Safe):
-    _client: Any                                                                    # Reference to main client
-
-    @property
-    def requests(self):                                                             # Access the unified request handler
-        return self._client.requests()
+    requests : Cache__Service__Fast_API__Client__Requests
 
     def bucket_name(self) -> Dict:                              # Auto-generated from endpoint get__bucket_name
                                                                                     # Build path

@@ -17,16 +17,10 @@ from .info.Service__Fast_API__Client__Info                      import Service__
 
 class Cache__Service__Fast_API__Client(Type_Safe):
     config   : Cache__Service__Fast_API__Client__Config
-    _requests: Cache__Service__Fast_API__Client__Requests = None        # todo: remove this since we can just use .requests()
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)                                                 # Initialize request handler with config
-        if not self._requests:
-            self._requests = Cache__Service__Fast_API__Client__Requests(config=self.config)
 
     @cache_on_self
     def requests(self) -> Cache__Service__Fast_API__Client__Requests:                            # Access the unified request handler
-        return self._requests
+        return Cache__Service__Fast_API__Client__Requests(config=self.config)
 
     @cache_on_self
     def store(self) -> Service__Fast_API__Client__File__Store:                               # Access store operations
@@ -66,7 +60,7 @@ class Cache__Service__Fast_API__Client(Type_Safe):
 
     @cache_on_self
     def admin_storage(self) -> Service__Fast_API__Client__Admin__Storage:                               # Access admin_storage operations
-        return Service__Fast_API__Client__Admin__Storage(_client=self)
+        return Service__Fast_API__Client__Admin__Storage(requests=self.requests())
 
     @cache_on_self
     def server(self) -> Service__Fast_API__Client__Server:                               # Access server operations
