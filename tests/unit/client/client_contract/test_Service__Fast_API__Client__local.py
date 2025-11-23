@@ -3,7 +3,6 @@ from osbot_fast_api.utils.Fast_API_Server                                       
 from osbot_fast_api_serverless.fast_api.Serverless__Fast_API__Config                                import Serverless__Fast_API__Config
 from osbot_utils.helpers.duration.decorators.capture_duration                                       import capture_duration
 from osbot_utils.testing.__                                                                         import __, __SKIP__
-from osbot_utils.testing.__helpers                                                                  import obj
 from osbot_utils.utils.Http                                                                         import GET_json, url_join_safe
 from osbot_utils.utils.Misc                                                                         import list_set, is_guid, random_string, random_bytes
 from mgraph_ai_service_cache.fast_api.Cache_Service__Fast_API                                       import Cache_Service__Fast_API
@@ -12,7 +11,7 @@ from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_
 from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client__Config import Cache__Service__Fast_API__Client__Config
 from mgraph_ai_service_cache_client.client.requests.Cache__Service__Fast_API__Client__Requests      import Cache__Service__Fast_API__Client__Requests, Schema__Cache__Service__Fast_API__Client__Requests__Result
 from mgraph_ai_service_cache_client.client.requests.schemas.enums.Enum__Client__Mode                import Enum__Client__Mode
-from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Store__Response import Schema__Cache__Store__Response
+from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Store__Response                    import Schema__Cache__Store__Response
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Strategy                import Enum__Cache__Store__Strategy
 from mgraph_ai_service_cache_client.utils.Version                                                   import version__mgraph_ai_service_cache_client
 
@@ -203,8 +202,8 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                                          namespace  = namespace ,
                                          body       = body      )
 
-            cache_id   = result.get('cache_id')
-            cache_hash = result.get('cache_hash')
+            cache_id   = result.cache_id
+            cache_hash = result.cache_hash
 
             assert is_guid(cache_id) is True
 
@@ -222,7 +221,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                                                          f'{namespace}/refs/by-id/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.metadata' ] ),
                             size       = len(body.encode('utf-8')) + 2 )
 
-            assert obj(result) == expected
+            assert result.obj() == expected
 
 
     def test_storage__store__json(self):
@@ -234,10 +233,10 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
             result     = _.store__json(strategy   = strategy  ,
                                        namespace  = namespace ,
                                        body       = body      )
-            assert type(result) is dict
-            assert is_guid(result.get('cache_id')) is True
-            assert result.get('namespace'        ) == namespace
-            assert result.get('size'             ) == 18
+            assert type(result)             is Schema__Cache__Store__Response
+            assert is_guid(result.cache_id) is True
+            assert result.namespace         == namespace
+            assert result.size              == 18
 
     def test_storage__store__binary(self):
         with self.fast_api_client.store() as _:
@@ -262,7 +261,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
 
         with self.fast_api_client.store() as _:
             store__result = _.store__string(strategy=strategy, namespace=namespace, body=an_string)
-            cache_id      = store__result.get('cache_id')
+            cache_id      = store__result.cache_id
 
         with self.fast_api_client.retrieve() as _:
             retrieve__result = _.retrieve__cache_id__string(cache_id=cache_id, namespace=namespace)
@@ -278,7 +277,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
 
         with self.fast_api_client.store() as _:
             store__result = _.store__json(strategy=strategy, namespace=namespace, body=an_json)
-            cache_id      = store__result.get('cache_id')
+            cache_id      = store__result.cache_id
 
 
         with self.fast_api_client.retrieve() as _:
@@ -295,7 +294,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
 
         with self.fast_api_client.store() as _:
             store__result = _.store__binary(strategy=strategy, namespace=namespace, body=an_binary)
-            cache_id      = store__result.get('cache_id')
+            cache_id      = store__result.cache_id
 
 
         with self.fast_api_client.retrieve() as _:
@@ -315,11 +314,11 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
 
         with self.fast_api_client.store() as _:
             store__result = _.store__string(strategy=strategy, namespace=namespace, body=an_string)
-            cache_id      = store__result.get('cache_id')
+            cache_id      = store__result.cache_id
 
         with self.fast_api_client.data_store() as _:
             store_string__result                 = _.data__store_string(cache_id=cache_id, namespace=namespace, body=data_string)
-            store_string__file_id                = store_string__result.get('file_id')
+            store_string__file_id                = store_string__result.file_id
 
             store_string__with_id__result        = _.data__store_string__with__id(cache_id=cache_id, namespace=namespace, data_file_id=data_file_id, body=data_string)
 
@@ -327,7 +326,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
 
 
 
-        assert obj(store_string__result) == __(cache_id            = cache_id                                    ,
+        assert store_string__result.obj() == __(cache_id            = cache_id                                    ,
                                                data_files_created  = [ f'pytests/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}/data/{store_string__file_id}.txt' ],
                                                data_key            = ''                                          ,
                                                data_type           = 'string'                                    ,
@@ -337,7 +336,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                                                namespace           = 'pytests'                                   ,
                                                timestamp           = __SKIP__ )
 
-        assert obj(store_string__with_id__result) == __(cache_id            = cache_id                                    ,
+        assert store_string__with_id__result.obj() == __(cache_id            = cache_id                                    ,
                                                         data_files_created  = [ f'pytests/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}/data/an-data-file-id.txt' ],
                                                         data_key            = ''                                  ,
                                                         data_type           = 'string'                            ,
@@ -347,7 +346,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                                                         namespace           = 'pytests'                           ,
                                                         timestamp           = __SKIP__ )
 
-        assert obj(store_string__with_id_and_key_result) == __(cache_id            = cache_id                                    ,
+        assert store_string__with_id_and_key_result.obj() == __(cache_id            = cache_id                                    ,
                                                                data_files_created  = [ f'pytests/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}/data/some/data/key/an-data-file-id.txt' ],
                                                                data_key            = 'some/data/key'               ,
                                                                data_type           = 'string'                      ,
@@ -368,18 +367,18 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
 
         with self.fast_api_client.store() as _:
             store__result = _.store__string(strategy=strategy, namespace=namespace, body=an_string)
-            cache_id      = store__result.get('cache_id')
+            cache_id      = store__result.cache_id
 
         with self.fast_api_client.data_store() as _:
             store_json__result                 = _.data__store_json(cache_id=cache_id, namespace=namespace, body=data_json)
-            store_json__file_id                = store_json__result.get('file_id')
+            store_json__file_id                = store_json__result.file_id
 
             store_json__with_id__result        = _.data__store_json__with__id(cache_id=cache_id, namespace=namespace, data_file_id=data_file_id, body=data_json)
 
             store_json__with_id_and_key_result = _.data__store_json__with__id_and_key(cache_id=cache_id, namespace=namespace, data_key=data_key, data_file_id=data_file_id, body=data_json)
 
 
-        assert obj(store_json__result) == __(cache_id            = cache_id,
+        assert store_json__result.obj() == __(cache_id            = cache_id,
                                              data_files_created  = [ f'pytests/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}/data/{store_json__file_id}.json' ],
                                              data_key            = '',
                                              data_type           = 'json',
@@ -389,7 +388,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                                              namespace           = 'pytests',
                                              timestamp           = __SKIP__ )
 
-        assert obj(store_json__with_id__result) == __(cache_id            = cache_id,
+        assert store_json__with_id__result.obj() == __(cache_id            = cache_id,
                                                       data_files_created  = [ f'pytests/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}/data/an-data-file-id.json' ],
                                                       data_key            = '',
                                                       data_type           = 'json',
@@ -399,7 +398,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                                                       namespace           = 'pytests',
                                                       timestamp           = __SKIP__ )
 
-        assert obj(store_json__with_id_and_key_result) == __(cache_id            = cache_id,
+        assert store_json__with_id_and_key_result.obj() == __(cache_id            = cache_id,
                                                              data_files_created  = [ f'pytests/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}/data/some/data/key/an-data-file-id.json' ],
                                                              data_key            = 'some/data/key',
                                                              data_type           = 'json',
@@ -420,45 +419,45 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
 
         with self.fast_api_client.store() as _:
             store__result = _.store__string(strategy=strategy, namespace=namespace, body=an_string)
-            cache_id      = store__result.get('cache_id')
+            cache_id      = store__result.cache_id
 
         with self.fast_api_client.data_store() as _:
             store_binary__result                 = _.data__store_binary(cache_id=cache_id, namespace=namespace, body=data_binary)
-            store_binary__file_id                = store_binary__result.get('file_id')
+            store_binary__file_id                = store_binary__result.file_id
 
             store_binary__with_id__result        = _.data__store_binary__with__id(cache_id=cache_id, namespace=namespace, data_file_id=data_file_id, body=data_binary)
 
             store_binary__with_id_and_key_result = _.data__store_binary__with__id_and_key(cache_id=cache_id, namespace=namespace, data_key=data_key, data_file_id=data_file_id, body=data_binary)
 
-        assert obj(store_binary__result) == __(cache_id            = cache_id,
-                                               data_files_created  = [ f'pytests/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}/data/{store_binary__file_id}.bin' ],
-                                               data_key            = '',
-                                               data_type           = 'binary',
-                                               extension           = 'bin',
-                                               file_id             = store_binary__file_id,
-                                               file_size           = len(data_binary),
-                                               namespace           = 'pytests',
-                                               timestamp           = __SKIP__ )
+        assert store_binary__result.obj() == __(cache_id            = cache_id,
+                                                data_files_created  = [ f'pytests/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}/data/{store_binary__file_id}.bin' ],
+                                                data_key            = '',
+                                                data_type           = 'binary',
+                                                extension           = 'bin',
+                                                file_id             = store_binary__file_id,
+                                                file_size           = len(data_binary),
+                                                namespace           = 'pytests',
+                                                timestamp           = __SKIP__ )
 
-        assert obj(store_binary__with_id__result) == __(cache_id            = cache_id,
-                                                        data_files_created  = [ f'pytests/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}/data/an-data-file-id.bin' ],
-                                                        data_key            = '',
-                                                        data_type           = 'binary',
-                                                        extension           = 'bin',
-                                                        file_id             = 'an-data-file-id',
-                                                        file_size           = len(data_binary),
-                                                        namespace           = 'pytests',
-                                                        timestamp           = __SKIP__ )
+        assert store_binary__with_id__result.obj() == __(cache_id            = cache_id,
+                                                         data_files_created  = [ f'pytests/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}/data/an-data-file-id.bin' ],
+                                                         data_key            = '',
+                                                         data_type           = 'binary',
+                                                         extension           = 'bin',
+                                                         file_id             = 'an-data-file-id',
+                                                         file_size           = len(data_binary),
+                                                         namespace           = 'pytests',
+                                                         timestamp           = __SKIP__ )
 
-        assert obj(store_binary__with_id_and_key_result) == __(cache_id            = cache_id,
-                                                               data_files_created  = [ f'pytests/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}/data/some/data/key/an-data-file-id.bin' ],
-                                                               data_key            = 'some/data/key',
-                                                               data_type           = 'binary',
-                                                               extension           = 'bin',
-                                                               file_id             = 'an-data-file-id',
-                                                               file_size           = len(data_binary),
-                                                               namespace           = 'pytests',
-                                                               timestamp           = __SKIP__ )
+        assert store_binary__with_id_and_key_result.obj() == __(cache_id            = cache_id,
+                                                                data_files_created  = [ f'pytests/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}/data/some/data/key/an-data-file-id.bin' ],
+                                                                data_key            = 'some/data/key',
+                                                                data_type           = 'binary',
+                                                                extension           = 'bin',
+                                                                file_id             = 'an-data-file-id',
+                                                                file_size           = len(data_binary),
+                                                                namespace           = 'pytests',
+                                                                timestamp           = __SKIP__ )
 
     def test_store_and_retrieve__data__string(self):
         strategy     = Enum__Cache__Store__Strategy.DIRECT
@@ -473,13 +472,13 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
         # Store cache and data
         with self.fast_api_client.store() as _:
             store__result = _.store__string(strategy=strategy, namespace=namespace, body=an_string)
-            cache_id      = store__result.get('cache_id')
+            cache_id      = store__result.cache_id
 
 
         with self.fast_api_client.data_store() as _:
             # Test basic storage (auto-generated file_id)
             store_string__result    = _.data__store_string(cache_id=cache_id, namespace=namespace, body=data_string_1)
-            store_string__file_id   = store_string__result.get('file_id')
+            store_string__file_id   = store_string__result.file_id
 
             # Test storage with specific file_id
             _.data__store_string__with__id(cache_id=cache_id, namespace=namespace, data_file_id=data_file_id, body=data_string_2)
@@ -520,12 +519,12 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
         # Store cache and data
         with self.fast_api_client.store() as _:
             store__result = _.store__string(strategy=strategy, namespace=namespace, body=an_string)
-            cache_id      = store__result.get('cache_id')
+            cache_id      = store__result.cache_id
 
         with self.fast_api_client.data_store() as _:
             # Test basic storage (auto-generated file_id)
             store_json__result  = _.data__store_json(cache_id=cache_id, namespace=namespace, body=data_json_1)
-            store_json__file_id = store_json__result.get('file_id')
+            store_json__file_id = store_json__result.file_id
 
             # Test storage with specific file_id
             _.data__store_json__with__id(cache_id=cache_id, namespace=namespace, data_file_id=data_file_id, body=data_json_2)
@@ -565,12 +564,12 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
         # Store cache and data
         with self.fast_api_client.store() as _:
             store__result = _.store__string(strategy=strategy, namespace=namespace, body=an_string)
-            cache_id      = store__result.get('cache_id')
+            cache_id      = store__result.cache_id
 
         with self.fast_api_client.data_store() as _:
             # Test basic storage (auto-generated file_id)
             store_binary__result  = _.data__store_binary(cache_id=cache_id, namespace=namespace, body=data_binary_1)
-            store_binary__file_id = store_binary__result.get('file_id')
+            store_binary__file_id = store_binary__result.file_id
 
             # Test storage with specific file_id
             _.data__store_binary__with__id(cache_id=cache_id, namespace=namespace, data_file_id=data_file_id, body=data_binary_2)
@@ -609,12 +608,12 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                                                     cache_key  = cache_key  ,
                                                     body       = body       )
 
-            cache_id   = result.get('cache_id')
-            cache_hash = result.get('cache_hash')
+            cache_id   = result.cache_id
+            cache_hash = result.cache_hash
 
             assert is_guid(cache_id) is True
-            assert result.get('namespace') == namespace
-            assert result.get('size') > 0
+            assert result.namespace == namespace
+            assert result.size > 0
 
             # Verify we can retrieve it back
             retrieve_result = self.fast_api_client.retrieve().retrieve__cache_id__string(cache_id=cache_id, namespace=namespace )
@@ -633,12 +632,12 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                                                   cache_key  = cache_key,
                                                   body       = body     )
 
-            cache_id   = result.get('cache_id')
-            cache_hash = result.get('cache_hash')
+            cache_id   = result.cache_id
+            cache_hash = result.cache_hash
             assert cache_hash               == "224b0b70739c9b17"
             assert is_guid(cache_id)        is True
-            assert result.get('namespace')  == namespace
-            assert result.get('size')       == len(str(body).encode('utf-8')) + 2 + 6
+            assert result.namespace  == namespace
+            assert result.size       == len(str(body).encode('utf-8')) + 2 + 6
 
             retrieve_result = self.fast_api_client.retrieve().retrieve__cache_id__json(cache_id  = cache_id ,       # Verify retrieval
                                                                                        namespace = namespace)
@@ -658,19 +657,19 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                                                   body            = body           ,
                                                   json_field_path = json_field_path)
 
-            cache_id   = result.get('cache_id')
-            cache_hash = result.get('cache_hash')
+            cache_id   = result.cache_id
+            cache_hash = result.cache_hash
             assert cache_hash               == "73475cb40a568e8d"
             assert is_guid(cache_id)        is True
-            assert result.get('namespace')  == namespace
-            assert result.get('size')       == len(str(body).encode('utf-8')) + 2 + 6
+            assert result.namespace  == namespace
+            assert result.size       == len(str(body).encode('utf-8')) + 2 + 6
 
             retrieve_result_1 = self.fast_api_client.retrieve().retrieve__cache_id__json  (cache_id  = cache_id ,       # Verify retrieval
                                                                                            namespace = namespace)
             retrieve_result_2 = self.fast_api_client.retrieve().retrieve__hash__cache_hash(cache_hash  = cache_hash ,       # Verify retrieval
                                                                                            namespace = namespace)
-            assert retrieve_result_1             == body
-            assert retrieve_result_2.get('data') == body
+            assert retrieve_result_1      == body
+            assert retrieve_result_2.data == body
 
 
 
@@ -689,11 +688,11 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                 body       = body
             )
 
-            cache_id   = result.get('cache_id')
+            cache_id   = result.cache_id
 
             assert is_guid(cache_id) is True
-            assert result.get('namespace') == namespace
-            assert result.get('size') == len(body)
+            assert result.namespace == namespace
+            assert result.size == len(body)
 
             # Verify retrieval
             retrieve_result = self.fast_api_client.retrieve().retrieve__cache_id__binary(
@@ -726,7 +725,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                     body      = body
                 )
 
-                cache_id = result.get('cache_id')
+                cache_id = result.cache_id
                 assert is_guid(cache_id) is True
                 results[strategy.value] = cache_id
 
@@ -764,8 +763,8 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                 body      = body
             )
 
-            assert is_guid(result_temporal.get('cache_id')) is True
-            assert is_guid(result_temporal_latest.get('cache_id')) is True
+            assert is_guid(result_temporal.cache_id) is True
+            assert is_guid(result_temporal_latest.cache_id) is True
 
 
     def test_storage__store__string__all_data_types_with_key(self):
@@ -805,25 +804,25 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
             )
 
             # Verify all were stored successfully
-            assert is_guid(string_result.get('cache_id')) is True
-            assert is_guid(json_result.get('cache_id')) is True
-            assert is_guid(binary_result.get('cache_id')) is True
+            assert is_guid(string_result.cache_id) is True
+            assert is_guid(json_result.cache_id) is True
+            assert is_guid(binary_result.cache_id) is True
 
             # Verify retrieval
             string_retrieved = self.fast_api_client.retrieve().retrieve__cache_id__string(
-                cache_id=string_result.get('cache_id'),
+                cache_id=string_result.cache_id,
                 namespace=namespace
             )
             assert string_retrieved == string_body
 
             json_retrieved = self.fast_api_client.retrieve().retrieve__cache_id__json(
-                cache_id=json_result.get('cache_id'),
+                cache_id=json_result.cache_id,
                 namespace=namespace
             )
             assert json_retrieved == json_body
 
             binary_retrieved = self.fast_api_client.retrieve().retrieve__cache_id__binary(
-                cache_id=binary_result.get('cache_id'),
+                cache_id=binary_result.cache_id,
                 namespace=namespace
             )
             assert binary_retrieved == binary_body
@@ -852,8 +851,8 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                     body      = body
                 )
 
-                assert is_guid(result.get('cache_id')) is True
-                assert result.get('namespace') == namespace
+                assert is_guid(result.cache_id) is True
+                assert result.namespace == namespace
 
 
     def test_storage__store__same_content_different_keys(self):
@@ -878,8 +877,8 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
             )
 
             # Different cache_keys should produce different cache_ids
-            cache_id1 = result1.get('cache_id')
-            cache_id2 = result2.get('cache_id')
+            cache_id1 = result1.cache_id
+            cache_id2 = result2.cache_id
 
             assert is_guid(cache_id1) is True
             assert is_guid(cache_id2) is True
@@ -907,7 +906,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                     cache_key = cache_key,
                     body      = body
                 )
-                versions.append(result.get('cache_id'))
+                versions.append(result.cache_id)
 
             # All versions should have unique cache_ids
             assert len(set(versions)) == 3
@@ -937,14 +936,14 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                 file_id    = file_id
             )
 
-            cache_id   = result.get('cache_id')
-            cache_hash = result.get('cache_hash')
-            paths      = result.get('paths', {})
+            cache_id   = result.cache_id
+            cache_hash = result.cache_hash
+            paths      = result.paths
 
             # Verify basic response structure
             assert is_guid(cache_id) is True
-            assert result.get('namespace') == namespace
-            assert result.get('size') > 0
+            assert result.namespace == namespace
+            assert result.size > 0
 
             # Verify that the file_id is used in the data path instead of cache_id
             data_paths = paths.get('data', [])
@@ -977,8 +976,8 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                                               body       = body     ,
                                               file_id    = file_id  )
 
-            cache_id = result.get('cache_id')
-            paths    = result.get('paths', {})
+            cache_id = result.cache_id
+            paths    = result.paths
 
             assert is_guid(cache_id) is True
 
@@ -1012,8 +1011,8 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                 file_id    = file_id
             )
 
-            cache_id = result.get('cache_id')
-            paths    = result.get('paths', {})
+            cache_id = result.cache_id
+            paths    = result.paths
 
             assert is_guid(cache_id) is True
 
@@ -1055,10 +1054,10 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                 file_id    = 'custom-id'
             )
 
-            cache_id_without = result_without_file_id.get('cache_id')
-            cache_id_with    = result_with_file_id.get('cache_id')
-            cache_hash_without = result_without_file_id.get('cache_hash')
-            cache_hash_with    = result_with_file_id.get('cache_hash')
+            cache_id_without = result_without_file_id.cache_id
+            cache_id_with    = result_with_file_id.cache_id
+            cache_hash_without = result_without_file_id.cache_hash
+            cache_hash_with    = result_with_file_id.cache_hash
 
             # Different cache_ids (different storage locations)
             assert cache_id_without != cache_id_with
@@ -1106,8 +1105,8 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                     file_id   = file_id
                 )
 
-                cache_id   = result.get('cache_id')
-                data_paths = result.get('paths', {}).get('data', [])
+                cache_id   = result.cache_id
+                data_paths = result.paths.get('data', [])
 
                 assert is_guid(cache_id) is True
                 assert any(file_id in path for path in data_paths)
@@ -1137,8 +1136,8 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                 file_id    = file_id
             )
 
-            cache_id = result.get('cache_id')
-            paths    = result.get('paths', {})
+            cache_id = result.cache_id
+            paths    = result.paths
 
             # Verify data paths use file_id
             data_paths = paths.get('data', [])
@@ -1177,14 +1176,14 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                     file_id   = file_id
                 )
 
-                cache_id = result.get('cache_id')
+                cache_id = result.cache_id
                 results[file_id] = {
                     'cache_id': cache_id,
                     'body': body
                 }
 
                 # Verify each file is stored with the correct file_id
-                data_paths = result.get('paths', {}).get('data', [])
+                data_paths = result.paths.get('data', [])
                 assert any(file_id in path for path in data_paths)
 
             # All should have different cache_ids
@@ -1225,11 +1224,11 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                     file_id   = file_id
                 )
 
-                cache_id = result.get('cache_id')
+                cache_id = result.cache_id
                 results[strategy.value] = cache_id
 
                 # Verify file_id is in the paths
-                data_paths = result.get('paths', {}).get('data', [])
+                data_paths = result.paths.get('data', [])
                 assert any(file_id in path for path in data_paths)
 
                 # Verify retrieval
@@ -1268,8 +1267,8 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                 body       = body
             )
 
-            cache_id_empty   = result_empty.get('cache_id')
-            cache_id_default = result_default.get('cache_id')
+            cache_id_empty   = result_empty.cache_id
+            cache_id_default = result_default.cache_id
 
             # Both should create valid cache entries
             assert is_guid(cache_id_empty) is True
@@ -1279,7 +1278,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
             assert cache_id_empty != cache_id_default
 
             # But same content hash
-            assert result_empty.get('cache_hash') == result_default.get('cache_hash')
+            assert result_empty.cache_hash == result_default.cache_hash
 
 
     def test_storage__store__file_id__json_and_binary_types(self):
@@ -1301,8 +1300,8 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                 file_id   = json_file_id
             )
 
-            json_cache_id = json_result.get('cache_id')
-            json_paths    = json_result.get('paths', {}).get('data', [])
+            json_cache_id = json_result.cache_id
+            json_paths    = json_result.paths.get('data', [])
 
             assert is_guid(json_cache_id) is True
             assert any(json_file_id in path for path in json_paths)
@@ -1320,8 +1319,8 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                 file_id   = binary_file_id
             )
 
-            binary_cache_id = binary_result.get('cache_id')
-            binary_paths    = binary_result.get('paths', {}).get('data', [])
+            binary_cache_id = binary_result.cache_id
+            binary_paths    = binary_result.paths.get('data', [])
 
             assert is_guid(binary_cache_id) is True
             assert any(binary_file_id in path for path in binary_paths)

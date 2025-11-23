@@ -1,9 +1,8 @@
-from typing import Any, Optional, Dict, Union
-from osbot_utils.type_safe.Type_Safe import Type_Safe
-from osbot_utils.type_safe.type_safe_core.decorators.type_safe import type_safe
-
-from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Binary__Reference import Schema__Cache__Binary__Reference
-from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Retrieve__Success import Schema__Cache__Retrieve__Success
+from typing                                                                         import Any, Dict, Union
+from osbot_utils.type_safe.Type_Safe                                                import Type_Safe
+from osbot_utils.type_safe.type_safe_core.decorators.type_safe                      import type_safe
+from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Binary__Reference  import Schema__Cache__Binary__Reference
+from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Retrieve__Success  import Schema__Cache__Retrieve__Success
 
 
 class Service__Fast_API__Client__File__Retrieve(Type_Safe):

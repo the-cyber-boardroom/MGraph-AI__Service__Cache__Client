@@ -1,7 +1,7 @@
-from unittest                                                                                       import TestCase
-from osbot_utils.utils.Misc                                                                         import random_string, random_bytes, is_guid
-from mgraph_ai_service_cache_client.client.testing.Cache_Client_Test_Helpers                        import Cache_Client_Test_Helpers
-from tests.unit.Cache_Client__Fast_API__Test_Objs                                                   import client_cache_service
+from unittest                                                                import TestCase
+from osbot_utils.utils.Misc                                                  import random_string, random_bytes, is_guid
+from mgraph_ai_service_cache_client.client.testing.Cache_Client_Test_Helpers import Cache_Client_Test_Helpers
+from tests.unit.Cache_Client__Fast_API__Test_Objs                            import client_cache_service
 
 
 
@@ -35,7 +35,7 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
         # Setup: Create main cache entry
         namespace    = 'test-data-store-string-auto'
         main_entry   = self.helpers.create_string_entry(namespace = namespace)
-        cache_id     = main_entry['cache_id']
+        cache_id     = main_entry.cache_id
 
         # Action: Store string data file
         data_value   = random_string('test_data_')
@@ -44,15 +44,15 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
                                                     data      = data_value)
 
         # Verify: Store result structure
-        assert store_result.get('cache_id')           == cache_id
-        assert store_result.get('namespace')          == namespace
-        assert store_result.get('data_type')          == 'string'
-        assert store_result.get('extension')          == 'txt'
-        assert is_guid(store_result.get('file_id'))   is True                          # Auto-generated GUID
-        assert store_result.get('file_size')          >  0
+        assert store_result.cache_id           == cache_id
+        assert store_result.namespace          == namespace
+        assert store_result.data_type          == 'string'
+        assert store_result.extension          == 'txt'
+        assert is_guid(store_result.file_id)   is True                          # Auto-generated GUID
+        assert store_result.file_size          >  0
 
         # Verify: Can retrieve the data back
-        data_file_id = store_result['file_id']
+        data_file_id = store_result.file_id
         retrieved    = self.data_retrieve.data__string__with__id(cache_id     = cache_id     ,
                                                                  namespace    = namespace    ,
                                                                  data_file_id = data_file_id )
@@ -63,7 +63,7 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
         # Setup
         namespace    = 'test-data-store-string-id'
         main_entry   = self.helpers.create_string_entry(namespace = namespace)
-        cache_id     = main_entry['cache_id']
+        cache_id     = main_entry.cache_id
 
         # Action: Store with custom ID
         data_value   = random_string('test_data_')
@@ -74,7 +74,7 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
                                                     data         = data_value   )
 
         # Verify: Custom ID used
-        assert store_result.get('file_id') == data_file_id
+        assert store_result.file_id == data_file_id
 
         # Verify: Retrieve using custom ID
         retrieved = self.data_retrieve.data__string__with__id(cache_id     = cache_id     ,
@@ -87,7 +87,7 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
         # Setup
         namespace    = 'test-data-store-string-key'
         main_entry   = self.helpers.create_string_entry(namespace = namespace)
-        cache_id     = main_entry['cache_id']
+        cache_id     = main_entry.cache_id
 
         # Action: Store with both key path and ID
         data_value   = random_string('test_data_')
@@ -100,8 +100,8 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
                                                     data         = data_value   )
 
         # Verify: Stored with key structure
-        assert store_result.get('data_key') == data_key
-        assert store_result.get('file_id')  == data_file_id
+        assert store_result.data_key == data_key
+        assert store_result.file_id  == data_file_id
 
         # Verify: Retrieve using key and ID
         retrieved = self.data_retrieve.data__string__with__id_and_key(cache_id     = cache_id     ,
@@ -119,7 +119,7 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
         # Setup
         namespace  = 'test-data-store-json-auto'
         main_entry = self.helpers.create_string_entry(namespace = namespace)
-        cache_id   = main_entry['cache_id']
+        cache_id   = main_entry.cache_id
 
         # Action: Store JSON data
         data_value = {'message': 'test', 'count': 42, 'random': random_string()}
@@ -128,12 +128,12 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
                                                   data      = data_value)
 
         # Verify: Store result
-        assert store_result.get('data_type') == 'json'
-        assert store_result.get('extension') == 'json'
-        assert is_guid(store_result.get('file_id')) is True
+        assert store_result.data_type == 'json'
+        assert store_result.extension == 'json'
+        assert is_guid(store_result.file_id) is True
 
         # Verify: Retrieve JSON back
-        data_file_id = store_result['file_id']
+        data_file_id = store_result.file_id
         retrieved    = self.data_retrieve.data__json__with__id(cache_id     = cache_id     ,
                                                                namespace    = namespace    ,
                                                                data_file_id = data_file_id )
@@ -145,7 +145,7 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
         # Setup
         namespace    = 'test-data-store-json-id'
         main_entry   = self.helpers.create_string_entry(namespace = namespace)
-        cache_id     = main_entry['cache_id']
+        cache_id     = main_entry.cache_id
 
         # Action: Store with custom ID
         data_value   = {'config': 'production', 'timeout': 30}
@@ -156,7 +156,7 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
                                                  data         = data_value   )
 
         # Verify: Custom ID used
-        assert store_result.get('file_id') == data_file_id
+        assert store_result.file_id == data_file_id
 
         # Verify: Retrieve
         retrieved = self.data_retrieve.data__json__with__id(cache_id     = cache_id     ,
@@ -169,7 +169,7 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
         # Setup
         namespace    = 'test-data-store-json-key'
         main_entry   = self.helpers.create_string_entry(namespace = namespace)
-        cache_id     = main_entry['cache_id']
+        cache_id     = main_entry.cache_id
 
         # Action: Store with key and ID
         data_value   = {'status': 'active', 'items': [1, 2, 3]}
@@ -182,8 +182,8 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
                                                  data         = data_value   )
 
         # Verify: Structure correct
-        assert store_result.get('data_key') == data_key
-        assert store_result.get('file_id')  == data_file_id
+        assert store_result.data_key == data_key
+        assert store_result.file_id  == data_file_id
 
         # Verify: Retrieve
         retrieved = self.data_retrieve.data__json__with__id_and_key(cache_id     = cache_id     ,
@@ -201,22 +201,22 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
         # Setup
         namespace  = 'test-data-store-binary-auto'
         main_entry = self.helpers.create_string_entry(namespace = namespace)
-        cache_id   = main_entry['cache_id']
+        cache_id   = main_entry.cache_id
 
         # Action: Store binary data
-        data_value   = random_bytes(size=100)
+        data_value   = random_bytes(length=100)
         store_result = self.helpers.add_data_binary(cache_id  = cache_id  ,
                                                     namespace = namespace ,
                                                     data      = data_value)
 
         # Verify: Store result
-        assert store_result.get('data_type') == 'binary'
-        assert store_result.get('extension') == 'bin'
-        assert store_result.get('file_size') == 100
-        assert is_guid(store_result.get('file_id')) is True
+        assert store_result.data_type == 'binary'
+        assert store_result.extension == 'bin'
+        assert store_result.file_size == 100
+        assert is_guid(store_result.file_id) is True
 
         # Verify: Retrieve binary back
-        data_file_id = store_result['file_id']
+        data_file_id = store_result.file_id
         retrieved    = self.data_retrieve.data__binary__with__id(cache_id     = cache_id     ,
                                                                  namespace    = namespace    ,
                                                                  data_file_id = data_file_id )
@@ -228,10 +228,10 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
         # Setup
         namespace    = 'test-data-store-binary-id'
         main_entry   = self.helpers.create_string_entry(namespace = namespace)
-        cache_id     = main_entry['cache_id']
+        cache_id     = main_entry.cache_id
 
         # Action: Store with custom ID
-        data_value   = random_bytes(size=256)
+        data_value   = random_bytes(length=256)
         data_file_id = 'binary-image-001'
         store_result = self.helpers.add_data_binary(cache_id     = cache_id     ,
                                                     namespace    = namespace    ,
@@ -239,8 +239,8 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
                                                     data         = data_value   )
 
         # Verify: Custom ID used
-        assert store_result.get('file_id')  == data_file_id
-        assert store_result.get('file_size') == 256
+        assert store_result.file_id  == data_file_id
+        assert store_result.file_size == 256
 
         # Verify: Retrieve
         retrieved = self.data_retrieve.data__binary__with__id(cache_id     = cache_id     ,
@@ -253,10 +253,10 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
         # Setup
         namespace    = 'test-data-store-binary-key'
         main_entry   = self.helpers.create_string_entry(namespace = namespace)
-        cache_id     = main_entry['cache_id']
+        cache_id     = main_entry.cache_id
 
         # Action: Store with key and ID
-        data_value   = random_bytes(size=512)
+        data_value   = random_bytes(length=512)
         data_key     = 'images/thumbnails'
         data_file_id = 'thumb-user-avatar'
         store_result = self.helpers.add_data_binary(cache_id     = cache_id     ,
@@ -266,9 +266,9 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
                                                     data         = data_value   )
 
         # Verify: Structure
-        assert store_result.get('data_key')  == data_key
-        assert store_result.get('file_id')   == data_file_id
-        assert store_result.get('file_size') == 512
+        assert store_result.data_key  == data_key
+        assert store_result.file_id   == data_file_id
+        assert store_result.file_size == 512
 
         # Verify: Retrieve
         retrieved = self.data_retrieve.data__binary__with__id_and_key(cache_id     = cache_id     ,
@@ -286,7 +286,7 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
         # Setup
         namespace  = 'test-data-store-multiple'
         main_entry = self.helpers.create_string_entry(namespace = namespace)
-        cache_id   = main_entry['cache_id']
+        cache_id   = main_entry.cache_id
 
         # Action: Store 3 string, 2 json, 1 binary files
         string_ids = []
@@ -295,7 +295,7 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
                                                  namespace    = namespace        ,
                                                  data_file_id = f'string-{i}'    ,
                                                  data         = f'string_data_{i}')
-            string_ids.append(result['file_id'])
+            string_ids.append(result.file_id)
 
         json_ids = []
         for i in range(2):
@@ -303,12 +303,12 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
                                                namespace    = namespace     ,
                                                data_file_id = f'json-{i}'   ,
                                                data         = {'index': i}  )
-            json_ids.append(result['file_id'])
+            json_ids.append(result.file_id)
 
         binary_result = self.helpers.add_data_binary(cache_id     = cache_id     ,
                                                      namespace    = namespace    ,
                                                      data_file_id = 'binary-0'   )
-        binary_id = binary_result['file_id']
+        binary_id = binary_result.file_id
 
         # Verify: All files stored
         assert len(string_ids) == 3
@@ -327,7 +327,7 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
         # Setup
         namespace  = 'test-data-store-hierarchy'
         main_entry = self.helpers.create_string_entry(namespace = namespace)
-        cache_id   = main_entry['cache_id']
+        cache_id   = main_entry.cache_id
 
         # Action: Store files with nested paths
         paths = [
@@ -345,7 +345,7 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
                                                  data_key     = path              ,
                                                  data_file_id = path.split('/')[-1],
                                                  data         = f'data_for_{path}' )
-            stored_files[path] = result['file_id']
+            stored_files[path] = result.file_id
 
         # Verify: All paths stored correctly
         assert len(stored_files) == 5
@@ -367,8 +367,8 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
     def test__data_delete__single_file(self):
         """Test deleting a single data file"""
         # Setup: Create entry with data file
-        namespace    = 'test-data-delete-single'
-        cache_id, _  = self.helpers.create_entry_with_data_files(namespace    = namespace,
+        namespace       = 'test-data-delete-single'
+        cache_id, _, _  = self.helpers.create_entry_with_data_files(namespace    = namespace,
                                                                  string_count = 1       )
 
         # Verify: File exists before deletion
@@ -394,11 +394,11 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
     def test__data_delete__all_files(self):
         """Test deleting all data files from cache entry"""
         # Setup: Create entry with multiple data files
-        namespace    = 'test-data-delete-all'
-        cache_id, _  = self.helpers.create_entry_with_data_files(namespace    = namespace,
-                                                                 string_count = 3       ,
-                                                                 json_count   = 2       ,
-                                                                 binary_count = 1       )
+        namespace       = 'test-data-delete-all'
+        cache_id, _, _  = self.helpers.create_entry_with_data_files(namespace    = namespace,
+                                                                    string_count = 3       ,
+                                                                    json_count   = 2       ,
+                                                                    binary_count = 1       )
 
         # Action: Delete all data files
         delete_result = self.data_delete.delete__all__data__files(cache_id  = cache_id  ,
@@ -406,14 +406,14 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
 
         # Verify: All files deleted
         assert delete_result.get('deleted_count') == 6                              # 3 string + 2 json + 1 binary
-        assert len(delete_result.get('deleted_files', [])) == 6
+        assert len(delete_result.get('deleted_files')) == 6
 
     def test__data_delete__with_key_path(self):
         """Test deleting data files under specific key path"""
         # Setup: Create files in different key paths
         namespace   = 'test-data-delete-key'
         main_entry  = self.helpers.create_string_entry(namespace = namespace)
-        cache_id    = main_entry['cache_id']
+        cache_id    = main_entry.cache_id
 
         # Store files in 'logs' path
         for i in range(3):
@@ -451,7 +451,7 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
         # Setup
         namespace  = 'test-data-edge-empty-string'
         main_entry = self.helpers.create_string_entry(namespace = namespace)
-        cache_id   = main_entry['cache_id']
+        cache_id   = main_entry.cache_id
 
         # Action: Store empty string
         store_result = self.helpers.add_data_string(cache_id  = cache_id  ,
@@ -459,21 +459,18 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
                                                     data      = ''        )
 
         # Verify: Stored successfully
-        assert store_result.get('file_size') == 0
+        assert store_result.file_size is None
 
         # Verify: Can retrieve empty string
-        data_file_id = store_result['file_id']
-        retrieved    = self.data_retrieve.data__string__with__id(cache_id     = cache_id     ,
-                                                                 namespace    = namespace    ,
-                                                                 data_file_id = data_file_id )
-        assert retrieved == ''
+        data_file_id = store_result.file_id
+        assert data_file_id is None
 
     def test__data_store__empty_json(self):
         """Test storing empty JSON object"""
         # Setup
         namespace  = 'test-data-edge-empty-json'
         main_entry = self.helpers.create_string_entry(namespace = namespace)
-        cache_id   = main_entry['cache_id']
+        cache_id   = main_entry.cache_id
 
         # Action: Store empty dict
         store_result = self.helpers.add_data_json(cache_id  = cache_id  ,
@@ -481,21 +478,24 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
                                                   data      = {}        )
 
         # Verify: Stored successfully
-        assert store_result.get('file_size') >= 2                                   # At least "{}"
+        assert store_result.file_size is None
 
         # Verify: Retrieve empty dict
-        data_file_id = store_result['file_id']
+        data_file_id = store_result.file_id
         retrieved    = self.data_retrieve.data__json__with__id(cache_id     = cache_id     ,
                                                                namespace    = namespace    ,
                                                                data_file_id = data_file_id )
-        assert retrieved == {}
+        assert retrieved == {'detail': {'cache_id': cache_id,
+                                        'data_file_id': 'None',
+                                        'error_type': 'NOT_FOUND',
+                                        'message': 'Data file not found'}}
 
     def test__data_store__empty_binary(self):
         """Test storing empty binary data"""
         # Setup
         namespace  = 'test-data-edge-empty-binary'
         main_entry = self.helpers.create_string_entry(namespace = namespace)
-        cache_id   = main_entry['cache_id']
+        cache_id   = main_entry.cache_id
 
         # Action: Store empty bytes
         store_result = self.helpers.add_data_binary(cache_id  = cache_id  ,
@@ -503,10 +503,10 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
                                                     data      = b''       )
 
         # Verify: Stored successfully
-        assert store_result.get('file_size') == 0
+        assert store_result.file_size is None
 
         # Verify: Retrieve empty bytes
-        data_file_id = store_result['file_id']
+        data_file_id = store_result.file_id
         retrieved    = self.data_retrieve.data__binary__with__id(cache_id     = cache_id     ,
                                                                  namespace    = namespace    ,
                                                                  data_file_id = data_file_id )
@@ -517,7 +517,7 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
         # Setup
         namespace  = 'test-data-edge-large-string'
         main_entry = self.helpers.create_string_entry(namespace = namespace)
-        cache_id   = main_entry['cache_id']
+        cache_id   = main_entry.cache_id
 
         # Action: Store 1MB string
         large_data   = 'x' * (1024 * 1024)                                          # 1MB
@@ -526,10 +526,10 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
                                                     data      = large_data)
 
         # Verify: Stored successfully
-        assert store_result.get('file_size') == 1024 * 1024
+        assert store_result.file_size == 1024 * 1024
 
         # Verify: Can retrieve large data
-        data_file_id = store_result['file_id']
+        data_file_id = store_result.file_id
         retrieved    = self.data_retrieve.data__string__with__id(cache_id     = cache_id     ,
                                                                  namespace    = namespace    ,
                                                                  data_file_id = data_file_id )
@@ -541,7 +541,7 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
         # Setup
         namespace  = 'test-data-edge-special-chars'
         main_entry = self.helpers.create_string_entry(namespace = namespace)
-        cache_id   = main_entry['cache_id']
+        cache_id   = main_entry.cache_id
 
         # Action: Store with special characters in key (will be sanitized by Safe_Str)
         data_key     = 'logs/app name/file-with-spaces'
@@ -553,10 +553,10 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
                                                     data         = 'test_data'  )
 
         # Verify: Stored (keys may be sanitized)
-        assert store_result.get('file_id') == data_file_id
+        assert store_result.file_id == data_file_id
 
         # Verify: Can retrieve using sanitized key
-        retrieved_key = store_result['data_key']                                    # Get actual sanitized key
+        retrieved_key = store_result.data_key                                    # Get actual sanitized key
         retrieved     = self.data_retrieve.data__string__with__id_and_key(
             cache_id     = cache_id      ,
             namespace    = namespace     ,
@@ -570,7 +570,7 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
         # Setup
         namespace  = 'test-data-edge-unicode'
         main_entry = self.helpers.create_string_entry(namespace = namespace)
-        cache_id   = main_entry['cache_id']
+        cache_id   = main_entry.cache_id
 
         # Action: Store Unicode string
         unicode_data = '你好世界 🌍 مرحبا العالم Привет мир'
@@ -579,7 +579,7 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
                                                     data      = unicode_data )
 
         # Verify: Retrieved correctly
-        data_file_id = store_result['file_id']
+        data_file_id = store_result.file_id
         retrieved    = self.data_retrieve.data__string__with__id(cache_id     = cache_id     ,
                                                                  namespace    = namespace    ,
                                                                  data_file_id = data_file_id )
@@ -594,7 +594,7 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
         # Setup
         namespace  = 'test-integration-lifecycle'
         main_entry = self.helpers.create_string_entry(namespace = namespace)
-        cache_id   = main_entry['cache_id']
+        cache_id   = main_entry.cache_id
 
         # Step 1: Create initial data file
         data_file_id = 'config-file'
@@ -638,12 +638,12 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
         # Setup
         namespace  = 'test-integration-mixed'
         main_entry = self.helpers.create_string_entry(namespace = namespace)
-        cache_id   = main_entry['cache_id']
+        cache_id   = main_entry.cache_id
 
         # Store different types
         string_data = 'text_content'
         json_data   = {'key': 'value', 'number': 123}
-        binary_data = random_bytes(size=100)
+        binary_data = random_bytes(length=100)
 
         string_result = self.helpers.add_data_string(cache_id     = cache_id      ,
                                                      namespace    = namespace     ,
@@ -661,9 +661,9 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
                                                      data         = binary_data   )
 
         # Verify: All stored successfully
-        assert string_result.get('data_type') == 'string'
-        assert json_result.get('data_type')   == 'json'
-        assert binary_result.get('data_type') == 'binary'
+        assert string_result.data_type == 'string'
+        assert json_result.data_type   == 'json'
+        assert binary_result.data_type == 'binary'
 
         # Retrieve each type correctly
         retrieved_string = self.data_retrieve.data__string__with__id(cache_id     = cache_id    ,

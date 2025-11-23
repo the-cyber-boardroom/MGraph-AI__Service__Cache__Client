@@ -25,7 +25,7 @@ class Service__Fast_API__Client__Data__Delete(Type_Safe):
 
     def delete__all__data__files__with__key(self, cache_id: str, namespace: str, data_key: str) -> Dict:                              # Auto-generated from endpoint delete__delete__all__data__files__with__key
                                                                                     # Build path
-        path = f"/{namespace}/cache/{cache_id}/data/delete/all/{data_key:path}"
+        path = f"/{namespace}/cache/{cache_id}/data/delete/all/{data_key}"
         body = None
                                                                                     # Execute request
         result = self.requests.execute(
@@ -51,7 +51,7 @@ class Service__Fast_API__Client__Data__Delete(Type_Safe):
 
     def delete__data__file__with__id_and_key(self, cache_id: str, namespace: str, data_type: Enum__Cache__Data_Type, data_key: str, data_file_id: str) -> Dict:                              # Auto-generated from endpoint delete__delete__data__file__with__id_and_key
                                                                                     # Build path
-        path = f"/{namespace}/cache/{cache_id}/data/delete/{data_type}/{data_key:path}/{data_file_id}"
+        path = f"/{namespace}/cache/{cache_id}/data/delete/{data_type}/{data_key}/{data_file_id}"
         body = None
                                                                                     # Execute request
         result = self.requests.execute(
