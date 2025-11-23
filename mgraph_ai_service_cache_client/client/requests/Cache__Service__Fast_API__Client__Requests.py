@@ -67,6 +67,7 @@ class Cache__Service__Fast_API__Client__Requests(Type_Safe):
         request_headers = {**self.auth_headers(), **(headers or {})}
                                                                                     # Execute based on mode
         if self.config.mode == Enum__Client__Mode.IN_MEMORY:
+
             response = self._execute_in_memory(method, path, body, request_headers)
         else:
             response = self._execute_remote(method, path, body, request_headers)
@@ -81,6 +82,7 @@ class Cache__Service__Fast_API__Client__Requests(Type_Safe):
         method_func = getattr(self.test_client(), method.lower())
         if body:
             if type(body) is bytes:
+                headers["Content-Type"]=  "application/octet-stream"
                 return method_func(path, data=body, headers=headers)
             else:
                 return method_func(path, json=body, headers=headers)

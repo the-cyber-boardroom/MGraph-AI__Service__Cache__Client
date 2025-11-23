@@ -3,6 +3,8 @@ from osbot_utils.type_safe.Type_Safe import Type_Safe
 from osbot_utils.type_safe.primitives.domains.files.safe_str.Safe_Str__File__Path   import Safe_Str__File__Path
 from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id     import Safe_Str__Id
 
+from mgraph_ai_service_cache_client.schemas.cache.data.Schema__Cache__Data__Store__Response import Schema__Cache__Data__Store__Response
+
 
 class Service__Fast_API__Client__Data__Store(Type_Safe):
     _client: Any                                                                    # Reference to main client
@@ -11,7 +13,11 @@ class Service__Fast_API__Client__Data__Store(Type_Safe):
     def requests(self):                                                             # Access the unified request handler
         return self._client.requests()
 
-    def data__store_binary(self, cache_id: str, namespace: str, body:bytes) -> Dict:                              # Auto-generated from endpoint post__data__store_binary
+    def data__store_binary(self,
+                           cache_id : str,
+                           namespace: str,
+                           body     :bytes
+                      ) -> Schema__Cache__Data__Store__Response:                    # Auto-generated from endpoint post__data__store_binary
                                                                                     # Build path
         path = f"/{namespace}/cache/{cache_id}/data/store/binary"
         #body = None
@@ -21,10 +27,15 @@ class Service__Fast_API__Client__Data__Store(Type_Safe):
             path   = path,
             body   = body
         )
-                                                                                    # Return response data
+        return Schema__Cache__Data__Store__Response.from_json(result.json)          # Return response data
         return result.json if result.json else result.text
 
-    def data__store_binary__with__id(self, cache_id: str, namespace: str, data_file_id: str, body:bytes) -> Dict:                              # Auto-generated from endpoint post__data__store_binary__with__id
+    def data__store_binary__with__id(self,
+                                     cache_id    : str ,
+                                     namespace   : str ,
+                                     data_file_id: str ,
+                                     body        :bytes
+                                ) -> Schema__Cache__Data__Store__Response:                              # Auto-generated from endpoint post__data__store_binary__with__id
                                                                                     # Build path
         path = f"/{namespace}/cache/{cache_id}/data/store/binary/{data_file_id}"
         #body = None
@@ -34,10 +45,16 @@ class Service__Fast_API__Client__Data__Store(Type_Safe):
             path   = path,
             body   = body
         )
-                                                                                    # Return response data
-        return result.json if result.json else result.text
+        return Schema__Cache__Data__Store__Response.from_json(result.json)              # Return response data
+        #return result.json if result.json else result.text
 
-    def data__store_binary__with__id_and_key(self, cache_id: str, namespace: str, data_key: str, data_file_id: str, body:bytes) -> Dict:                              # Auto-generated from endpoint post__data__store_binary__with__id_and_key
+    def data__store_binary__with__id_and_key(self,
+                                             cache_id    : str ,
+                                             namespace   : str ,
+                                             data_key    : str ,
+                                             data_file_id: str ,
+                                             body        : bytes
+                                        ) -> Schema__Cache__Data__Store__Response:                              # Auto-generated from endpoint post__data__store_binary__with__id_and_key
                                                                                     # Build path
         path = f"/{namespace}/cache/{cache_id}/data/store/binary/{data_key}/{data_file_id}"
         #body = None
@@ -47,10 +64,14 @@ class Service__Fast_API__Client__Data__Store(Type_Safe):
             path   = path,
             body   = body
         )
-                                                                                    # Return response data
-        return result.json if result.json else result.text
+        return Schema__Cache__Data__Store__Response.from_json(result.json)         # Return response data
+        #return result.json if result.json else result.text
 
-    def data__store_json(self, cache_id: str, namespace: str, body:dict) -> Dict:                              # Auto-generated from endpoint post__data__store_json
+    def data__store_json(self,
+                         cache_id : str,
+                         namespace: str,
+                         body     :dict
+                    ) -> Schema__Cache__Data__Store__Response:                              # Auto-generated from endpoint post__data__store_json
                                                                                     # Build path
         #path = f"/{{namespace}}/cache/{{cache_id}}/data/store/json"
         path = f"/{namespace}/cache/{cache_id}/data/store/json"
@@ -61,8 +82,8 @@ class Service__Fast_API__Client__Data__Store(Type_Safe):
             path   = path,
             body   = body
         )
-                                                                                    # Return response data
-        return result.json if result.json else result.text
+        return Schema__Cache__Data__Store__Response.from_json(result.json)              # Return response data
+        #return result.json if result.json else result.text
 
     def data__store_json__with__id(self, cache_id: str, namespace: str, data_file_id: str, body:dict) -> Dict:                              # Auto-generated from endpoint post__data__store_json__with__id
                                                                                     # Build path
@@ -74,8 +95,8 @@ class Service__Fast_API__Client__Data__Store(Type_Safe):
             path   = path,
             body   = body
         )
-                                                                                    # Return response data
-        return result.json if result.json else result.text
+        return Schema__Cache__Data__Store__Response.from_json(result.json)                # Return response data
+        #return result.json if result.json else result.text
 
     def data__store_json__with__id_and_key(self, cache_id: str,
                                            namespace: str, data_key: str,
@@ -90,11 +111,13 @@ class Service__Fast_API__Client__Data__Store(Type_Safe):
             path   = path,
             body   = body
         )
-                                                                                    # Return response data
-        return result.json if result.json else result.text
+        return Schema__Cache__Data__Store__Response.from_json(result.json)          # Return response data
+        #return result.json if result.json else result.text
 
     #def data__store_string(self, cache_id: str, namespace: str) -> Dict:                             # todo: BUG same as the others
-    def data__store_string(self, cache_id: str, namespace: Safe_Str__Id, body:str) -> Dict:
+    def data__store_string(self, cache_id: str,
+                           namespace: Safe_Str__Id,
+                           body:str) -> Schema__Cache__Data__Store__Response:
                                                                                     # Build path
         #path = f"/{{namespace}}/cache/{{cache_id}}/data/store/string"              # BUG
         #body = None
@@ -105,15 +128,15 @@ class Service__Fast_API__Client__Data__Store(Type_Safe):
             path   = path,
             body   = body
         )
-                                                                                    # Return response data
-        return result.json if result.json else result.text
+        return Schema__Cache__Data__Store__Response.from_json(result.json)
+        #return result.json if result.json else result.text
 
     #def data__store_string__with__id(self, cache_id: str, namespace: str, data_file_id: str) -> Dict:                              # Auto-generated from endpoint post__data__store_string__with__id
     def data__store_string__with__id(self, cache_id     : str,
                                            namespace    : Safe_Str__Id,
                                            data_file_id : Safe_Str__Id,
                                            body         : str
-                                     ) -> Dict:                              # Auto-generated from endpoint post__data__store_string__with__id
+                                     ) -> Schema__Cache__Data__Store__Response:                              # Auto-generated from endpoint post__data__store_string__with__id
 
         #path = f"/{{namespace}}/cache/{{cache_id}}/data/store/string/{{data_file_id}}"      # Build path
         path = f"/{namespace}/cache/{cache_id}/data/store/string/{data_file_id}"      # Build path
@@ -124,7 +147,7 @@ class Service__Fast_API__Client__Data__Store(Type_Safe):
             path   = path,
             body   = body
         )
-                                                                                    # Return response data
+        return Schema__Cache__Data__Store__Response.from_json(result.json)  # Return response data
         return result.json if result.json else result.text
 
     #def data__store_string__with__id_and_key(self, cache_id: str, namespace: str, data_key: str, data_file_id: str) -> Dict:                              # Auto-generated from endpoint post__data__store_string__with__id_and_key
@@ -133,7 +156,7 @@ class Service__Fast_API__Client__Data__Store(Type_Safe):
                                                    data_key     : Safe_Str__File__Path  ,
                                                    data_file_id : Safe_Str__Id          ,
                                                    body: str
-                                             ) -> Dict:                              # Auto-generated from endpoint post__data__store_string__with__id_and_key
+                                             ) -> Schema__Cache__Data__Store__Response:                              # Auto-generated from endpoint post__data__store_string__with__id_and_key
 
         #path = f"/{{namespace}}/cache/{{cache_id}}/data/store/string/{data_key:path}/{{data_file_id}}"  # Build path
         path = f"/{namespace}/cache/{cache_id}/data/store/string/{data_key}/{data_file_id}"  # Build path
@@ -144,5 +167,5 @@ class Service__Fast_API__Client__Data__Store(Type_Safe):
             path   = path,
             body   = body
         )
-                                                                                    # Return response data
-        return result.json if result.json else result.text
+        return Schema__Cache__Data__Store__Response.from_json(result.json)                         # Return response data
+        #return result.json if result.json else result.text

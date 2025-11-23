@@ -253,6 +253,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
             assert is_guid(result.cache_id) is True
             assert result.namespace         == namespace
             assert result.size              == 21
+            assert len(result.paths)        == 3
 
     def test_retrieve__string(self):
         strategy   = Enum__Cache__Store__Strategy.DIRECT

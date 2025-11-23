@@ -13,17 +13,13 @@ class Service__Fast_API__Client__File__Store(Type_Safe):
     def requests(self):                                                             # Access the unified request handler
         return self._client.requests()
 
-    #def store__string(self, strategy: Enum__Cache__Store__Strategy, namespace: str) -> Dict:                             # todo: BUG, missing body in method param
     def store__string(self, strategy  : Enum__Cache__Store__Strategy,
                             #namespace : str,                                           # todo: BUG namespace is Safe_Str__Id
                             namespace: Safe_Str__Id                 ,
                             body : str
                       ) -> Schema__Cache__Store__Response:                                                    # Auto-generated from endpoint post__store__string
                                                                                     # Build path
-        #path = f"/{{namespace}}/{{strategy}}/store/string"                         # todo: BUG used {{namespace}} instead of {namespace}
         path = f"/{namespace}/{strategy}/store/string"
-
-        #body = None                                                                # todo: BUG name was None
                                                                                     # Execute request
         result = self.requests.execute(
             method = "POST",
@@ -38,7 +34,7 @@ class Service__Fast_API__Client__File__Store(Type_Safe):
                                        cache_key: str                           ,
                                        body     : str                           ,
                                        file_id  : str   = ''
-                                  ) -> Dict:                              # Auto-generated from endpoint post__store__string__cache_key
+                                  ) -> Schema__Cache__Store__Response:                              # Auto-generated from endpoint post__store__string__cache_key
                                                                                     # Build path
         path = f"/{namespace}/{strategy}/store/string/{cache_key}?file_id={file_id}"
         #body = None
@@ -50,14 +46,11 @@ class Service__Fast_API__Client__File__Store(Type_Safe):
         return Schema__Cache__Store__Response.from_json(result.json)
         #return result.json if result.json else result.text
 
-    #def store__json(self, strategy: Enum__Cache__Store__Strategy, namespace: str) -> Dict:                              # BUG: missing body, namespace should be Safe_Str__Id
     def store__json(self, strategy : Enum__Cache__Store__Strategy,
                           namespace: Safe_Str__Id,
                           body     : Dict
-                      )-> Dict:
-        #path = f"/{{namespace}}/{{strategy}}/store/json"                           # BUG: used {{
+                      )-> Schema__Cache__Store__Response:
         path = f"/{namespace}/{strategy}/store/json"                            # Build path
-        #body = None                                                                # BUG: body was None
                                                                                     # Execute request
         result = self.requests.execute(
             method = "POST",
@@ -65,7 +58,6 @@ class Service__Fast_API__Client__File__Store(Type_Safe):
             body   = body
         )
         return Schema__Cache__Store__Response.from_json(result.text)              # Return response data
-        #return result.json if result.json else result.text
 
     def store__json__cache_key(self, namespace: str,
                                      strategy : Enum__Cache__Store__Strategy,
@@ -84,14 +76,11 @@ class Service__Fast_API__Client__File__Store(Type_Safe):
         return Schema__Cache__Store__Response.from_json(result.text)                # Return response data
         #return result.json if result.json else result.text
 
-    #def store__binary(self, strategy: Enum__Cache__Store__Strategy, namespace: str) -> Dict:                              # todo: same prob as the store__string and store__json
     def store__binary(self, strategy : Enum__Cache__Store__Strategy,
                             namespace: Safe_Str__Id                ,
                             body     : bytes
                        ) -> Schema__Cache__Store__Response:
-        #path = f"/{{namespace}}/{{strategy}}/store/binary"                          # Build path
-        path = f"/{namespace}/{strategy}/store/binary"                          # Build path
-        #body = None
+        path  = f"/{namespace}/{strategy}/store/binary"                          # Build path
         result = self.requests.execute(method = "POST",                             # Execute request
                                        path   = path  ,
                                        body   = body  )
@@ -101,7 +90,7 @@ class Service__Fast_API__Client__File__Store(Type_Safe):
                                        strategy: Enum__Cache__Store__Strategy,
                                        cache_key: str,
                                        body = bytes ,
-                                       file_id: str = '') -> Dict:                              # Auto-generated from endpoint post__store__binary__cache_key
+                                       file_id: str = '') -> Schema__Cache__Store__Response:                              # Auto-generated from endpoint post__store__binary__cache_key
                                                                                     # Build path
         path = f"/{namespace}/{strategy}/store/binary/{cache_key}?file_id={file_id}"
         #body = None

@@ -10,7 +10,7 @@ class Service__Fast_API__Client__File__Delete(Type_Safe):
 
     def delete__cache_id(self, cache_id: str, namespace: str) -> Dict:                              # Auto-generated from endpoint delete__delete__cache_id
                                                                                     # Build path
-        path = f"/{{namespace}}/delete/{{cache_id}}"
+        path = f"/{namespace}/delete/{cache_id}"
         body = None
                                                                                     # Execute request
         result = self.requests.execute(

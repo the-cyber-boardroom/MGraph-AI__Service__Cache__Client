@@ -11,13 +11,13 @@ Usage:
 """
 
 from typing                                                                                      import Dict, List, Tuple
-
-from osbot_utils.testing.__helpers import obj
-from osbot_utils.utils.Misc import random_string, random_bytes, str_to_bytes
+from osbot_utils.type_safe.primitives.domains.identifiers.Random_Guid                            import Random_Guid
+from osbot_utils.utils.Misc                                                                      import random_string, random_bytes, str_to_bytes
 from osbot_utils.type_safe.Type_Safe                                                             import Type_Safe
 from osbot_utils.type_safe.type_safe_core.decorators.type_safe                                   import type_safe
 from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client      import Cache__Service__Fast_API__Client
-from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Store__Response import Schema__Cache__Store__Response
+from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Store__Response                 import Schema__Cache__Store__Response
+from mgraph_ai_service_cache_client.schemas.cache.data.Schema__Cache__Data__Store__Response      import Schema__Cache__Data__Store__Response
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Strategy             import Enum__Cache__Store__Strategy
 
 
@@ -91,9 +91,7 @@ class Cache_Client_Test_Helpers(Type_Safe):
         Create a binary cache entry and return full result
         """
         if data is None:
-            #data = str_to_bytes(random_string())
-            data = b"these are some bytes!"
-            #data = random_bytes()
+            data = random_bytes()
 
         with self.client.store() as _:
             if cache_key or file_id:
@@ -118,7 +116,7 @@ class Cache_Client_Test_Helpers(Type_Safe):
                        data         : str  = None  ,
                        data_file_id : str  = None  ,
                        data_key     : str  = None
-                  ) -> Dict:
+                  ) -> Schema__Cache__Data__Store__Response:
         """
         Add a string data file to existing cache entry
 
@@ -151,7 +149,7 @@ class Cache_Client_Test_Helpers(Type_Safe):
                      data         : dict = None  ,
                      data_file_id : str  = None  ,
                      data_key     : str  = None
-                ) -> Dict:
+                ) -> Schema__Cache__Data__Store__Response:
         """
         Add a JSON data file to existing cache entry
         """
@@ -182,7 +180,7 @@ class Cache_Client_Test_Helpers(Type_Safe):
                        data         : bytes = None  ,
                        data_file_id : str   = None  ,
                        data_key     : str   = None
-                  ) -> Dict:
+                  ) -> Schema__Cache__Data__Store__Response:
         """
         Add a binary data file to existing cache entry
         """
@@ -203,8 +201,8 @@ class Cache_Client_Test_Helpers(Type_Safe):
                                                       body         = data         )
             else:
                 return _.data__store_binary(cache_id  = cache_id  ,
-                                           namespace = namespace ,
-                                           body      = data      )
+                                            namespace = namespace ,
+                                            body      = data      )
 
     @type_safe
     def create_entry_with_data_files(self,
@@ -213,7 +211,7 @@ class Cache_Client_Test_Helpers(Type_Safe):
                                     json_count     : int = 2    ,
                                     binary_count   : int = 1    ,
                                     use_data_keys  : bool = False
-                               ) -> Tuple[str, Dict]:
+                               ) -> Tuple[Random_Guid, Schema__Cache__Store__Response, List[str]]:
         """
         Create a cache entry with multiple data files attached
 
@@ -221,37 +219,38 @@ class Cache_Client_Test_Helpers(Type_Safe):
         """
         # Create main entry
         store_result = self.create_string_entry(namespace = namespace ,
-                                               value     = 'main_entry')
-        cache_id = store_result['cache_id']
+                                                value     = 'main_entry')
+        cache_id = store_result.cache_id
 
         # Add string data files
         for i in range(string_count):
             data_file_id = f'string-data-{i}'
             data_key     = f'strings/data-{i}' if use_data_keys else None
             self.add_data_string(cache_id     = cache_id     ,
-                                namespace    = namespace    ,
-                                data_file_id = data_file_id ,
-                                data_key     = data_key     )
+                                 namespace    = namespace    ,
+                                 data_file_id = data_file_id ,
+                                 data_key     = data_key     )
 
         # Add JSON data files
         for i in range(json_count):
             data_file_id = f'json-data-{i}'
             data_key     = f'jsons/data-{i}' if use_data_keys else None
             self.add_data_json(cache_id     = cache_id     ,
-                              namespace    = namespace    ,
-                              data_file_id = data_file_id ,
-                              data_key     = data_key     )
+                               namespace    = namespace    ,
+                               data_file_id = data_file_id ,
+                               data_key     = data_key     )
 
         # Add binary data files
         for i in range(binary_count):
             data_file_id = f'binary-data-{i}'
             data_key     = f'binaries/data-{i}' if use_data_keys else None
             self.add_data_binary(cache_id     = cache_id     ,
-                                namespace    = namespace    ,
-                                data_file_id = data_file_id ,
-                                data_key     = data_key     )
+                                 namespace    = namespace    ,
+                                 data_file_id = data_file_id ,
+                                 data_key     = data_key     )
 
-        return cache_id, store_result
+        files__in_cache_id = self.admin__get_files_in_folder__by_cache_id__direct(namespace=namespace, cache_id=cache_id)
+        return cache_id, store_result, files__in_cache_id
 
     # ═══════════════════════════════════════════════════════════════════════════════
     # Verification Methods - Check state using client API
@@ -266,13 +265,10 @@ class Cache_Client_Test_Helpers(Type_Safe):
         Verify cache entry exists by trying to retrieve it
         Returns True if exists, False otherwise
         """
-        try:
-            with self.client.retrieve() as _:
-                result = _.retrieve__cache_id(cache_id  = cache_id  ,
-                                             namespace = namespace )
-                return result is not None
-        except:
-            return False
+        with self.client.retrieve() as _:
+            result = _.retrieve__cache_id(cache_id  = cache_id  ,
+                                         namespace = namespace )
+            return result is not None
 
     @type_safe
     def verify_entry_exists_by_hash(self,
@@ -282,13 +278,10 @@ class Cache_Client_Test_Helpers(Type_Safe):
         """
         Verify cache entry exists by hash
         """
-        try:
-            with self.client.retrieve() as _:
-                result = _.retrieve__hash__cache_hash(cache_hash = cache_hash ,
-                                                     namespace  = namespace  )
-                return result is not None
-        except:
-            return False
+        with self.client.retrieve() as _:
+            result = _.retrieve__hash__cache_hash(cache_hash = cache_hash ,
+                                                 namespace  = namespace  )
+            return result is not None
 
     @type_safe
     def verify_data_file_exists(self,
@@ -300,20 +293,18 @@ class Cache_Client_Test_Helpers(Type_Safe):
         """
         Verify data file exists by trying to retrieve it
         """
-        try:
-            with self.client.data().retrieve() as _:
-                if data_key:
-                    result = _.data__string__with__id_and_key(cache_id     = cache_id     ,
-                                                              namespace    = namespace    ,
-                                                              data_key     = data_key     ,
-                                                              data_file_id = data_file_id )
-                else:
-                    result = _.data__string__with__id(cache_id     = cache_id     ,
-                                                      namespace    = namespace    ,
-                                                      data_file_id = data_file_id )
-                return result is not None
-        except:
-            return False
+
+        with self.client.data().retrieve() as _:
+            if data_key:
+                result = _.data__string__with__id_and_key(cache_id     = cache_id     ,
+                                                          namespace    = namespace    ,
+                                                          data_key     = data_key     ,
+                                                          data_file_id = data_file_id )
+            else:
+                result = _.data__string__with__id(cache_id     = cache_id     ,
+                                                  namespace    = namespace    ,
+                                                  data_file_id = data_file_id )
+            return result is not None
 
     @type_safe
     def get_namespace_file_count(self, namespace: str = 'test') -> int:
@@ -323,12 +314,10 @@ class Cache_Client_Test_Helpers(Type_Safe):
 
         NOTE: Uses admin_storage() which might not be available in production
         """
-        try:
-            with self.client.admin_storage() as _:
-                result = _.files__all__path(path = namespace)
-                return result.file_count if result else 0
-        except:
-            return 0
+
+        with self.client.admin_storage() as _:
+            result = _.files__all__path(path = namespace)
+            return result.file_count if result else 0
 
     @type_safe
     def get_all_namespaces(self) -> List[str]:
@@ -349,7 +338,7 @@ class Cache_Client_Test_Helpers(Type_Safe):
     @type_safe
     def create_multi_strategy_entries(self,
                                      namespace : str = 'test'
-                                ) -> Dict[str, Dict]:
+                                ) -> Dict[str, Schema__Cache__Store__Response]:
         """
         Create entries using all storage strategies
 
@@ -361,13 +350,11 @@ class Cache_Client_Test_Helpers(Type_Safe):
             'key_based': {...}
         }
         """
-        strategies = [
-            Enum__Cache__Store__Strategy.DIRECT             ,
-            Enum__Cache__Store__Strategy.TEMPORAL           ,
-            Enum__Cache__Store__Strategy.TEMPORAL_LATEST    ,
-            Enum__Cache__Store__Strategy.TEMPORAL_VERSIONED ,
-            Enum__Cache__Store__Strategy.KEY_BASED
-        ]
+        strategies = [  Enum__Cache__Store__Strategy.DIRECT             ,
+                        Enum__Cache__Store__Strategy.TEMPORAL           ,
+                        Enum__Cache__Store__Strategy.TEMPORAL_LATEST    ,
+                        Enum__Cache__Store__Strategy.TEMPORAL_VERSIONED ,
+                        Enum__Cache__Store__Strategy.KEY_BASED          ]
 
         results = {}
         for strategy in strategies:
@@ -383,7 +370,7 @@ class Cache_Client_Test_Helpers(Type_Safe):
                                 namespace   : str = 'test'      ,
                                 cache_key   : str = 'test/key'  ,
                                 version_count: int = 3
-                           ) -> List[Dict]:
+                           ) -> List[Schema__Cache__Store__Response]:
         """
         Create multiple versions of same cache_key using TEMPORAL_VERSIONED
 
@@ -406,7 +393,7 @@ class Cache_Client_Test_Helpers(Type_Safe):
                                   base_namespace : str = 'test',
                                   depth          : int = 3     ,
                                   entries_per_ns : int = 2
-                             ) -> Dict[str, List[Dict]]:
+                             ) -> Dict[str, List[Schema__Cache__Store__Response]]:
         """
         Create nested namespace structure with entries
 
@@ -433,6 +420,7 @@ class Cache_Client_Test_Helpers(Type_Safe):
     # Cleanup Operations
     # ═══════════════════════════════════════════════════════════════════════════════
 
+    # todo: refactor to add type safe return type
     @type_safe
     def delete_entry(self,
                     cache_id  : str ,
@@ -445,7 +433,7 @@ class Cache_Client_Test_Helpers(Type_Safe):
         """
         with self.client.delete() as _:
             return _.delete__cache_id(cache_id  = cache_id  ,
-                                     namespace = namespace )
+                                      namespace = namespace )
 
     @type_safe
     def delete_all_data_files(self,
@@ -471,8 +459,8 @@ class Cache_Client_Test_Helpers(Type_Safe):
                              cache_hash : str                            ,
                              namespace  : str                = 'test'    ,
                              strategy   : Enum__Cache__Store__Strategy   = Enum__Cache__Store__Strategy.DIRECT,
-                             file_id    : str                            = None  ,
-                             cache_key  : str                            = None  ,
+                             file_id    : str                            = None    ,
+                             cache_key  : str                            = None    ,
                              extension  : str                            = 'json'
                         ) -> Dict[str, list]:
 
@@ -548,42 +536,53 @@ class Cache_Client_Test_Helpers(Type_Safe):
             # data_files = [data_base, f"{data_base}.config", f"{data_base}.metadata"]
 
         return { 'data'    : data_files,
-                 'by_hash' : [f"{namespace}/refs/by-hash/{hash_prefix}/{cache_hash}.{extension}",
-                             f"{namespace}/refs/by-hash/{hash_prefix}/{cache_hash}.{extension}.config",
-                             f"{namespace}/refs/by-hash/{hash_prefix}/{cache_hash}.{extension}.metadata"],
-                 'by_id'   : [f"{namespace}/refs/by-id/{cache_id_prefix}/{cache_id}.{extension}",
-                             f"{namespace}/refs/by-id/{cache_id_prefix}/{cache_id}.{extension}.config",
-                             f"{namespace}/refs/by-id/{cache_id_prefix}/{cache_id}.{extension}.metadata"]}
+                 'by_hash' : [f"{namespace}/refs/by-hash/{hash_prefix}/{cache_hash}.json",
+                             f"{namespace}/refs/by-hash/{hash_prefix}/{cache_hash}.json.config",
+                             f"{namespace}/refs/by-hash/{hash_prefix}/{cache_hash}.json.metadata"],
+                 'by_id'   : [f"{namespace}/refs/by-id/{cache_id_prefix}/{cache_id}.json",
+                             f"{namespace}/refs/by-id/{cache_id_prefix}/{cache_id}.json.config",
+                             f"{namespace}/refs/by-id/{cache_id_prefix}/{cache_id}.json.metadata"]}
 
-    @type_safe
-    def build_expected_store_result(self,
-                                    cache_id   : str                            ,
-                                    cache_hash : str                            ,
-                                    namespace  : str                = 'test'    ,
-                                    strategy   : Enum__Cache__Store__Strategy   = Enum__Cache__Store__Strategy.DIRECT,
-                                    size       : int                            = None  ,
-                                    file_id    : str                            = None  ,
-                                    cache_key  : str                            = None  ,
-                                    extension  : str                            = 'json'
-                               ) -> Dict:
-        paths = self.build_expected_paths(cache_id   = cache_id   ,
-                                          cache_hash = cache_hash ,
-                                          namespace  = namespace  ,
-                                          strategy   = strategy   ,
-                                          file_id    = file_id    ,
-                                          cache_key  = cache_key  ,
-                                          extension  = extension  )
+    # @type_safe
+    # def build_expected_store_result(self,
+    #                                 cache_id   : str                            ,
+    #                                 cache_hash : str                            ,
+    #                                 namespace  : str                = 'test'    ,
+    #                                 strategy   : Enum__Cache__Store__Strategy   = Enum__Cache__Store__Strategy.DIRECT,
+    #                                 size       : int                            = None  ,
+    #                                 file_id    : str                            = None  ,
+    #                                 cache_key  : str                            = None  ,
+    #                                 extension  : str                            = 'json'
+    #                            ) -> Dict:
+    #     paths = self.build_expected_paths(cache_id   = cache_id   ,
+    #                                       cache_hash = cache_hash ,
+    #                                       namespace  = namespace  ,
+    #                                       strategy   = strategy   ,
+    #                                       file_id    = file_id    ,
+    #                                       cache_key  = cache_key  ,
+    #                                       extension  = extension  )
+    #
+    #     result = { 'cache_id'   : cache_id   ,
+    #                'cache_hash' : cache_hash ,
+    #                'namespace'  : namespace  ,
+    #                'paths'      : paths      }
+    #
+    #     if size is not None:
+    #         result['size'] = size
+    #
+    #     return result
 
-        result = { 'cache_id'   : cache_id   ,
-                   'cache_hash' : cache_hash ,
-                   'namespace'  : namespace  ,
-                   'paths'      : paths      }
-
-        if size is not None:
-            result['size'] = size
-
-        return result
-
+    # Admin storage helpers
+    # todo: add missing type_safety return type (needs fix to in cache service code)
+    def admin__get_files_in_folder__by_cache_id__direct(self, namespace, cache_id):
+        path            = f'{namespace}/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/'                          # Verify data files created
+        recursive       = True
+        files_full_path = self.client.admin_storage().files__in__path(path      = path,
+                                                                      recursive = recursive)
+        files           = []
+        for file_full_path in files_full_path:
+            files.append(file_full_path.replace(path, ""))
+        return files
 
 # ═══════════════════════════════════════════════════════════════════════════════════
 # Gaps/Missing Client Methods to Address Later
