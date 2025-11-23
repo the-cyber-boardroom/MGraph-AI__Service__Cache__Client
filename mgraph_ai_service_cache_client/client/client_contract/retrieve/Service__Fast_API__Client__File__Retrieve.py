@@ -159,26 +159,24 @@ class Service__Fast_API__Client__File__Retrieve(Type_Safe):
         path = f"/{namespace}/retrieve/hash/{cache_hash}/string"
         body = None
                                                                                     # Execute request
-        result = self.requests.execute(
-            method = "GET",
-            path   = path,
-            body   = body
-        )
-                                                                                    # Return response data
-        return result.json if result.json else result.text
+        result = self.requests.execute(method = "GET",
+                                       path   = path ,
+                                       body   = body )
+        if result.status_code == 200:
+            return result.text
+        return None
 
     def retrieve__hash__cache_hash__json(self, cache_hash: str, namespace: str) -> Dict:                              # Auto-generated from endpoint get__retrieve__hash__cache_hash__json
                                                                                     # Build path
         path = f"/{namespace}/retrieve/hash/{cache_hash}/json"
         body = None
                                                                                     # Execute request
-        result = self.requests.execute(
-            method = "GET",
-            path   = path,
-            body   = body
-        )
-                                                                                    # Return response data
-        return result.json if result.json else result.text
+        result = self.requests.execute(method = "GET",
+                                       path   = path ,
+                                       body   = body )
+        if result.status_code == 200:
+            return result.json
+        return None
 
     def retrieve__hash__cache_hash__binary(self, cache_hash: str, namespace: str) -> Dict:                              # Auto-generated from endpoint get__retrieve__hash__cache_hash__binary
                                                                                     # Build path
@@ -190,5 +188,6 @@ class Service__Fast_API__Client__File__Retrieve(Type_Safe):
             path   = path,
             body   = body
         )
-                                                                                    # Return response data
-        return result.json if result.json else result.text
+        if result.status_code == 200:
+            return result.content
+        return None

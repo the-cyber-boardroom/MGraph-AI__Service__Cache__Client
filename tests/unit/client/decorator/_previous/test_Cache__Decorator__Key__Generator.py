@@ -102,7 +102,6 @@ class test_Cache__Decorator__Key__Generator(TestCase):
                                   file_id               = 'response'                      ,
                                   cache_attr_name       = 'decorator__cache'         ,
                                   ttl_seconds           = None                            ,
-                                  cache_none_results    = False                           ,
                                   invalidate_on_error   = False                           ,
                                   namespace             = 'test'                          ,
                                   key_fields            = ['param1']                      )

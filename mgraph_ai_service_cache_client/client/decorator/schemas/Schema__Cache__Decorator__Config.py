@@ -24,5 +24,4 @@ class Schema__Cache__Decorator__Config(Type_Safe):                              
     file_id             : str                               = CACHE__DECORATOR__CONFIG__FILE_ID          # Fixed file_id for stored responses
     cache_attr_name     : str                               = CACHE__DECORATOR__CONFIG__ATTRIBUTE_NAME   # Attribute name to look for cache client
     ttl_seconds         : Safe_UInt                         = None                                       # Time to live (None = no expiry, handled by cache service)
-    cache_none_results  : bool                              = False                                      # Whether to cache None/empty results
     invalidate_on_error : bool                              = False                                      # Clear cache if method raises exception

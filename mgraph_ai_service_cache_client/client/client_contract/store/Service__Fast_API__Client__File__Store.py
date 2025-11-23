@@ -63,7 +63,7 @@ class Service__Fast_API__Client__File__Store(Type_Safe):
                                      cache_key: str,
                                      body     : dict ,
                                      file_id  : str  = '',
-                                     json_field_path = ''               # todo: added new json_field_path
+                                     json_field_path = ''                               # todo: add new json_field_path
                                  ) -> Schema__Cache__Store__Response:                          # Auto-generated from endpoint post__store__json__cache_key
                                                                                     # Build path
         path = f"/{namespace}/{strategy}/store/json/{cache_key}?file_id={file_id}&json_field_path={json_field_path}"
