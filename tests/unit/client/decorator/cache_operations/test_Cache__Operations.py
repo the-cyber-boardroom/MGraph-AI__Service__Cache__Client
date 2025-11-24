@@ -3,6 +3,9 @@ from unittest                                                                   
 import pytest
 from osbot_fast_api_serverless.fast_api.Serverless__Fast_API__Config                                import Serverless__Fast_API__Config
 from osbot_utils.helpers.cache.Cache__Hash__Generator                                               import Cache__Hash__Generator
+from osbot_utils.testing.__                                                                         import __, __SKIP__
+from osbot_utils.testing.__helpers                                                                  import obj
+from osbot_utils.type_safe.primitives.domains.common.safe_str.Safe_Str__Text                        import Safe_Str__Text
 from osbot_utils.utils.Objects                                                                      import base_classes
 from osbot_utils.type_safe.Type_Safe                                                                import Type_Safe
 from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id                     import Safe_Str__Id
@@ -13,6 +16,7 @@ from mgraph_ai_service_cache.fast_api.Cache_Service__Fast_API                   
 from mgraph_ai_service_cache_client.client.decorator.cache_operations.Cache__Operations             import Cache__Operations
 from mgraph_ai_service_cache_client.client.decorator.cache_operations.Cache__Serializer             import Cache__Serializer
 from mgraph_ai_service_cache_client.client.decorator.schemas.Schema__Cache__Decorator__Config       import Schema__Cache__Decorator__Config
+from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Metadata                           import Schema__Cache__Metadata
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Data_Type                      import Enum__Cache__Data_Type
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Strategy                import Enum__Cache__Store__Strategy
 from mgraph_ai_service_cache_client.client.Client__Cache__Service                                   import Client__Cache__Service
@@ -73,11 +77,48 @@ class test_Cache__Operations(TestCase):             # Test Cache__Operations usi
                                                    data_type   = Enum__Cache__Data_Type.STRING)       # as string
 
         direct    = (self.client_cache_service.client ()                            # Retrieve data directly from cache
-                                             .retrieve()
-                                             .retrieve__hash__cache_hash__string(cache_hash=cache_hash, namespace=namespace))
+                                              .retrieve()
+                                              .retrieve__hash__cache_hash__string(cache_hash=cache_hash, namespace=namespace))
         assert stored    is True
         assert retrieved == data
         assert retrieved == direct
+
+        # check metadata
+        metadata    = (self.client_cache_service.client ()                            # Retrieve data directly from cache
+                                                .retrieve()
+                                                .retrieve__hash__cache_hash__metadata(cache_hash=cache_hash, namespace=namespace))
+        cache_id = metadata.cache_id
+        assert type(metadata) is Schema__Cache__Metadata
+        assert metadata.obj() == __(cache_id    = cache_id,
+                                    cache_hash  = cache_hash,
+                                    cache_key   = Safe_Str__Text(cache_key),
+                                    file_id     ='test-string',
+                                    namespace   ='test-operations',
+                                    strategy    ='key_based',
+                                    stored_at   = __SKIP__,
+                                    file_type   = 'json',
+                                    content_encoding = None,
+                                    content_size     = 0)
+
+        # check refs_hash
+        refs_hash = (self.client_cache_service.client ()                            # Retrieve data directly from cache
+                                                .retrieve()
+                                                .retrieve__hash__cache_hash__refs_hash(cache_hash=cache_hash, namespace=namespace))
+        assert type(refs_hash) is dict
+        assert obj(refs_hash) == __(cache_hash     = cache_hash,
+                                    cache_ids      = [__(cache_id=cache_id,
+                                                         timestamp=__SKIP__)],
+                                    latest_id      = cache_id,
+                                    total_versions = 1)
+
+        # check cache_id
+        cache_id_data = (self.client_cache_service.client ()                            # Retrieve data directly from cache
+                                                  .retrieve()
+                                                  .retrieve__hash__cache_hash__cache_id(cache_hash=cache_hash, namespace=namespace))
+        assert type(cache_id_data) is dict
+        assert obj(cache_id_data) == __(cache_hash     = cache_hash,
+                                        cache_id      = cache_id,
+                                        namespace = namespace)
 
 
 
@@ -204,8 +245,6 @@ class test_Cache__Operations(TestCase):             # Test Cache__Operations usi
                                         config    = config   )
 
 
-    # TODO: Fix from here based on the pattern above
-
     # ═══════════════════════════════════════════════════════════════════════════════
     # Invalidation Tests
     # ═══════════════════════════════════════════════════════════════════════════════
@@ -233,43 +272,46 @@ class test_Cache__Operations(TestCase):             # Test Cache__Operations usi
         invalidated = self.cache_operations.invalidate(namespace  = namespace,
                                                        cache_hash = cache_hash)
         assert invalidated is True
-        return
+
         # Verify it's gone
-        retrieved_after = self.cache_operations.retrieve(
-            namespace   = namespace,
-            cache_hash  = cache_hash,
-            target_type = str
-        )
+        retrieved_after = self.cache_operations.retrieve(namespace   = namespace,
+                                                         cache_hash  = cache_hash,
+                                                         data_type   = Enum__Cache__Data_Type.STRING)
         assert retrieved_after is None
+
+# TODO: FROM HERE
+
+# TODO: Fix the tests bellow based on the pattern above (note all tests above are passing)
+
 
     def test_invalidate__nonexistent_entry(self):
         """Test invalidating a non-existent cache entry"""
         namespace = self.test_namespace
         cache_hash = Safe_Str__Cache_Hash("nonexistent_for_invalidate")
-        
+
         invalidated = self.cache_operations.invalidate(
             namespace  = namespace,
             cache_hash = cache_hash
         )
-        
+
         assert invalidated is False
 
     # ═══════════════════════════════════════════════════════════════════════════════
     # Exists Tests
     # ═══════════════════════════════════════════════════════════════════════════════
-    
+
     def test_exists__existing_entry(self):
         """Test checking if an existing entry exists"""
         namespace = self.test_namespace
         cache_key = Safe_Str__File__Path(f"test/exists/{random_string()}")
         data = "data for exists test"
-        
+
         config = Schema__Cache__Decorator__Config(
             namespace = str(namespace),
             strategy  = Enum__Cache__Store__Strategy.KEY_BASED,
             file_id   = "test-exists"
         )
-        
+
         # Store data
         stored = self.cache_operations.store(
             namespace = namespace,
@@ -278,40 +320,40 @@ class test_Cache__Operations(TestCase):             # Test Cache__Operations usi
             config    = config
         )
         assert stored is True
-        
+
         # Get the cache hash
         from osbot_utils.helpers.cache.Cache__Hash__Generator import Cache__Hash__Generator
         hash_generator = Cache__Hash__Generator()
         cache_hash = Safe_Str__Cache_Hash(hash_generator.from_string(str(cache_key)))
-        
+
         # Check existence
         exists = self.cache_operations.exists(
             namespace  = namespace,
             cache_hash = cache_hash
         )
-        
+
         assert exists is True
 
     def test_exists__nonexistent_entry(self):
         """Test checking if a non-existent entry exists"""
         namespace = self.test_namespace
         cache_hash = Safe_Str__Cache_Hash("nonexistent_for_exists")
-        
+
         exists = self.cache_operations.exists(
             namespace  = namespace,
             cache_hash = cache_hash
         )
-        
+
         assert exists is False
 
     # ═══════════════════════════════════════════════════════════════════════════════
     # Status Tests
     # ═══════════════════════════════════════════════════════════════════════════════
-    
+
     def test_get_client_status(self):
         """Test getting client status"""
         status = self.cache_operations.get_client_status()
-        
+
         assert status["available"] is True
         assert status["mode"] == "IN_MEMORY"
         assert "info" in status
@@ -321,35 +363,35 @@ class test_Cache__Operations(TestCase):             # Test Cache__Operations usi
         operations_no_client = Cache__Operations(
             client_cache_service = None
         )
-        
+
         status = operations_no_client.get_client_status()
-        
+
         assert status["available"] is False
         assert status["reason"] == "No client configured"
 
     # ═══════════════════════════════════════════════════════════════════════════════
     # Different Storage Strategies Tests
     # ═══════════════════════════════════════════════════════════════════════════════
-    
+
     def test_store_with_direct_strategy(self):
         """Test storing with DIRECT strategy"""
         namespace = self.test_namespace
         cache_key = Safe_Str__File__Path(f"test/direct/{random_string()}")
         data = {"strategy": "direct"}
-        
+
         config = Schema__Cache__Decorator__Config(
             namespace = str(namespace),
             strategy  = Enum__Cache__Store__Strategy.DIRECT,
             file_id   = "test-direct"
         )
-        
+
         stored = self.cache_operations.store(
             namespace = namespace,
             cache_key = cache_key,
             data      = data,
             config    = config
         )
-        
+
         assert stored is True
 
     def test_store_with_temporal_strategy(self):
@@ -357,57 +399,57 @@ class test_Cache__Operations(TestCase):             # Test Cache__Operations usi
         namespace = self.test_namespace
         cache_key = Safe_Str__File__Path(f"test/temporal/{random_string()}")
         data = {"strategy": "temporal"}
-        
+
         config = Schema__Cache__Decorator__Config(
             namespace = str(namespace),
             strategy  = Enum__Cache__Store__Strategy.TEMPORAL,
             file_id   = "test-temporal"
         )
-        
+
         stored = self.cache_operations.store(
             namespace = namespace,
             cache_key = cache_key,
             data      = data,
             config    = config
         )
-        
+
         assert stored is True
 
     # ═══════════════════════════════════════════════════════════════════════════════
     # Complex Integration Tests
     # ═══════════════════════════════════════════════════════════════════════════════
-    
+
     def test_multiple_operations_sequence(self):
         """Test a sequence of store, retrieve, invalidate operations"""
         namespace = self.test_namespace
-        
+
         # Create multiple entries
         entries = []
         for i in range(3):
             cache_key = Safe_Str__File__Path(f"test/sequence/{i}")
             data = f"data_{i}"
-            
+
             config = Schema__Cache__Decorator__Config(
                 namespace = str(namespace),
                 strategy  = Enum__Cache__Store__Strategy.KEY_BASED,
                 file_id   = f"test-seq-{i}"
             )
-            
+
             stored = self.cache_operations.store(
                 namespace = namespace,
                 cache_key = cache_key,
                 data      = data,
                 config    = config
             )
-            
+
             assert stored is True
-            
+
             from osbot_utils.helpers.cache.Cache__Hash__Generator import Cache__Hash__Generator
             hash_generator = Cache__Hash__Generator()
             cache_hash = Safe_Str__Cache_Hash(hash_generator.from_string(str(cache_key)))
-            
+
             entries.append((cache_hash, data))
-        
+
         # Retrieve all entries
         for cache_hash, expected_data in entries:
             retrieved = self.cache_operations.retrieve(
@@ -416,14 +458,14 @@ class test_Cache__Operations(TestCase):             # Test Cache__Operations usi
                 target_type = str
             )
             assert retrieved == expected_data
-        
+
         # Invalidate middle entry
         invalidated = self.cache_operations.invalidate(
             namespace  = namespace,
             cache_hash = entries[1][0]
         )
         assert invalidated is True
-        
+
         # Verify first and last still exist, middle is gone
         assert self.cache_operations.exists(namespace, entries[0][0]) is True
         assert self.cache_operations.exists(namespace, entries[1][0]) is False
@@ -434,12 +476,12 @@ class test_Cache__Operations(TestCase):             # Test Cache__Operations usi
         class InnerSchema(Type_Safe):
             inner_value: str = "inner"
             inner_number: int = 42
-        
+
         class OuterSchema(Type_Safe):
             outer_value: str
             inner: InnerSchema
             list_data: list
-        
+
         namespace = self.test_namespace
         cache_key = Safe_Str__File__Path(f"test/nested/{random_string()}")
         data = OuterSchema(
@@ -447,13 +489,13 @@ class test_Cache__Operations(TestCase):             # Test Cache__Operations usi
             inner       = InnerSchema(inner_value="nested", inner_number=100),
             list_data   = [1, 2, 3]
         )
-        
+
         config = Schema__Cache__Decorator__Config(
             namespace = str(namespace),
             strategy  = Enum__Cache__Store__Strategy.KEY_BASED,
             file_id   = "test-nested"
         )
-        
+
         # Store
         stored = self.cache_operations.store(
             namespace = namespace,
@@ -462,18 +504,18 @@ class test_Cache__Operations(TestCase):             # Test Cache__Operations usi
             config    = config
         )
         assert stored is True
-        
+
         # Retrieve
         from osbot_utils.helpers.cache.Cache__Hash__Generator import Cache__Hash__Generator
         hash_generator = Cache__Hash__Generator()
         cache_hash = Safe_Str__Cache_Hash(hash_generator.from_string(str(cache_key)))
-        
+
         retrieved = self.cache_operations.retrieve(
             namespace   = namespace,
             cache_hash  = cache_hash,
             target_type = OuterSchema
         )
-        
+
         assert isinstance(retrieved, OuterSchema)
         assert retrieved.outer_value == "outer"
         assert isinstance(retrieved.inner, InnerSchema)

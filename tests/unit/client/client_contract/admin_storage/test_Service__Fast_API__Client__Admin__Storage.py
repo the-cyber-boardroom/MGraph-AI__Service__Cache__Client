@@ -121,26 +121,16 @@ class test_Service__Fast_API__Client__Admin__Storage(TestCase):                 
         result = self.admin_storage.files__in__path(path=path)
         assert type(result) is list
         assert len(result) > 0
-        assert result == ['25f249f06786c7cf.json'        ,
-                          '25f249f06786c7cf.json.config' ,
-                          '25f249f06786c7cf.json.metadata']
+        assert result == ['25f249f06786c7cf.json' ]
 
         result_2 = self.admin_storage.files__in__path(path=path, return_full_path=True )
-        assert result_2 == [f'{namespace}/refs/by-hash/25/f2/25f249f06786c7cf.json'        ,
-                            f'{namespace}/refs/by-hash/25/f2/25f249f06786c7cf.json.config' ,
-                            f'{namespace}/refs/by-hash/25/f2/25f249f06786c7cf.json.metadata']
+        assert result_2 == [f'{namespace}/refs/by-hash/25/f2/25f249f06786c7cf.json'        ]
 
         path_3   = f'{namespace}/refs/by-hash/'
         result_3 = self.admin_storage.files__in__path(path=path_3, recursive=True )
         assert result_3 == [ f'{namespace}/refs/by-hash/25/f2/25f249f06786c7cf.json',
-                             f'{namespace}/refs/by-hash/25/f2/25f249f06786c7cf.json.config',
-                             f'{namespace}/refs/by-hash/25/f2/25f249f06786c7cf.json.metadata',
                              f'{namespace}/refs/by-hash/3d/69/3d693601f5fab122.json',
-                             f'{namespace}/refs/by-hash/3d/69/3d693601f5fab122.json.config',
-                             f'{namespace}/refs/by-hash/3d/69/3d693601f5fab122.json.metadata',
-                             f'{namespace}/refs/by-hash/c0/ff/c0ff7685548acfd2.json',
-                             f'{namespace}/refs/by-hash/c0/ff/c0ff7685548acfd2.json.config',
-                             f'{namespace}/refs/by-hash/c0/ff/c0ff7685548acfd2.json.metadata']
+                             f'{namespace}/refs/by-hash/c0/ff/c0ff7685548acfd2.json']
 
         result__folders__1 = self.admin_storage.folders()
         assert namespace in result__folders__1
@@ -185,16 +175,12 @@ class test_Service__Fast_API__Client__Admin__Storage(TestCase):                 
         result = self.admin_storage.files__all__path(path = namespace)
         assert type(result)         is Schema__Routes__Admin__Storage__Files_All__Response
         assert result.obj()         == __( timestamp  = __SKIP__,
-                                           file_count = 9,
-                                           files      = [ f'{namespace}/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json',
-                                                          f'{namespace}/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.config',
+                                           file_count = 5,
+                                           files      = [ f'{namespace}/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json'         ,
+                                                          f'{namespace}/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.config'  ,
                                                           f'{namespace}/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.metadata',
-                                                          f'{namespace}/refs/by-hash/9c/af/9caf1f672d20295b.json',
-                                                          f'{namespace}/refs/by-hash/9c/af/9caf1f672d20295b.json.config',
-                                                          f'{namespace}/refs/by-hash/9c/af/9caf1f672d20295b.json.metadata',
-                                                          f'{namespace}/refs/by-id/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json',
-                                                          f'{namespace}/refs/by-id/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.config',
-                                                          f'{namespace}/refs/by-id/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.metadata'])
+                                                          f'{namespace}/refs/by-hash/9c/af/9caf1f672d20295b.json'                            ,
+                                                          f'{namespace}/refs/by-id/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json'          ])
 
 
     def test__folders__default_params(self):                                     # Test listing folders with default parameters

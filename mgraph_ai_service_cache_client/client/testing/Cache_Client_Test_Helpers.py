@@ -536,12 +536,8 @@ class Cache_Client_Test_Helpers(Type_Safe):
             # data_files = [data_base, f"{data_base}.config", f"{data_base}.metadata"]
 
         return { 'data'    : data_files,
-                 'by_hash' : [f"{namespace}/refs/by-hash/{hash_prefix}/{cache_hash}.json",
-                             f"{namespace}/refs/by-hash/{hash_prefix}/{cache_hash}.json.config",
-                             f"{namespace}/refs/by-hash/{hash_prefix}/{cache_hash}.json.metadata"],
-                 'by_id'   : [f"{namespace}/refs/by-id/{cache_id_prefix}/{cache_id}.json",
-                             f"{namespace}/refs/by-id/{cache_id_prefix}/{cache_id}.json.config",
-                             f"{namespace}/refs/by-id/{cache_id_prefix}/{cache_id}.json.metadata"]}
+                 'by_hash' : [f"{namespace}/refs/by-hash/{hash_prefix}/{cache_hash}.json" ],
+                 'by_id'   : [f"{namespace}/refs/by-id/{cache_id_prefix}/{cache_id}.json" ]}
 
     # @type_safe
     # def build_expected_store_result(self,

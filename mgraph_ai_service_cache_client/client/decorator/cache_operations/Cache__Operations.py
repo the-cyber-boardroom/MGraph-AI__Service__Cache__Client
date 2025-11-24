@@ -93,36 +93,18 @@ class Cache__Operations(Type_Safe):                                             
 
         with self.client_cache_service.client() as cache_client:        # First, we need to get the cache_id from the hash
 
-            result = cache_client.retrieve().retrieve__hash__cache_hash(cache_hash = cache_hash,    # Try to retrieve to get the cache_id
-                                                                        namespace  = namespace )
+            result = cache_client.retrieve().retrieve__hash__cache_hash__cache_id(cache_hash = cache_hash,    # Try to retrieve to get the cache_id
+                                                                                  namespace  = namespace )
             if not result:
                 return False
+            cache_id = result.get('cache_id')                                                           # found cache_id for this cache_hash
 
-        # Extract cache_id from result
-        cache_id = None
-        if hasattr(result, 'cache_id'):
-            cache_id = result.cache_id
-        elif isinstance(result, dict) and 'cache_id' in result:
-            cache_id = result['cache_id']
-        elif hasattr(result, 'metadata') and hasattr(result.metadata, 'cache_id'):
-            cache_id = result.metadata.cache_id
-
-        if not cache_id:
-            logger.warning(f"Could not extract cache_id from retrieval result")
-            return False
-
-        # Now delete using the cache_id
-        with self.client_cache_service.client() as cache_client:
-            delete_result = cache_client.delete().delete__cache_id(
-                cache_id  = str(cache_id),
-                namespace = str(namespace)
-            )
+            delete_result = cache_client.delete().delete__cache_id(cache_id  = str(cache_id),           # Now delete using the cache_id
+                                                                   namespace = str(namespace))
 
         if delete_result:
-            logger.debug(f"Invalidated cache entry {cache_id} (hash: {cache_hash})")
             return True
         else:
-            logger.warning(f"Failed to invalidate cache entry {cache_id}")
             return False
 
 

@@ -1,5 +1,5 @@
 from unittest                                                                                       import TestCase
-from mgraph_ai_service_cache_client.client.decorator.Cache__Decorator__Configs                      import CACHE_CONFIG__TRANSFORMATION, CACHE_CONFIG__GENERAL, CACHE_CONFIG__CLASSIFICATION
+from mgraph_ai_service_cache_client.client.decorator.schemas.configs.Cache__Decorator__Configs      import CACHE_CONFIG__TRANSFORMATION, CACHE_CONFIG__GENERAL, CACHE_CONFIG__CLASSIFICATION
 from mgraph_ai_service_cache_client.client.decorator.schemas.Schema__Cache__Decorator__Config       import Schema__Cache__Decorator__Config
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Strategy                import Enum__Cache__Store__Strategy
 
