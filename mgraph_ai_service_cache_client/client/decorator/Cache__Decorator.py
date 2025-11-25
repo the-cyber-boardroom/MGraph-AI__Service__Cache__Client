@@ -1,193 +1,91 @@
 import functools
-import inspect
 import logging
-from typing                                                                                     import Any, Callable, Optional
-from osbot_utils.helpers.cache.Cache__Hash__Generator                                           import Cache__Hash__Generator
-from mgraph_ai_service_cache_client.client.decorator.Cache__Decorator__Key__Generator           import Cache__Decorator__Key__Generator
+from typing                                                                                     import Any, Callable
 from mgraph_ai_service_cache_client.client.decorator.schemas.Schema__Cache__Decorator__Config   import Schema__Cache__Decorator__Config
 from mgraph_ai_service_cache_client.client.decorator.schemas.enums.Enum__Cache__Decorator__Mode import Enum__Cache__Decorator__Mode
+from mgraph_ai_service_cache_client.client.decorator.Decorator__Cache                           import Decorator__Cache
+from mgraph_ai_service_cache_client.client.decorator.exceptions.Cache__Decorator__Exceptions    import Cache__Invalid__Config
 
 logger = logging.getLogger(__name__)
 
 
-def cache_response(config: Schema__Cache__Decorator__Config) -> Callable:                          # Decorator to cache method responses using cache service
-    """
-    Decorator that caches method responses transparently.
-    
-    Usage:
-        CACHE_CONFIG = Schema__Cache__Decorator__Config(
-            namespace   = "transformations",
-            key_fields  = ["request", "mode"]
-        )
-        
-        class MyService(Type_Safe):
-            decorator__cache : Decorator__Cache  # Must be set before calling cached methods
-            
-            @cache_response(CACHE_CONFIG)
-            def transform(self, request: Request) -> Response:
-                # Method logic here
-                ...
-    
-    Args:
-        config: Cache configuration object
-        
-    Returns:
-        Decorated function with caching behavior
-    """
-    
-    key_generator  = Cache__Decorator__Key__Generator()                                     # Create key generator instance
-    hash_generator = Cache__Hash__Generator()                                   # Create hash generator instance
-    
-    def decorator(func: Callable) -> Callable:
-        
+def cache_response(config: Schema__Cache__Decorator__Config) -> Callable:                       # Decorator that caches method responses transparently
+
+    if not config:                                                                              # Validate configuration
+        raise Cache__Invalid__Config("config", "Configuration cannot be None")
+
+    if not config.namespace:
+        raise Cache__Invalid__Config("namespace", "Namespace must be specified")
+
+    def decorator(func: Callable) -> Callable:                                                  # Inner decorator function
+
         @functools.wraps(func)
-        def wrapper(*args, **kwargs) -> Any:
-            
-            if not config.enabled or config.mode == Enum__Cache__Decorator__Mode.DISABLED:     # Check if caching is disabled
-                return func(*args, **kwargs)                                    # Execute method without caching
-            
-            self_arg = args[0] if args else None                                # Get 'self' (first positional arg)
-            if not self_arg:                                                    # No 'self' means it's not a method
+        def wrapper(*args, **kwargs) -> Any:                                                    # Wrapper function that implements caching logic
+
+            if not config.enabled or config.mode == Enum__Cache__Decorator__Mode.DISABLED:     # Quick exit if caching is disabled
                 return func(*args, **kwargs)
-            
-            cache_client = getattr(self_arg, config.cache_attr_name, None)      # Get cache client from instance
-            if not cache_client:                                                # No cache client available
-                logger.debug(f"Cache client '{config.cache_attr_name}' not found on {type(self_arg).__name__}, executing without cache")
+
+            if not args:                                                                        # Must have 'self' as first argument
+                logger.debug(f"No 'self' argument found for {func.__name__}, executing without cache")
                 return func(*args, **kwargs)
-            
-            sig = inspect.signature(func)                                       # Get method signature
-            bound_args = sig.bind(*args, **kwargs)                              # Bind arguments to parameters
-            bound_args.apply_defaults()                                         # Fill in default values
-            
-            class_name = type(self_arg).__name__                                # Extract class and method names
-            method_name = func.__name__
-            
-            params_dict = dict(bound_args.arguments)                            # Convert bound arguments to dict
-            params_dict.pop('self', None)                                       # Remove 'self' from params
-            
-            cache_key = key_generator.generate(config      = config,            # Generate cache key
-                                               class_name  = class_name,
-                                               method_name = method_name,
-                                               **params_dict)
-            
-            cache_hash = hash_generator.from_string(cache_key)                  # Generate cache hash
-            
-            if config.mode != Enum__Cache__Decorator__Mode.READ_ONLY:          # Try to retrieve from cache (unless READ_ONLY mode)
-                cached_result = _retrieve_from_cache(cache_client               ,
-                                                     config                     ,
-                                                     cache_hash                 ,
-                                                     func                       )
-                
-                if cached_result is not None:                                   # Cache hit
-                    logger.debug(f"Cache HIT for {class_name}.{method_name}() with key: {cache_key}")
-                    return cached_result
-            
-            logger.debug(f"Cache MISS for {class_name}.{method_name}() with key: {cache_key}")
-            
-            try:                                                                # Execute the actual method
-                result = func(*args, **kwargs)
-                
-                if config.mode == Enum__Cache__Decorator__Mode.ENABLED:        # Store result in cache (only in ENABLED mode)
-                    _store_in_cache(cache_client                                ,
-                                   config                                       ,
-                                   cache_key                                    ,
-                                   result                                       )
-                
-                return result
-            
-            except Exception as e:                                              # Handle execution errors
-                if config.invalidate_on_error:
-                    _invalidate_cache(cache_client, config, cache_hash)
-                raise
-        
+
+            self_instance = args[0]
+
+            if not isinstance(self_instance, object) or not hasattr(self_instance.__class__, func.__name__):
+                return func(*args, **kwargs)                                                    # Not an instance method, execute without caching
+
+            cache_helper = _get_cache_helper(self_instance, config)                             # Get the Decorator__Cache from instance
+
+            if not cache_helper:
+                return func(*args, **kwargs)                                                    # No cache available, execute without caching
+
+            return cache_helper.execute_cached(func   = func  ,                                 # Delegate all caching logic to Decorator__Cache
+                                               args   = args  ,
+                                               kwargs = kwargs,
+                                               config = config)
+
+        wrapper._cache_config  = config                                                         # Add metadata to the wrapper for introspection
+        wrapper._cache_enabled = True
+        wrapper._original_func = func
+
         return wrapper
-    
+
     return decorator
 
 
-def _retrieve_from_cache(cache_client : Any,                                    # Retrieve cached response from cache service
-                         config       : Schema__Cache__Decorator__Config,
-                         cache_hash   : str,
-                         func         : Callable
-                    ) -> Optional[Any]:
-    """Retrieve cached result and deserialize to original type"""
-    
-    try:
-        result = cache_client.cache_client.retrieve().retrieve__hash__cache_hash(cache_hash = cache_hash,
-                                                                                 namespace  = config.namespace)
-        
-        if not result:                                                          # Not found in cache
-            return None
-        
-        body = result.get('body')                                               # Extract body from result
-        
-        if body is None:                                                        # No body means cache miss
-            return None
-        
-        response_type = _get_response_type(func)                                # Get expected response type from function signature
-        
-        if response_type and hasattr(response_type, 'from_json'):               # Deserialize Type_Safe response
-            return response_type.from_json(body)
-        
-        return body                                                             # Return raw body if can't deserialize
-    
-    except Exception as e:
-        logger.warning(f"Error retrieving from cache: {e}")
+def _get_cache_helper(instance: object,                                                         # Get Decorator__Cache from instance
+                      config  : Schema__Cache__Decorator__Config
+                 ) -> Decorator__Cache:                                                         # Returns Decorator__Cache or None
+
+    if not hasattr(instance, config.cache_attr_name):
         return None
 
+    cache_attr = getattr(instance, config.cache_attr_name)
 
-def _store_in_cache(cache_client : Any,                                         # Store response in cache service
-                    config       : Schema__Cache__Decorator__Config,
-                    cache_key    : str,
-                    result       : Any
-               ) -> None:
-    """Store result in cache, serializing Type_Safe objects"""
-    
-    if result is None and not config.cache_none_results:                        # Don't cache None results unless explicitly configured
-        return
-    
-    try:
-        from osbot_utils.type_safe.Type_Safe import Type_Safe                   # Import here to avoid circular dependency
-        
-        if isinstance(result, Type_Safe):                                       # Serialize Type_Safe objects to JSON
-            body = result.json()
-        else:
-            body = result                                                       # Store other types as-is
-        
-        cache_client.cache_client.store().store__json__cache_key(data         = body,
-                                                                 namespace    = config.namespace,
-                                                                 strategy     = config.strategy,
-                                                                 cache_key    = cache_key,
-                                                                 file_id      = config.file_id)
-        
-        logger.debug(f"Stored result in cache with key: {cache_key}")
-    
-    except Exception as e:
-        logger.warning(f"Error storing in cache: {e}")
+    if isinstance(cache_attr, Decorator__Cache):                                                # Already a Decorator__Cache
+        if cache_attr.is_available():
+            return cache_attr
+        return None
 
+    if hasattr(cache_attr, 'client'):                                                           # Legacy: Client__Cache__Service
+        from mgraph_ai_service_cache_client.client.Client__Cache__Service import Client__Cache__Service
+        if isinstance(cache_attr, Client__Cache__Service):
+            return Decorator__Cache(client_cache_service=cache_attr)
 
-def _invalidate_cache(cache_client : Any,                                       # Invalidate cache entry (delete from cache)
-                      config       : Schema__Cache__Decorator__Config,
-                      cache_hash   : str
-                 ) -> None:
-    """Remove cache entry when method execution fails"""
-    
-    try:
-        cache_client.cache_client.delete().delete__hash__cache_hash(cache_hash = cache_hash,
-                                                                    namespace  = config.namespace)
-        
-        logger.debug(f"Invalidated cache for hash: {cache_hash}")
-    
-    except Exception as e:
-        logger.warning(f"Error invalidating cache: {e}")
-
-
-def _get_response_type(func: Callable) -> Optional[type]:                       # Extract response type from function signature
-    """Get the return type annotation from function signature"""
-    
-    sig = inspect.signature(func)
-    
-    if sig.return_annotation != inspect.Signature.empty:                        # Check if return annotation exists
-        return sig.return_annotation
-    
     return None
+
+
+def disable_cache_for_method(func: Callable) -> Callable:                                       # Decorator to explicitly disable caching for a method
+    if hasattr(func, '_cache_enabled'):
+        func._cache_enabled = False
+    return func
+
+
+def get_cache_config(func: Callable) -> Schema__Cache__Decorator__Config:                       # Get the cache configuration from a decorated method
+    if hasattr(func, '_cache_config'):
+        return func._cache_config
+    return None
+
+
+def is_cache_decorated(func: Callable) -> bool:                                                 # Check if a method has cache decoration
+    return hasattr(func, '_cache_enabled') and func._cache_enabled

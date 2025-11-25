@@ -2,6 +2,7 @@ from typing                                                                     
 from osbot_utils.type_safe.Type_Safe                                                import Type_Safe
 from osbot_utils.type_safe.type_safe_core.decorators.type_safe                      import type_safe
 from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Binary__Reference  import Schema__Cache__Binary__Reference
+from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Metadata           import Schema__Cache__Metadata
 from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Retrieve__Success  import Schema__Cache__Retrieve__Success
 
 
@@ -159,26 +160,24 @@ class Service__Fast_API__Client__File__Retrieve(Type_Safe):
         path = f"/{namespace}/retrieve/hash/{cache_hash}/string"
         body = None
                                                                                     # Execute request
-        result = self.requests.execute(
-            method = "GET",
-            path   = path,
-            body   = body
-        )
-                                                                                    # Return response data
-        return result.json if result.json else result.text
+        result = self.requests.execute(method = "GET",
+                                       path   = path ,
+                                       body   = body )
+        if result.status_code == 200:
+            return result.text
+        return None
 
     def retrieve__hash__cache_hash__json(self, cache_hash: str, namespace: str) -> Dict:                              # Auto-generated from endpoint get__retrieve__hash__cache_hash__json
                                                                                     # Build path
         path = f"/{namespace}/retrieve/hash/{cache_hash}/json"
         body = None
                                                                                     # Execute request
-        result = self.requests.execute(
-            method = "GET",
-            path   = path,
-            body   = body
-        )
-                                                                                    # Return response data
-        return result.json if result.json else result.text
+        result = self.requests.execute(method = "GET",
+                                       path   = path ,
+                                       body   = body )
+        if result.status_code == 200:
+            return result.json
+        return None
 
     def retrieve__hash__cache_hash__binary(self, cache_hash: str, namespace: str) -> Dict:                              # Auto-generated from endpoint get__retrieve__hash__cache_hash__binary
                                                                                     # Build path
@@ -190,5 +189,53 @@ class Service__Fast_API__Client__File__Retrieve(Type_Safe):
             path   = path,
             body   = body
         )
-                                                                                    # Return response data
-        return result.json if result.json else result.text
+        if result.status_code == 200:
+            return result.content
+        return None
+
+    def retrieve__hash__cache_hash__metadata(self,
+                                             cache_hash: str,
+                                             namespace: str
+                                        ) -> Schema__Cache__Metadata:                              # Auto-generated from endpoint get__retrieve__hash__cache_hash__string
+                                                                                    # Build path
+        path = f"/{namespace}/retrieve/hash/{cache_hash}/metadata"
+        body = None
+                                                                                    # Execute request
+        result = self.requests.execute(method = "GET",
+                                       path   = path ,
+                                       body   = body )
+        if result.status_code == 200:
+            return Schema__Cache__Metadata.from_json(result.json)
+        return None
+
+    def retrieve__hash__cache_hash__refs_hash(self,
+                                             cache_hash: str,
+                                             namespace: str
+                                        ) -> Schema__Cache__Metadata:                              # Auto-generated from endpoint get__retrieve__hash__cache_hash__string
+                                                                                    # Build path
+        path = f"/{namespace}/retrieve/hash/{cache_hash}/refs-hash"
+        body = None
+                                                                                    # Execute request
+        result = self.requests.execute(method = "GET",
+                                       path   = path ,
+                                       body   = body )
+        if result.status_code == 200:
+            return result.json
+        return None
+
+    # todo: refactor main client to return a type_safe class here
+    @type_safe
+    def retrieve__hash__cache_hash__cache_id(self,
+                                             cache_hash: str,
+                                             namespace: str
+                                        ) -> Dict:                              # Auto-generated from endpoint get__retrieve__hash__cache_hash__string
+                                                                                    # Build path
+        path = f"/{namespace}/retrieve/hash/{cache_hash}/cache-id"
+        body = None
+                                                                                    # Execute request
+        result = self.requests.execute(method = "GET",
+                                       path   = path ,
+                                       body   = body )
+        if result.status_code == 200:
+            return result.json
+        return None

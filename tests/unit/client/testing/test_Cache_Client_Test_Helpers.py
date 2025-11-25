@@ -67,26 +67,18 @@ class test_Cache_Client_Test_Helpers(TestCase):                         # Test t
         assert result                         == {'cache_hash': cache_hash,
                                                   'cache_id': cache_id,
                                                   'namespace': 'test',
-                                                  'paths': {'by_hash': [f'test/refs/by-hash/{cache_hash[0:2]}/{cache_hash[2:4]}/{cache_hash}.json',
-                                                                        f'test/refs/by-hash/{cache_hash[0:2]}/{cache_hash[2:4]}/{cache_hash}.json.config',
-                                                                        f'test/refs/by-hash/{cache_hash[0:2]}/{cache_hash[2:4]}/{cache_hash}.json.metadata'],
-                                                           'by_id': [   f'test/refs/by-id/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json',
-                                                                        f'test/refs/by-id/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.config',
-                                                                        f'test/refs/by-id/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.metadata'],
-                                                           'data': [    f'test/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json',
-                                                                        f'test/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.config',
-                                                                        f'test/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.metadata']},
+                                                  'paths': {'by_hash': [ f'test/refs/by-hash/{cache_hash[0:2]}/{cache_hash[2:4]}/{cache_hash}.json'],
+                                                           'by_id'   : [ f'test/refs/by-id/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json' ],
+                                                           'data'    : [ f'test/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json',
+                                                                         f'test/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.config',
+                                                                         f'test/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.metadata']},
                                                   'size': 10}
 
         expected_paths      = self.helpers.build_expected_paths(cache_id=cache_id, cache_hash=cache_hash, namespace='test')
         expected_paths__obj = obj(expected_paths)
 
-        assert expected_paths ==  {'by_hash': [ f'test/refs/by-hash/{cache_hash[0:2]}/{cache_hash[2:4]}/{cache_hash}.json',
-                                                f'test/refs/by-hash/{cache_hash[0:2]}/{cache_hash[2:4]}/{cache_hash}.json.config',
-                                                f'test/refs/by-hash/{cache_hash[0:2]}/{cache_hash[2:4]}/{cache_hash}.json.metadata'],
-                                   'by_id': [   f'test/refs/by-id/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json',
-                                                f'test/refs/by-id/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.config',
-                                                f'test/refs/by-id/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.metadata'],
+        assert expected_paths ==  {'by_hash': [ f'test/refs/by-hash/{cache_hash[0:2]}/{cache_hash[2:4]}/{cache_hash}.json'],
+                                   'by_id': [   f'test/refs/by-id/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json'],
                                    'data': [    f'test/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json',
                                                 f'test/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.config',
                                                 f'test/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.metadata']}
@@ -105,14 +97,10 @@ class test_Cache_Client_Test_Helpers(TestCase):                         # Test t
         assert store_result.obj() == __(cache_id    = cache_id,
                                         cache_hash  = cache_hash ,
                                         namespace   = 'test',
-                                        paths       = __(by_hash = [ f'test/refs/by-hash/{cache_hash[0:2]}/{cache_hash[2:4]}/{cache_hash}.json',
-                                                                     f'test/refs/by-hash/{cache_hash[0:2]}/{cache_hash[2:4]}/{cache_hash}.json.config',
-                                                                     f'test/refs/by-hash/{cache_hash[0:2]}/{cache_hash[2:4]}/{cache_hash}.json.metadata'],
-                                                         by_id   = [ f'test/refs/by-id/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json',
-                                                                     f'test/refs/by-id/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.config',
-                                                                     f'test/refs/by-id/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.metadata'],
+                                        paths       = __(by_hash = [ f'test/refs/by-hash/{cache_hash[0:2]}/{cache_hash[2:4]}/{cache_hash}.json',],
+                                                         by_id   = [ f'test/refs/by-id/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json',],
                                                          data    =  [ f'test/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json',
-                                                                      f'test/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.config',
+                                                                      f'test/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.config' ,
                                                                       f'test/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json.metadata']),
                                        size=10)
 
@@ -1023,7 +1011,7 @@ class test_Cache_Client_Test_Helpers(TestCase):                         # Test t
         assert 'deleted_count'                in delete_result                          # Verify deletion result
         assert obj(delete_result)             == __(status='success',
                                                     cache_id=cache_id,
-                                                    deleted_count=9,
+                                                    deleted_count=5,
                                                     failed_count=0,
                                                     deleted_paths=__SKIP__,
                                                     failed_paths=[])
