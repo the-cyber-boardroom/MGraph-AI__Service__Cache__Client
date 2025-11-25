@@ -14,7 +14,6 @@ from mgraph_ai_service_cache_client.client.requests.schemas.enums.Enum__Client__
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Data_Type                      import Enum__Cache__Data_Type
 from mgraph_ai_service_cache.fast_api.Cache_Service__Fast_API                                       import Cache_Service__Fast_API
 from osbot_fast_api_serverless.fast_api.Serverless__Fast_API__Config                                import Serverless__Fast_API__Config
-from mgraph_ai_service_cache_client.utils.Version                                                   import version__mgraph_ai_service_cache_client
 
 
 class test_Decorator__Cache(TestCase):                                                              # Test Decorator__Cache helper class using actual in-memory cache service
