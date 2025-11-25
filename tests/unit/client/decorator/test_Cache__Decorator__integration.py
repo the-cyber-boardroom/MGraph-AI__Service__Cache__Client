@@ -625,7 +625,7 @@ class test_Cache__Decorator__integration(TestCase):             # Integration te
         assert result1 == result2
         assert time1 > 0.01  # At least 10ms
         if in_github_action():
-            assert time < 0.05    # Much faster (but slower than locally)
+            assert time2 < 0.05    # Much faster (but slower than locally)
         else:
             assert time2 < 0.005  # Much faster (cache hit)
 
