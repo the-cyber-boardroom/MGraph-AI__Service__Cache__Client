@@ -56,11 +56,9 @@ class test_Cache__Decorator__integration(TestCase):
         """Test basic caching functionality with real cache service"""
         call_count = 0
         
-        config = Schema__Cache__Decorator__Config(
-            namespace  = f"test-basic-{random_string()}",
-            enabled    = True,
-            key_fields = ["value"]
-        )
+        config = Schema__Cache__Decorator__Config(namespace  = f"test-basic-{random_string()}",
+                                                  enabled    = True         ,
+                                                  key_fields = ["value"]    )
         
         class TestService(Type_Safe):
             decorator__cache = self.decorator_cache
@@ -72,31 +70,21 @@ class test_Cache__Decorator__integration(TestCase):
                 return f"result_{value}_{call_count}"
         
         service = TestService()
-        
-        # First call - should execute
-        result1 = service.process("test")
-        assert result1 == "result_test_1"
+
+        result1 = service.process("test")                           # First call - should execute
+        assert result1    == "result_test_1"
         assert call_count == 1
-        
-        # Second call with same params - should hit cache
-        result2 = service.process("test")
-        assert result2 == "result_test_1"  # Same result from cache
-        assert call_count == 1  # Method not executed again
-        
-        # Third call with different params - should execute
-        result3 = service.process("different")
+
+        result2 = service.process("test")                           # Second call with same params - should hit cache
+        assert result2 == "result_test_1"                           # Same result from cache
+        assert call_count == 1                                      # Method not executed again
+
+        result3 = service.process("different")                      # Third call with different params - should execute
         assert result3 == "result_different_2"
         assert call_count == 2
 
     def test_cache_decorator__type_safe_objects(self):
         """Test caching with Type_Safe request/response objects"""
-        class RequestSchema(Type_Safe):
-            field1: str
-            field2: int
-        
-        class ResponseSchema(Type_Safe):
-            message: str
-            processed: bool = True
         
         call_count = 0
         
@@ -110,26 +98,24 @@ class test_Cache__Decorator__integration(TestCase):
             decorator__cache = self.decorator_cache
             
             @cache_response(config)
-            def transform(self, request: RequestSchema) -> ResponseSchema:
+            def transform(self, request: RequestSchema) -> ResponseSchema_2:
                 nonlocal call_count
                 call_count += 1
-                return ResponseSchema(
-                    message = f"{request.field1}_{request.field2}_{call_count}"
-                )
+                return ResponseSchema_2(message = f"{request.field1}_{request.field2}_{call_count}")
         
         service = TestService()
         request = RequestSchema(field1="test", field2=42)
         
         # First call
         result1 = service.transform(request)
-        assert isinstance(result1, ResponseSchema)
+        assert isinstance(result1, ResponseSchema_2)
         assert result1.message == "test_42_1"
         assert result1.processed is True
         assert call_count == 1
         
         # Second call - cached
         result2 = service.transform(request)
-        assert isinstance(result2, ResponseSchema)
+        assert isinstance(result2, ResponseSchema_2)
         assert result2.message == "test_42_1"  # Same from cache
         assert call_count == 1
         
@@ -291,9 +277,8 @@ class test_Cache__Decorator__integration(TestCase):
         
         assert result1 == "method1_test"
         assert result2 == "method2_test"
-        
-        # Configs were applied correctly (can't easily verify without internals)
-        # But the methods work, demonstrating configs are independent
+
+        # todo: add internals check to confirm files were created correctly
 
     # ═══════════════════════════════════════════════════════════════════════════════
     # Exception Handling Tests
@@ -303,12 +288,9 @@ class test_Cache__Decorator__integration(TestCase):
         """Test cache invalidation on error with real cache"""
         namespace = f"test-exception-{random_string()}"
         
-        config = Schema__Cache__Decorator__Config(
-            namespace           = namespace,
-            enabled             = True,
-            invalidate_on_error = True,
-            key_fields          = ["value"]
-        )
+        config = Schema__Cache__Decorator__Config(namespace           = namespace,
+                                                  enabled             = True,
+                                                  key_fields          = ["value"])
         
         fail_next = True
         
@@ -340,23 +322,21 @@ class test_Cache__Decorator__integration(TestCase):
         assert result2 == "success_test"  # From cache, not executed
 
     def test_exception_handling_without_invalidate(self):
-        """Test that cache is not invalidated when invalidate_on_error is False"""
         config = Schema__Cache__Decorator__Config(
             namespace           = f"test-no-invalidate-{random_string()}",
             enabled             = True,
-            invalidate_on_error = False,  # Don't invalidate
             key_fields          = []
         )
-        
+
         class TestService(Type_Safe):
             decorator__cache = self.decorator_cache
-            
+
             @cache_response(config)
             def failing_method(self) -> str:
                 raise ValueError("Always fails")
-        
+
         service = TestService()
-        
+
         # Should raise exception and not affect cache
         with self.assertRaises(ValueError):
             service.failing_method()
@@ -401,15 +381,12 @@ class test_Cache__Decorator__integration(TestCase):
         assert result3 == "value2_ignored1_2"
         assert call_count == 2
 
-    def test_empty_key_fields(self):
-        """Test with empty key_fields (cache based on class/method only)"""
+    def test_empty_key_fields(self):        # Test with empty key_fields (cache based on class/method only)"""
         call_count = 0
         
-        config = Schema__Cache__Decorator__Config(
-            namespace  = f"test-empty-keys-{random_string()}",
-            enabled    = True,
-            key_fields = []  # No parameter-based caching
-        )
+        config = Schema__Cache__Decorator__Config(namespace  = f"test-empty-keys-{random_string()}",
+                                                  enabled    = True ,
+                                                  key_fields = []   ) # No parameter-based caching (means we will use all fields)
         
         class TestService(Type_Safe):
             decorator__cache = self.decorator_cache
@@ -422,15 +399,22 @@ class test_Cache__Decorator__integration(TestCase):
         
         service = TestService()
         
-        # Multiple calls with different params should all hit same cache
-        result1 = service.process("a", 1)
-        result2 = service.process("b", 2)
-        result3 = service.process("c", 3)
+        # Multiple calls with different params should create new entries (unless called with same params
+        result1         = service.process("a", 1)
+        result1_cached  = service.process("a", 1)
+        result2         = service.process("b", 2)
+        result2_cached  = service.process("b", 2)
+        result3         = service.process("c", 3)
+        result3_cached  = service.process("c", 3)
         
-        assert result1 == "result_1"
-        assert result2 == "result_1"  # Same cached result
-        assert result3 == "result_1"  # Same cached result
-        assert call_count == 1
+        assert result1        == "result_1"
+        assert result1_cached == "result_1"  # Same cached result
+        assert result2        == "result_2"
+        assert result2_cached == "result_2"  # Same cached result
+        assert result3        == "result_3"
+        assert result3_cached == "result_3"  # Same cached result
+
+        assert call_count == 3
 
     # ═══════════════════════════════════════════════════════════════════════════════
     # Service Without Cache Tests
@@ -559,19 +543,6 @@ class test_Cache__Decorator__integration(TestCase):
     
     def test_nested_type_safe_objects_full_flow(self):
         """Test complete flow with nested Type_Safe objects"""
-        class InnerSchema(Type_Safe):
-            inner_field: str
-            inner_value: int
-        
-        class OuterSchema(Type_Safe):
-            outer_field: str
-            inner: InnerSchema
-            list_data: list
-        
-        class ResponseSchema(Type_Safe):
-            message: str
-            processed_inner: str
-            total: int
         
         call_count = 0
         
@@ -585,15 +556,13 @@ class test_Cache__Decorator__integration(TestCase):
             decorator__cache = self.decorator_cache
             
             @cache_response(config)
-            def process_nested(self, request: OuterSchema) -> ResponseSchema:
+            def process_nested(self, request: OuterSchema) -> ResponseSchema_1:
                 nonlocal call_count
                 call_count += 1
                 total = sum(request.list_data) + request.inner.inner_value
-                return ResponseSchema(
-                    message         = f"{request.outer_field}_{call_count}",
-                    processed_inner = request.inner.inner_field.upper(),
-                    total           = total
-                )
+                return ResponseSchema_1(message         = f"{request.outer_field}_{call_count}",
+                                        processed_inner = request.inner.inner_field.upper(),
+                                        total           = total)
         
         service = TestService()
         
@@ -605,7 +574,7 @@ class test_Cache__Decorator__integration(TestCase):
         
         # First call
         result1 = service.process_nested(request)
-        assert isinstance(result1, ResponseSchema)
+        assert isinstance(result1, ResponseSchema_1)
         assert result1.message == "test_1"
         assert result1.processed_inner == "NESTED"
         assert result1.total == 16
@@ -664,3 +633,28 @@ class test_Cache__Decorator__integration(TestCase):
         assert result1 == result2
         assert time1 > 0.01  # At least 10ms
         assert time2 < 0.005  # Much faster (cache hit)
+
+
+# classes used in this project
+
+class InnerSchema(Type_Safe):
+    inner_field: str
+    inner_value: int
+
+class OuterSchema(Type_Safe):
+    outer_field: str
+    inner: InnerSchema
+    list_data: list
+
+class ResponseSchema_1(Type_Safe):
+    message: str
+    processed_inner: str = None
+    total: int
+
+class RequestSchema(Type_Safe):
+    field1: str
+    field2: int
+
+class ResponseSchema_2(Type_Safe):
+    message: str
+    processed: bool = True

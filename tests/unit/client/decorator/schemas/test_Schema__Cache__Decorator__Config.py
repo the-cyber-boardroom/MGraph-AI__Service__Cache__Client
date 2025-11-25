@@ -28,7 +28,6 @@ class test_Schema__Cache__Decorator__Config(TestCase):
             assert type(_.file_id)              is str
             assert type(_.cache_attr_name)      is str
             assert _.ttl_seconds                is None                     # Optional field
-            assert type(_.invalidate_on_error)  is bool
 
     def test__init__defaults(self):                                         # Test default values match specification
         with Schema__Cache__Decorator__Config(namespace="test") as _:
@@ -42,7 +41,6 @@ class test_Schema__Cache__Decorator__Config(TestCase):
             assert _.file_id                == "response"                   # Default file_id
             assert _.cache_attr_name        == "decorator__cache"       # Default cache client name
             assert _.ttl_seconds            is None                         # Default: no expiry
-            assert _.invalidate_on_error    == False                        # Default: keep cache on error
 
     def test__obj(self):                                                    # Test .obj() serialization
         with Schema__Cache__Decorator__Config(namespace="test-namespace") as _:
@@ -54,9 +52,8 @@ class test_Schema__Cache__Decorator__Config(TestCase):
                                  use_class_name       = True                                    ,
                                  use_method_name      = True                                    ,
                                  file_id              = "response"                              ,
-                                 cache_attr_name      = "decorator__cache"                  ,
-                                 ttl_seconds          = None                                    ,
-                                 invalidate_on_error  = False                                   )
+                                 cache_attr_name      = "decorator__cache"                      ,
+                                 ttl_seconds          = None                                    )
 
     def test__with_custom_values(self):                                     # Test setting custom configuration values
         with Schema__Cache__Decorator__Config(namespace             = "custom-namespace"                   ,
@@ -67,8 +64,7 @@ class test_Schema__Cache__Decorator__Config(TestCase):
                                               use_method_name       = False                                ,
                                               file_id               = "custom-response"                    ,
                                               cache_attr_name       = "my_cache"                           ,
-                                              ttl_seconds           = Safe_UInt(3600)                      ,
-                                              invalidate_on_error   = True                                 ) as _:
+                                              ttl_seconds           = Safe_UInt(3600)                      ) as _:
             
             assert _.namespace              == "custom-namespace"
             assert _.enabled                == False
@@ -79,7 +75,6 @@ class test_Schema__Cache__Decorator__Config(TestCase):
             assert _.file_id                == "custom-response"
             assert _.cache_attr_name        == "my_cache"
             assert _.ttl_seconds            == 3600
-            assert _.invalidate_on_error    == True
 
     def test__namespace_validation(self):                                   # Test namespace type safety
         # Valid namespace formats

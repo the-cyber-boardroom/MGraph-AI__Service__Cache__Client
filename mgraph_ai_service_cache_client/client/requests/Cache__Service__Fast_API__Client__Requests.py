@@ -22,7 +22,7 @@ class Cache__Service__Fast_API__Client__Requests(Type_Safe):
     @cache_on_self
     def test_client(self):
         if self.config.fast_api_app is None:
-            raise Exception("in Cache__Service__Fast_API__Client__Requests.test_client the target self.config.fast_api_app must be configured")
+            raise ValueError("in Cache__Service__Fast_API__Client__Requests.test_client the target self.config.fast_api_app must be configured")
         return TestClient(self.config.fast_api_app)
 
     @cache_on_self

@@ -1,7 +1,7 @@
 import hashlib
 import json
 import logging
-from typing                                                                                     import Any, Dict, List
+from typing import Any, Dict, List, Union
 from osbot_utils.type_safe.Type_Safe                                                            import Type_Safe
 from osbot_utils.type_safe.Type_Safe__Primitive                                                 import Type_Safe__Primitive
 from osbot_utils.type_safe.primitives.domains.cryptography.safe_str.Safe_Str__Cache_Hash        import Safe_Str__Cache_Hash
@@ -15,19 +15,8 @@ from mgraph_ai_service_cache_client.client.decorator.schemas.Schema__Cache__Deco
 logger = logging.getLogger(__name__)
 
 
-class Cache__Key__Builder(Type_Safe):
-    """
-    Builds cache keys leveraging Type_Safe primitives for robust key generation.
-    
-    This class provides improved key generation that properly handles Type_Safe objects
-    and uses the framework's built-in hashing capabilities.
-    """
-    
-    hash_generator: Cache__Hash__Generator = None
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.hash_generator = Cache__Hash__Generator()
+class Cache__Key__Builder(Type_Safe):           # Builds cache keys leveraging Type_Safe primitives for robust key generation.
+    hash_generator: Cache__Hash__Generator
 
     @type_safe
     def build_cache_key(self,                                               # Build a cache key path for storage.
@@ -61,25 +50,18 @@ class Cache__Key__Builder(Type_Safe):
             return Safe_Str__File__Path("default/cache")                    # Fallback to a default key if no components
 
     @type_safe
-    def build_cache_hash(self, 
-                        cache_key: Safe_Str__File__Path
-                       ) -> Safe_Str__Cache_Hash:
-        """
-        Generate a cache hash from a cache key.
-        
-        Args:
-            cache_key: The cache key path
-            
-        Returns:
-            A cache hash suitable for hash-based lookups
-        """
-        if self.hash_generator:
-            hash_value = self.hash_generator.from_string(str(cache_key))
-            return Safe_Str__Cache_Hash(hash_value)
-        else:
-            # Fallback to simple MD5 if hash generator not available
-            hash_value = hashlib.md5(str(cache_key).encode()).hexdigest()
-            return Safe_Str__Cache_Hash(hash_value)
+    def build_cache_hash(self,                                              # Generate a cache hash from a cache key.
+                         data : Union[dict, str, bytes]
+                         #cache_key: Safe_Str__File__Path                    # The cache key path
+                    ) -> Safe_Str__Cache_Hash:                              # A cache hash suitable for hash-based lookups
+        hash_value = None
+        if  isinstance(data, str):
+            hash_value = self.hash_generator.from_string(data)
+        elif  isinstance(data, bytes):
+            hash_value = self.hash_generator.from_bytes(data)
+        elif isinstance(data, dict):
+            hash_value = self.hash_generator.from_json(data)
+        return hash_value
 
     @type_safe
     def _extract_key_fields(self,
