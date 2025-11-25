@@ -1,5 +1,6 @@
 from typing                                                                                 import List
 from osbot_utils.type_safe.Type_Safe                                                        import Type_Safe
+from osbot_utils.type_safe.primitives.core.Safe_UInt                                        import Safe_UInt
 from osbot_utils.type_safe.primitives.domains.cryptography.safe_str.Safe_Str__Cache_Hash    import Safe_Str__Cache_Hash
 from osbot_utils.type_safe.primitives.domains.files.safe_str.Safe_Str__File__Path           import Safe_Str__File__Path
 from osbot_utils.type_safe.primitives.domains.identifiers.Random_Guid                       import Random_Guid
@@ -12,7 +13,7 @@ class Schema__Cache__Update__Response(Type_Safe):                      # Respons
     cache_hash       : Safe_Str__Cache_Hash                             # Content hash (V1: unchanged)
     namespace        : Safe_Str__Id                                     # Namespace
     paths            : List[Safe_Str__File__Path]                       # All updated file paths
-    size             : int                                              # Updated content size in bytes
+    size             : Safe_UInt                                        # Updated content size in bytes
     timestamp        : Timestamp_Now                                    # Update timestamp
     updated_content  : bool                                             # Content files updated
     updated_hash     : bool                                             # Hash reference updated

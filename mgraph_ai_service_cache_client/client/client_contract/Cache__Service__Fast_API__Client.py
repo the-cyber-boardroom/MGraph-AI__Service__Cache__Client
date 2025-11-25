@@ -9,6 +9,7 @@ from .exists.Service__Fast_API__Client__File__Exists            import Service__
 from .delete.Service__Fast_API__Client__File__Delete            import Service__Fast_API__Client__File__Delete
 from .data_store.Service__Fast_API__Client__Data__Store         import Service__Fast_API__Client__Data__Store
 from .data.Service__Fast_API__Client__Data                      import Service__Fast_API__Client__Data
+from .update.Service__Fast_API__Client__File__Update            import Service__Fast_API__Client__File__Update
 from .zip.Service__Fast_API__Client__Zip                        import Service__Fast_API__Client__Zip
 from .namespace.Service__Fast_API__Client__Namespace            import Service__Fast_API__Client__Namespace
 from .admin_storage.Service__Fast_API__Client__Admin__Storage   import Service__Fast_API__Client__Admin__Storage
@@ -33,6 +34,10 @@ class Cache__Service__Fast_API__Client(Type_Safe):
     @cache_on_self
     def exists(self) -> Service__Fast_API__Client__File__Exists:                               # Access exists operations
         return Service__Fast_API__Client__File__Exists(_client=self)
+
+    @cache_on_self
+    def update(self) -> Service__Fast_API__Client__File__Update:                               # Access exists operations
+        return Service__Fast_API__Client__File__Update(_client=self)
 
     @cache_on_self
     def delete(self) -> Service__Fast_API__Client__File__Delete:                               # Access delete operations
