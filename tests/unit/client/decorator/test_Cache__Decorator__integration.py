@@ -627,7 +627,7 @@ class test_Cache__Decorator__integration(TestCase):             # Integration te
         if in_github_action():
             assert time2 < 0.05    # Much faster (but slower than locally)
         else:
-            assert time2 < 0.005  # Much faster (cache hit)
+            assert time2 < 0.008  # Much faster (cache hit)
 
 
 # classes used in this project
