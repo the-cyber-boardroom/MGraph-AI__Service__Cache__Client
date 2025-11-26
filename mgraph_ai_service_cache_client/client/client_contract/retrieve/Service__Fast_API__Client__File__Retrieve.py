@@ -64,6 +64,7 @@ class Service__Fast_API__Client__File__Retrieve(Type_Safe):
                                                                                     # Return response data
         return result.json if result.json else result.text
 
+    # todo: BUG: should return type Schema__Cache__File__Refs, not Dict
     def retrieve__cache_id__refs(self, cache_id: str, namespace: str) -> Dict:                              # Auto-generated from endpoint get__retrieve__cache_id__refs
                                                                                     # Build path
         path = f"/{namespace}/retrieve/{cache_id}/refs"

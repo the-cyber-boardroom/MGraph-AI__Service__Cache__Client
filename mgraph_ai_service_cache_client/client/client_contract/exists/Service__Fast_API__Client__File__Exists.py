@@ -10,7 +10,7 @@ class Service__Fast_API__Client__File__Exists(Type_Safe):
 
     def exists__hash__cache_hash(self, cache_hash: str, namespace: str) -> Dict:                              # Auto-generated from endpoint get__exists__hash__cache_hash
                                                                                     # Build path
-        path = f"/{{namespace}}/exists/hash/{{cache_hash}}"
+        path = f"/{namespace}/exists/hash/{cache_hash}"
         body = None
                                                                                     # Execute request
         result = self.requests.execute(
