@@ -8,6 +8,7 @@ class Service__Fast_API__Client__File__Delete(Type_Safe):
     def requests(self):                                                             # Access the unified request handler
         return self._client.requests()
 
+    # todo: this should a variation of the Schema__Cache__Delete__Success (which needed refactoring)
     def delete__cache_id(self, cache_id: str, namespace: str) -> Dict:                              # Auto-generated from endpoint delete__delete__cache_id
                                                                                     # Build path
         path = f"/{namespace}/delete/{cache_id}"

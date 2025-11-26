@@ -6,6 +6,7 @@ from osbot_utils.type_safe.primitives.domains.files.safe_str.Safe_Str__File__Pat
 from osbot_utils.type_safe.primitives.domains.identifiers.Random_Guid             import Random_Guid
 from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id   import Safe_Str__Id
 
+# todo: this needs to be refactored to handle more cases (not just the success)
 # Response for delete operations
 class Schema__Cache__Delete__Success(Type_Safe):                                      # Successful deletion
     cache_id       : Random_Guid                                                      # ID that was deleted

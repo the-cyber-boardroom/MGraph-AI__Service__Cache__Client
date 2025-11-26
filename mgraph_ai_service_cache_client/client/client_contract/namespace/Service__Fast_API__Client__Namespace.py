@@ -10,7 +10,7 @@ class Service__Fast_API__Client__Namespace(Type_Safe):
 
     def file_hashes(self, namespace: str) -> Dict:                              # Auto-generated from endpoint get__file_hashes
                                                                                     # Build path
-        path = f"/{{namespace}}/file-hashes"
+        path = f"/{namespace}/file-hashes"
         body = None
                                                                                     # Execute request
         result = self.requests.execute(
@@ -23,7 +23,7 @@ class Service__Fast_API__Client__Namespace(Type_Safe):
 
     def file_ids(self, namespace: str) -> Dict:                              # Auto-generated from endpoint get__file_ids
                                                                                     # Build path
-        path = f"/{{namespace}}/file-ids"
+        path = f"/{namespace}/file-ids"
         body = None
                                                                                     # Execute request
         result = self.requests.execute(
@@ -36,7 +36,7 @@ class Service__Fast_API__Client__Namespace(Type_Safe):
 
     def stats(self, namespace: str) -> Dict:                              # Auto-generated from endpoint get__stats
                                                                                     # Build path
-        path = f"/{{namespace}}/stats"
+        path = f"/{namespace}/stats"
         body = None
                                                                                     # Execute request
         result = self.requests.execute(
