@@ -57,7 +57,7 @@ class Cache__Service__Fast_API__Client(Type_Safe):
 
     @cache_on_self
     def namespace(self) -> Service__Fast_API__Client__Namespace:                               # Access namespace operations
-        return Service__Fast_API__Client__Namespace(_client=self)
+        return Service__Fast_API__Client__Namespace(requests=self.requests())
 
     @cache_on_self
     def namespaces(self) -> Service__Fast_API__Client__Namespaces:                               # Access namespace operations

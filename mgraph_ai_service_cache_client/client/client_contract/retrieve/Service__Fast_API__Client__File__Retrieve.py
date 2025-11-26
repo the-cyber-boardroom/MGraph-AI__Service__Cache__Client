@@ -209,6 +209,7 @@ class Service__Fast_API__Client__File__Retrieve(Type_Safe):
             return Schema__Cache__Metadata.from_json(result.json)
         return None
 
+    # todo: rename this should be just retrieve__hash__cache_hash__refs
     def retrieve__hash__cache_hash__refs_hash(self,
                                              cache_hash: str,
                                              namespace: str
