@@ -13,7 +13,6 @@ class Service__Fast_API__Client__File__Store(Type_Safe):
         return self._client.requests()
 
     def store__string(self, strategy  : Enum__Cache__Store__Strategy,
-                            #namespace : str,                                           # todo: BUG namespace is Safe_Str__Id
                             namespace: Safe_Str__Id                 ,
                             body : str
                       ) -> Schema__Cache__Store__Response:                                                    # Auto-generated from endpoint post__store__string

@@ -1,27 +1,43 @@
-from mgraph_ai_service_cache_client.client.requests.Cache__Service__Fast_API__Client__Requests import Cache__Service__Fast_API__Client__Requests
-from osbot_utils.type_safe.Type_Safe                            import Type_Safe
-from osbot_utils.decorators.methods.cache_on_self               import cache_on_self
-from .Cache__Service__Fast_API__Client__Config                  import Cache__Service__Fast_API__Client__Config
-from .namespaces.Service__Fast_API__Client__Namespace           import Service__Fast_API__Client__Namespaces
-from .store.Service__Fast_API__Client__File__Store              import Service__Fast_API__Client__File__Store
-from .retrieve.Service__Fast_API__Client__File__Retrieve        import Service__Fast_API__Client__File__Retrieve
-from .exists.Service__Fast_API__Client__File__Exists            import Service__Fast_API__Client__File__Exists
-from .delete.Service__Fast_API__Client__File__Delete            import Service__Fast_API__Client__File__Delete
-from .data_store.Service__Fast_API__Client__Data__Store         import Service__Fast_API__Client__Data__Store
-from .data.Service__Fast_API__Client__Data                      import Service__Fast_API__Client__Data
-from .update.Service__Fast_API__Client__File__Update            import Service__Fast_API__Client__File__Update
-from .zip.Service__Fast_API__Client__Zip                        import Service__Fast_API__Client__Zip
-from .namespace.Service__Fast_API__Client__Namespace            import Service__Fast_API__Client__Namespace
-from .admin_storage.Service__Fast_API__Client__Admin__Storage   import Service__Fast_API__Client__Admin__Storage
-from .server.Service__Fast_API__Client__Server                  import Service__Fast_API__Client__Server
-from .info.Service__Fast_API__Client__Info                      import Service__Fast_API__Client__Info
+from mgraph_ai_service_cache_client.client.requests.schemas.enums.Enum__Client__Mode            import Enum__Client__Mode
+from mgraph_ai_service_cache_client.schemas.consts.consts__Cache_Client                         import ENV_VAR__AUTH__TARGET_SERVER__CACHE_SERVICE__KEY_NAME, ENV_VAR__AUTH__TARGET_SERVER__CACHE_SERVICE__KEY_VALUE, ENV_VAR__URL__TARGET_SERVER__CACHE_SERVICE
+from osbot_utils.utils.Env                                                                      import get_env
+from mgraph_ai_service_cache_client.client.requests.Cache__Service__Fast_API__Client__Requests  import Cache__Service__Fast_API__Client__Requests
+from osbot_utils.type_safe.Type_Safe                                                            import Type_Safe
+from osbot_utils.decorators.methods.cache_on_self                                               import cache_on_self
+from .Cache__Service__Fast_API__Client__Config                                                  import Cache__Service__Fast_API__Client__Config
+from .namespaces.Service__Fast_API__Client__Namespace                                           import Service__Fast_API__Client__Namespaces
+from .store.Service__Fast_API__Client__File__Store                                              import Service__Fast_API__Client__File__Store
+from .retrieve.Service__Fast_API__Client__File__Retrieve                                        import Service__Fast_API__Client__File__Retrieve
+from .exists.Service__Fast_API__Client__File__Exists                                            import Service__Fast_API__Client__File__Exists
+from .delete.Service__Fast_API__Client__File__Delete                                            import Service__Fast_API__Client__File__Delete
+from .data_store.Service__Fast_API__Client__Data__Store                                         import Service__Fast_API__Client__Data__Store
+from .data.Service__Fast_API__Client__Data                                                      import Service__Fast_API__Client__Data
+from .update.Service__Fast_API__Client__File__Update                                            import Service__Fast_API__Client__File__Update
+from .zip.Service__Fast_API__Client__Zip                                                        import Service__Fast_API__Client__Zip
+from .namespace.Service__Fast_API__Client__Namespace                                            import Service__Fast_API__Client__Namespace
+from .admin_storage.Service__Fast_API__Client__Admin__Storage                                   import Service__Fast_API__Client__Admin__Storage
+from .server.Service__Fast_API__Client__Server                                                  import Service__Fast_API__Client__Server
+from .info.Service__Fast_API__Client__Info                                                      import Service__Fast_API__Client__Info
 
 class Cache__Service__Fast_API__Client(Type_Safe):
     config   : Cache__Service__Fast_API__Client__Config
 
     @cache_on_self
     def requests(self) -> Cache__Service__Fast_API__Client__Requests:                            # Access the unified request handler
+        self.setup_config_from_env()
         return Cache__Service__Fast_API__Client__Requests(config=self.config)
+
+    def setup_config_from_env(self):
+        key_name   = get_env(ENV_VAR__AUTH__TARGET_SERVER__CACHE_SERVICE__KEY_NAME  )
+        key_value  = get_env(ENV_VAR__AUTH__TARGET_SERVER__CACHE_SERVICE__KEY_VALUE )
+        target_url = get_env(ENV_VAR__URL__TARGET_SERVER__CACHE_SERVICE             )
+        if key_name and key_value and target_url:
+            with self.config as _:
+                _.api_key_header = key_name                                             # todo : see if we have a use case where we shouldn't be overwriting these self.config values
+                _.api_key        = key_value
+                _.base_url       = target_url
+                _.mode           = Enum__Client__Mode.REMOTE
+        return self
 
     @cache_on_self
     def store(self) -> Service__Fast_API__Client__File__Store:                               # Access store operations
@@ -57,7 +73,7 @@ class Cache__Service__Fast_API__Client(Type_Safe):
 
     @cache_on_self
     def namespace(self) -> Service__Fast_API__Client__Namespace:                               # Access namespace operations
-        return Service__Fast_API__Client__Namespace(_client=self)
+        return Service__Fast_API__Client__Namespace(requests=self.requests())
 
     @cache_on_self
     def namespaces(self) -> Service__Fast_API__Client__Namespaces:                               # Access namespace operations

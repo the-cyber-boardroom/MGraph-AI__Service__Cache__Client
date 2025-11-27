@@ -3,7 +3,7 @@ from mgraph_ai_service_cache_client.client.client_contract.namespaces.Service__F
 from tests.unit.Cache_Client__Fast_API__Test_Objs                                                          import client_cache_service
 
 
-class test_Service__Fast_API__Client__Namespace(TestCase):
+class test_Service__Fast_API__Client__Namespaces(TestCase):
     @classmethod
     def setUpClass(cls) -> None:                                                 # Setup in-memory FastAPI client for testing
 

@@ -6,7 +6,7 @@ from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_
 from mgraph_ai_service_cache_client.utils.Version                                                   import version__mgraph_ai_service_cache_client
 
 
-class test_Cache__Service__Client(TestCase):
+class test_Client__Cache__Service(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.cache_client = Client__Cache__Service()

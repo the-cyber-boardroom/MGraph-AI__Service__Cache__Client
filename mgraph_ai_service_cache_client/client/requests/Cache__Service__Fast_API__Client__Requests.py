@@ -9,15 +9,8 @@ from mgraph_ai_service_cache_client.client.requests.schemas.enums.Enum__Client__
 
 
 
-
 class Cache__Service__Fast_API__Client__Requests(Type_Safe):
     config       : Cache__Service__Fast_API__Client__Config                         # Service__Fast_API__Client__Config
-    #_server      : Optional[Any]              = None                               # Fast_API_Server for local
-    #_session     : requests.Session         = None                                  # Session for remote
-
-    # def __init__(self, **kwargs):
-    #     super().__init__(**kwargs)
-    #     self._setup_mode()
 
     @cache_on_self
     def test_client(self):

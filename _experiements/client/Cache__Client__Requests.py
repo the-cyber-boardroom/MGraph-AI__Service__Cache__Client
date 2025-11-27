@@ -3,7 +3,7 @@ from osbot_utils.helpers.duration.decorators.capture_duration                   
 from osbot_utils.type_safe.Type_Safe                                                import Type_Safe
 from osbot_utils.utils.Env                                                          import get_env
 from osbot_utils.utils.Http                                                         import url_join_safe
-from mgraph_ai_service_cache_client.client.Cache__Client__Config                    import Cache__Client__Config
+
 from mgraph_ai_service_cache_client.schemas.client.Cache__Client__Requests__Result  import Cache__Client__Requests__Result
 from mgraph_ai_service_cache_client.schemas.consts.consts__Cache_Client             import ENV_VAR__AUTH__TARGET_SERVER__CACHE_SERVICE__KEY_NAME, ENV_VAR__AUTH__TARGET_SERVER__CACHE_SERVICE__KEY_VALUE
 

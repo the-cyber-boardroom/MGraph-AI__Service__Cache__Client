@@ -10,6 +10,7 @@ from osbot_utils.utils.Objects                                                  
 from mgraph_ai_service_cache_client.client.client_contract.update.Service__Fast_API__Client__File__Update   import Service__Fast_API__Client__File__Update
 from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Update__Response                           import Schema__Cache__Update__Response
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Strategy                        import Enum__Cache__Store__Strategy
+from mgraph_ai_service_cache_client.schemas.cache.file.Schema__Cache__File__Refs                            import Schema__Cache__File__Refs
 from tests.unit.Cache_Client__Fast_API__Test_Objs                                                           import client_cache_service
 
 
@@ -218,23 +219,22 @@ class test_Service__Fast_API__Client__File__Update(TestCase):
     def test_update__preserves_strategy(self):                                       # Test that update preserves storage strategy
         with self.update_client as _:
             # Create with specific strategy
-            create_result = self._create_test_entry(
-                self.test_json_v1,
-                strategy = Enum__Cache__Store__Strategy.TEMPORAL_VERSIONED
-            )
+            create_result = self._create_test_entry(data     = self.test_json_v1,
+                                                    strategy = Enum__Cache__Store__Strategy.TEMPORAL_VERSIONED)
             cache_id = create_result.cache_id
 
             # Update entry
             update_result = _.update__json(cache_id  = cache_id             ,
-                                          namespace = self.test_namespace   ,
-                                          body      = self.test_json_v2     )
+                                           namespace = self.test_namespace  ,
+                                           body      = self.test_json_v2    )
 
             assert update_result.cache_id == cache_id
 
             # Verify strategy preserved via config
             refs = self.retrieve_client.retrieve__cache_id__refs(cache_id  = str(cache_id),
                                                                    namespace = str(self.test_namespace))
-            assert refs['strategy'] == 'temporal_versioned'
+            assert type(refs) is Schema__Cache__File__Refs
+            assert refs.strategy == 'temporal_versioned'
 
     def test_update__all_strategies(self):                                           # Test updates work with all strategies
         strategies = [  Enum__Cache__Store__Strategy.DIRECT             ,
@@ -244,36 +244,35 @@ class test_Service__Fast_API__Client__File__Update(TestCase):
 
         with self.update_client as _:
             for strategy in strategies:
-                with self.subTest(strategy=strategy):
-                    namespace = Safe_Str__Id(f"upd-client-{strategy.value}")
+                namespace = Safe_Str__Id(f"upd-client-{strategy.value}")
 
-                    # Create with strategy
-                    if isinstance(self.test_string_v1, bytes):
-                        create_result = self.store_client.store__binary(
-                            strategy  = strategy,
-                            namespace = namespace,
-                            body      = self.test_string_v1
-                        )
-                    else:
-                        create_result = self.store_client.store__string(
-                            strategy  = strategy,
-                            namespace = namespace,
-                            body      = self.test_string_v1
-                        )
-                    cache_id = create_result.cache_id
+                # Create with strategy
+                if isinstance(self.test_string_v1, bytes):
+                    create_result = self.store_client.store__binary(
+                        strategy  = strategy,
+                        namespace = namespace,
+                        body      = self.test_string_v1
+                    )
+                else:
+                    create_result = self.store_client.store__string(
+                        strategy  = strategy,
+                        namespace = namespace,
+                        body      = self.test_string_v1
+                    )
+                cache_id = create_result.cache_id
 
-                    # Update via client
-                    update_result = _.update__string(cache_id  = cache_id          ,
-                                                    namespace = namespace          ,
-                                                    body      = self.test_string_v2)
+                # Update via client
+                update_result = _.update__string(cache_id  = cache_id          ,
+                                                namespace = namespace          ,
+                                                body      = self.test_string_v2)
 
-                    assert update_result.cache_id  == cache_id
-                    assert update_result.namespace == namespace
+                assert update_result.cache_id  == cache_id
+                assert update_result.namespace == namespace
 
-                    # Verify strategy preserved
-                    refs = self.retrieve_client.retrieve__cache_id__refs(cache_id  = str(cache_id),
-                                                                         namespace = str(namespace))
-                    assert refs['strategy'] == strategy.value
+                # Verify strategy preserved
+                refs = self.retrieve_client.retrieve__cache_id__refs(cache_id  = str(cache_id),
+                                                                     namespace = str(namespace))
+                assert refs.strategy == strategy.value
 
     def test_update__response_structure(self):                                       # Test response has all expected fields
         with self.update_client as _:
