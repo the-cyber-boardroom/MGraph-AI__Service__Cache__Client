@@ -1,6 +1,8 @@
 from unittest                                                                                       import TestCase
 from osbot_utils.testing.__                                                                         import __, __SKIP__
 from osbot_utils.testing.__helpers                                                                  import obj
+from osbot_utils.type_safe.type_safe_core.collections.Type_Safe__Dict                               import Type_Safe__Dict
+from osbot_utils.type_safe.type_safe_core.collections.Type_Safe__List                               import Type_Safe__List
 from osbot_utils.utils.Misc                                                                         import is_guid
 from osbot_utils.utils.Objects                                                                      import base_classes
 from osbot_utils.type_safe.Type_Safe                                                                import Type_Safe
@@ -899,7 +901,7 @@ class test_Cache_Client_Test_Helpers(TestCase):                         # Test t
         namespaces = self.helpers.get_all_namespaces()
 
         # Verify: Our namespaces are in the list
-        assert type(namespaces)               is list
+        assert type(namespaces)               is Type_Safe__List
         assert ns1                            in namespaces
         assert ns2                            in namespaces
         assert ns3                            in namespaces
@@ -916,7 +918,7 @@ class test_Cache_Client_Test_Helpers(TestCase):                         # Test t
 
         # Verify: All strategies created
         expected_strategies = ['direct', 'temporal', 'temporal_latest', 'temporal_versioned', 'key_based']
-        assert type(results)   is dict
+        assert type(results)   is Type_Safe__Dict
         assert len(results)    == 5
 
         for strategy in expected_strategies:
@@ -930,10 +932,10 @@ class test_Cache_Client_Test_Helpers(TestCase):                         # Test t
 
         # Action: Create 3 versions (default)
         results = self.helpers.create_versioned_entries(namespace = namespace ,
-                                                       cache_key = cache_key )
+                                                        cache_key = cache_key )
 
         # Verify: 3 versions created
-        assert type(results) is list
+        assert type(results) is Type_Safe__List
         assert len(results)  == 3
 
         for i, result in enumerate(results):
@@ -961,7 +963,7 @@ class test_Cache_Client_Test_Helpers(TestCase):                         # Test t
         results = self.helpers.create_namespace_hierarchy(base_namespace=base_namespace)
 
         # Verify: 3 namespaces created
-        assert type(results)                  is dict
+        assert type(results)                  is Type_Safe__Dict
         assert len(results)                   == 3
 
         # Verify structure

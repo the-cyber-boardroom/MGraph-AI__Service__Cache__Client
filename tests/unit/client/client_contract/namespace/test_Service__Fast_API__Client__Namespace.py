@@ -9,6 +9,7 @@ class test_Service__Fast_API__Client__Namespace(TestCase):
 
         cls.client_cache_service, cls.cache_service    = client_cache_service()
         cls.client__namespace                          = cls.client_cache_service.namespace()
+        cls.client__delete                             = cls.client_cache_service.delete()
         cls.test_data      = {"test": "data", "number": 42}
         cls.namespace      = "test-namespace"
         cls.cache_hash     = cls.cache_service.hash_from_json(cls.test_data)
@@ -22,16 +23,18 @@ class test_Service__Fast_API__Client__Namespace(TestCase):
         with self.client__namespace as _:
             assert type(_) is Service__Fast_API__Client__Namespace
 
-    # todo: BUG: rename file_hashes to cache_hashes     (after client refactor)
-    def test_file_hashes(self):
+    def test_cache_hashes(self):
         with self.client__namespace as _:
-            assert _.file_hashes(namespace = self.namespace) == [self.cache_hash]
+            assert _.cache_hashes(namespace = self.namespace) == [self.cache_hash]
 
-    # todo: BUG: rename file_ids to cache_ids     (after client refactor)
-    def test_file_ids(self):
+    def test_cache_ids(self):
         with self.client__namespace as _:
-            assert _.file_ids(namespace = self.namespace) == [self.cache_id]
+            assert _.cache_ids(namespace = self.namespace) == [self.cache_id]
 
-            # add an entry with an entry
+            self.client__delete.delete__cache_id(cache_id = self.cache_id, namespace = self.namespace)
+
+            assert _.cache_ids   (namespace = self.namespace) == []
+            assert _.cache_hashes(namespace = self.namespace) == []
+
 
 
