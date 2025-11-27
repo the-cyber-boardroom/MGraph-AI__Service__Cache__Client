@@ -244,36 +244,35 @@ class test_Service__Fast_API__Client__File__Update(TestCase):
 
         with self.update_client as _:
             for strategy in strategies:
-                with self.subTest(strategy=strategy):
-                    namespace = Safe_Str__Id(f"upd-client-{strategy.value}")
+                namespace = Safe_Str__Id(f"upd-client-{strategy.value}")
 
-                    # Create with strategy
-                    if isinstance(self.test_string_v1, bytes):
-                        create_result = self.store_client.store__binary(
-                            strategy  = strategy,
-                            namespace = namespace,
-                            body      = self.test_string_v1
-                        )
-                    else:
-                        create_result = self.store_client.store__string(
-                            strategy  = strategy,
-                            namespace = namespace,
-                            body      = self.test_string_v1
-                        )
-                    cache_id = create_result.cache_id
+                # Create with strategy
+                if isinstance(self.test_string_v1, bytes):
+                    create_result = self.store_client.store__binary(
+                        strategy  = strategy,
+                        namespace = namespace,
+                        body      = self.test_string_v1
+                    )
+                else:
+                    create_result = self.store_client.store__string(
+                        strategy  = strategy,
+                        namespace = namespace,
+                        body      = self.test_string_v1
+                    )
+                cache_id = create_result.cache_id
 
-                    # Update via client
-                    update_result = _.update__string(cache_id  = cache_id          ,
-                                                    namespace = namespace          ,
-                                                    body      = self.test_string_v2)
+                # Update via client
+                update_result = _.update__string(cache_id  = cache_id          ,
+                                                namespace = namespace          ,
+                                                body      = self.test_string_v2)
 
-                    assert update_result.cache_id  == cache_id
-                    assert update_result.namespace == namespace
+                assert update_result.cache_id  == cache_id
+                assert update_result.namespace == namespace
 
-                    # Verify strategy preserved
-                    refs = self.retrieve_client.retrieve__cache_id__refs(cache_id  = str(cache_id),
-                                                                         namespace = str(namespace))
-                    assert refs['strategy'] == strategy.value
+                # Verify strategy preserved
+                refs = self.retrieve_client.retrieve__cache_id__refs(cache_id  = str(cache_id),
+                                                                     namespace = str(namespace))
+                assert refs.strategy == strategy.value
 
     def test_update__response_structure(self):                                       # Test response has all expected fields
         with self.update_client as _:
