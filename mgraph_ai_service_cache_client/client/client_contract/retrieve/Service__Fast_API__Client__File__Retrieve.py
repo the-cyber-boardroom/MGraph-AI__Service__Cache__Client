@@ -1,6 +1,5 @@
 from typing                                                                         import Any, Dict, Union
-
-from mgraph_ai_service_cache_client.schemas.cache.file.Schema__Cache__File__Refs import Schema__Cache__File__Refs
+from mgraph_ai_service_cache_client.schemas.cache.file.Schema__Cache__File__Refs    import Schema__Cache__File__Refs
 from osbot_utils.type_safe.Type_Safe                                                import Type_Safe
 from osbot_utils.type_safe.type_safe_core.decorators.type_safe                      import type_safe
 from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Binary__Reference  import Schema__Cache__Binary__Reference
