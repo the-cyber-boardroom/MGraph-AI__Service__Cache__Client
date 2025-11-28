@@ -1054,35 +1054,32 @@ class test_Cache_Client_Test_Helpers(TestCase):                         # Test t
     # Edge Cases and Error Scenarios
     # ═════════════════════════════════════════════════════════════════════════════
 
-    def test__bug__create_string_entry__empty_value(self):       # Test creating entry with empty string value
+    def test__create_string_entry__empty_value(self):       # Test creating entry with empty string value
         result = self.helpers.create_string_entry(value='')
 
-        assert is_guid(result.cache_id)    is True                  # todo: BUG: review this since this should be a bug (i.e. we shouldn't return a GUID if there is no file created)
-        assert __(cache_id=result.cache_id,
-                  cache_hash='',
-                  namespace='',
-                  paths=__(),
-                  size=0)
+        assert result.obj() == __(cache_id='',
+                                  cache_hash='',
+                                  namespace='',
+                                  paths=__(),
+                                  size=0)
 
-    def test__bug__create_json_entry__empty_dict(self):             # Test creating entry with empty JSON dict
+    def test__create_json_entry__empty_dict(self):             # Test creating entry with empty JSON dict
         result = self.helpers.create_json_entry(data={})
 
-        assert is_guid(result.cache_id)    is True
-        assert __(cache_id=result.cache_id,                         # todo: BUG: review this since this should be a bug (i.e. we shouldn't return a GUID if there is no file created)
-                  cache_hash='',
-                  namespace='',
-                  paths=__(),
-                  size=0)
+        assert result.obj() == __(cache_id='' ,
+                                  cache_hash='',
+                                  namespace='',
+                                  paths=__(),
+                                  size=0)
 
-    def test__bug__create_binary_entry__empty_bytes(self):               # Test creating entry with empty bytes
+    def test__create_binary_entry__empty_bytes(self):               # Test creating entry with empty bytes
         result = self.helpers.create_binary_entry(data=b'')
 
-        assert is_guid(result.cache_id)    is True
-        assert __(cache_id=result.cache_id,                         # todo: BUG: review this since this should be a bug (i.e. we shouldn't return a GUID if there is no file created)
-                  cache_hash='',
-                  namespace='',
-                  paths=__(),
-                  size=0)
+        assert result.obj() == __(cache_id='',
+                                  cache_hash='',
+                                  namespace='',
+                                  paths=__(),
+                                  size=0)
 
     def test__add_data_string__none_value_uses_default(self):       # Test that None data value uses auto-generated default
         # Setup

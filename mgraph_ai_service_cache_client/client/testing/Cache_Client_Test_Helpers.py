@@ -50,8 +50,8 @@ class Cache_Client_Test_Helpers(Type_Safe):
                                                   file_id    = file_id or '')
             else:
                 return _.store__string(strategy  = strategy  ,
-                                      namespace = namespace ,
-                                      body      = value     )
+                                       namespace = namespace ,
+                                       body      = value     )
 
     @type_safe
     def create_json_entry(self,
