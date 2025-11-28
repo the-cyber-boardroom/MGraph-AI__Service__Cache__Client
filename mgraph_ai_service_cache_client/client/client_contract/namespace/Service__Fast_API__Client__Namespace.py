@@ -1,7 +1,7 @@
 from typing                                                                                    import Dict, List
+from mgraph_ai_service_cache_client.schemas.cache.Cache_Id                                     import Cache_Id
 from osbot_utils.type_safe.Type_Safe                                                           import Type_Safe
 from osbot_utils.type_safe.primitives.domains.cryptography.safe_str.Safe_Str__Cache_Hash       import Safe_Str__Cache_Hash
-from osbot_utils.type_safe.primitives.domains.identifiers.Random_Guid                          import Random_Guid
 from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id                import Safe_Str__Id
 from osbot_utils.type_safe.type_safe_core.collections.Type_Safe__List                          import Type_Safe__List
 from osbot_utils.type_safe.type_safe_core.decorators.type_safe                                 import type_safe
@@ -34,7 +34,7 @@ class Service__Fast_API__Client__Namespace(Type_Safe):
     @type_safe
     def cache_ids(self,
                   namespace: Safe_Str__Id
-             ) -> List[Random_Guid]:
+             ) -> List[Cache_Id]:
                                                                                     # Build path
         path = f"/{namespace}/file-ids"                                             # todo: BUG: rename file_ids to cache_ids     (after client refactor)
         body = None

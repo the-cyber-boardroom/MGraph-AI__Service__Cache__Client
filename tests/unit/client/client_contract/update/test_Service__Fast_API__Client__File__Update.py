@@ -1,4 +1,5 @@
 from unittest                                                                                               import TestCase
+from mgraph_ai_service_cache_client.schemas.cache.Cache_Id                                                  import Cache_Id
 from osbot_utils.testing.__                                                                                 import __, __SKIP__
 from osbot_utils.type_safe.Type_Safe                                                                        import Type_Safe
 from osbot_utils.type_safe.primitives.core.Safe_UInt                                                        import Safe_UInt
@@ -296,7 +297,7 @@ class test_Service__Fast_API__Client__File__Update(TestCase):
             assert hasattr(update_result, 'updated_id_ref')
 
             # Verify field types
-            assert type(update_result.cache_id)         is Random_Guid
+            assert type(update_result.cache_id)         is Cache_Id
             assert type(update_result.cache_hash)       is Safe_Str__Cache_Hash
             assert type(update_result.namespace)        is Safe_Str__Id
             assert type(update_result.size)             is Safe_UInt
