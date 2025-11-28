@@ -19,5 +19,6 @@ class Service__Fast_API__Client__File__Delete(Type_Safe):
             path   = path,
             body   = body
         )
-                                                                                    # Return response data
-        return result.json if result.json else result.text
+        if result.status_code == 200:                                                                                          # Return response data
+            return result.json
+        return None

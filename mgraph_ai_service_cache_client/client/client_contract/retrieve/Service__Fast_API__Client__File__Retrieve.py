@@ -49,8 +49,9 @@ class Service__Fast_API__Client__File__Retrieve(Type_Safe):
             path   = path,
             body   = body
         )
-                                                                                    # Return response data
-        return result.json if result.json else result.text
+        if result.status_code == 200:
+            return result.json
+        return None
 
     def retrieve__cache_id__metadata(self, cache_id: str, namespace: str) -> Dict:                              # Auto-generated from endpoint get__retrieve__cache_id__metadata
                                                                                     # Build path
@@ -63,7 +64,9 @@ class Service__Fast_API__Client__File__Retrieve(Type_Safe):
             body   = body
         )
                                                                                     # Return response data
-        return result.json if result.json else result.text
+        if result.status_code == 200:
+            return result.json
+        return None
 
     def retrieve__cache_id__refs(self, cache_id: str, namespace: str) -> Schema__Cache__File__Refs:                              # Auto-generated from endpoint get__retrieve__cache_id__refs
                                                                                     # Build path
@@ -89,7 +92,9 @@ class Service__Fast_API__Client__File__Retrieve(Type_Safe):
             body   = body
         )
                                                                                     # Return response data
-        return result.json if result.json else result.text
+        if result.status_code == 200:
+            return result.json
+        return None
 
     def retrieve__hash__cache_hash(self,
                                    cache_hash: str,
@@ -114,7 +119,7 @@ class Service__Fast_API__Client__File__Retrieve(Type_Safe):
             return Schema__Cache__Retrieve__Success.from_json(result_json)
         #return result.json if result.json else result.text
 
-    def retrieve__cache_id__string(self, cache_id: str, namespace: str) -> Dict:                              # Auto-generated from endpoint get__retrieve__cache_id__string
+    def retrieve__cache_id__string(self, cache_id: str, namespace: str) -> str:                              # Auto-generated from endpoint get__retrieve__cache_id__string
                                                                                     # Build path
         #path = f"/{namespace}}/retrieve/{cache_id}}/string"                      # todo: BUG: used {{
         path = f"/{namespace}/retrieve/{cache_id}/string"
@@ -126,7 +131,9 @@ class Service__Fast_API__Client__File__Retrieve(Type_Safe):
             body   = body
         )
                                                                                     # Return response data
-        return result.json if result.json else result.text
+        if result.status_code == 200:
+            return result.text
+        return None
 
     def retrieve__cache_id__json(self, cache_id: str, namespace: str) -> Dict:                              # Auto-generated from endpoint get__retrieve__cache_id__json
                                                                                     # Build path
@@ -139,8 +146,9 @@ class Service__Fast_API__Client__File__Retrieve(Type_Safe):
             path   = path,
             body   = body
         )
-                                                                                    # Return response data
-        return result.json if result.json else result.text
+        if result.status_code == 200:
+            return result.json
+        return None
 
     def retrieve__cache_id__binary(self, cache_id: str, namespace: str) -> Dict:                              # Auto-generated from endpoint get__retrieve__cache_id__binary
                                                                                     # Build path
@@ -153,8 +161,9 @@ class Service__Fast_API__Client__File__Retrieve(Type_Safe):
             path   = path,
             body   = body
         )
-                                                                                    # Return response data
-        return result.content                                                       #       and since this is binary we need to return the result.content
+        if result.status_code == 200:
+            return result.content                                               #       and since this is binary we need to return the result.content
+        return None
 
     def retrieve__hash__cache_hash__string(self, cache_hash: str, namespace: str) -> Dict:                              # Auto-generated from endpoint get__retrieve__hash__cache_hash__string
                                                                                     # Build path
