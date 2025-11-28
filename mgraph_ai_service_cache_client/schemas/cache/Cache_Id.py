@@ -2,4 +2,8 @@ from osbot_utils.type_safe.primitives.domains.identifiers.Random_Guid import Ran
 
 
 class Cache_Id(Random_Guid):            # helper class so that we don't use Random_Guid to represent the cache_id class
-    pass
+    def __new__(cls, value=None):
+        if value is None or value == '':
+            return str.__new__(cls, '')
+        else:
+            return super(Cache_Id, cls).__new__(cls, value)
