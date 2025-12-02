@@ -1,5 +1,5 @@
 from osbot_utils.type_safe.Type_Safe                                                        import Type_Safe
-from osbot_utils.type_safe.primitives.domains.identifiers.Random_Guid                       import Random_Guid
+from osbot_utils.type_safe.primitives.domains.identifiers.Cache_Id                          import Cache_Id
 from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id             import Safe_Str__Id
 from osbot_utils.type_safe.primitives.domains.cryptography.safe_str.Safe_Str__Cache_Hash    import Safe_Str__Cache_Hash
 from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Metadata                   import Schema__Cache__Metadata
@@ -10,5 +10,5 @@ class Schema__Cache__Exists__Response(Type_Safe):                               
     exists       : bool                                                               # Whether entry exists
     cache_hash   : Safe_Str__Cache_Hash                                               # Hash that was checked
     namespace    : Safe_Str__Id                                                       # Namespace checked
-    cache_id     : Random_Guid             = None                                     # ID if it exists
+    cache_id     : Cache_Id             = None                                     # ID if it exists
     metadata     : Schema__Cache__Metadata = None                                     # Metadata if it exists

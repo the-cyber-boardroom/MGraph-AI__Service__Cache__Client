@@ -1,10 +1,11 @@
 from unittest                                                                                               import TestCase
-from osbot_utils.type_safe.primitives.domains.identifiers.Cache_Id                                          import Cache_Id
 from osbot_utils.testing.__                                                                                 import __, __SKIP__
 from osbot_utils.type_safe.Type_Safe                                                                        import Type_Safe
 from osbot_utils.type_safe.primitives.core.Safe_UInt                                                        import Safe_UInt
 from osbot_utils.type_safe.primitives.domains.cryptography.safe_str.Safe_Str__Cache_Hash                    import Safe_Str__Cache_Hash
-from osbot_utils.type_safe.primitives.domains.identifiers.Random_Guid                                       import Random_Guid
+from osbot_utils.type_safe.primitives.domains.identifiers.Cache_Id                                          import Cache_Id
+from osbot_utils.type_safe.primitives.domains.identifiers.Obj_Id import Obj_Id
+from osbot_utils.type_safe.primitives.domains.identifiers.Random_Guid import Random_Guid
 from osbot_utils.type_safe.primitives.domains.identifiers.safe_int.Timestamp_Now                            import Timestamp_Now
 from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id                             import Safe_Str__Id
 from osbot_utils.utils.Objects                                                                              import base_classes
@@ -169,7 +170,7 @@ class test_Service__Fast_API__Client__File__Update(TestCase):
 
     def test_update__nonexistent_entry(self):                                        # Test updating non-existent entry
         with self.update_client as _:
-            nonexistent_id = Random_Guid()
+            nonexistent_id = Cache_Id(Random_Guid())
 
 
             result = _.update__string(cache_id  = nonexistent_id       ,

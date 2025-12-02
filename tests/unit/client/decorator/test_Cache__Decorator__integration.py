@@ -1,6 +1,6 @@
 from unittest                                                                                       import TestCase
 from osbot_utils.type_safe.Type_Safe                                                                import Type_Safe
-from osbot_utils.utils.Env import in_github_action
+from osbot_utils.utils.Env                                                                          import in_github_action
 from osbot_utils.utils.Misc                                                                         import random_string
 from mgraph_ai_service_cache_client.client.decorator.Cache__Decorator                               import cache_response, disable_cache_for_method, get_cache_config, is_cache_decorated
 from mgraph_ai_service_cache_client.client.decorator.Decorator__Cache                               import Decorator__Cache
