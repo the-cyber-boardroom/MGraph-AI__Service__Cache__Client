@@ -11,7 +11,7 @@ from mgraph_ai_service_cache_client.schemas.cache.store.Schema__Cache__Store__Pa
 # todo: review the field name 'all_paths' (in light of the new file_paths field)
 class Schema__Cache__File__Refs(Type_Safe):                # ID-to-hash reference with content paths
     all_paths        : Schema__Cache__Store__Paths         # All file paths created
-    cache_id         : Cache_Id                         # Cache ID
+    cache_id         : Cache_Id                            # Cache ID
     cache_hash       : Safe_Str__Cache_Hash                # Hash value
     file_type        : Enum__Cache__File_Type              # Type of stored data
     namespace        : Safe_Str__Id                        # Namespace
