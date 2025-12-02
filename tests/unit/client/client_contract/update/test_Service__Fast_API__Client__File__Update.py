@@ -1,5 +1,5 @@
 from unittest                                                                                               import TestCase
-from mgraph_ai_service_cache_client.schemas.cache.Cache_Id                                                  import Cache_Id
+from osbot_utils.type_safe.primitives.domains.identifiers.Cache_Id                                          import Cache_Id
 from osbot_utils.testing.__                                                                                 import __, __SKIP__
 from osbot_utils.type_safe.Type_Safe                                                                        import Type_Safe
 from osbot_utils.type_safe.primitives.core.Safe_UInt                                                        import Safe_UInt

@@ -1,5 +1,5 @@
 from typing                                                                                 import List, Dict
-from mgraph_ai_service_cache_client.schemas.cache.Cache_Id                                  import Cache_Id
+from osbot_utils.type_safe.primitives.domains.identifiers.Cache_Id                          import Cache_Id
 from osbot_utils.type_safe.Type_Safe                                                        import Type_Safe
 from osbot_utils.type_safe.primitives.core.Safe_UInt                                        import Safe_UInt
 from osbot_utils.type_safe.primitives.domains.files.safe_str.Safe_Str__File__Path           import Safe_Str__File__Path
