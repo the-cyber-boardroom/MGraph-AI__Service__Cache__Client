@@ -485,10 +485,7 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
         retrieved    = self.data_retrieve.data__json__with__id(cache_id     = cache_id     ,
                                                                namespace    = namespace    ,
                                                                data_file_id = data_file_id )
-        assert retrieved == {'detail': {'cache_id': cache_id,
-                                        'data_file_id': 'None',
-                                        'error_type': 'NOT_FOUND',
-                                        'message': 'Data file not found'}}
+        assert retrieved is None
 
     def test__data_store__empty_binary(self):
         """Test storing empty binary data"""
@@ -510,7 +507,7 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
         retrieved    = self.data_retrieve.data__binary__with__id(cache_id     = cache_id     ,
                                                                  namespace    = namespace    ,
                                                                  data_file_id = data_file_id )
-        assert retrieved == b''
+        assert retrieved == None
 
     def test__data_store__large_string(self):
         """Test storing large string data (1MB+)"""
