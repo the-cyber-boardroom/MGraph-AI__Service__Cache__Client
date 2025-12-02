@@ -11,7 +11,7 @@ Usage:
 """
 
 from typing                                                                                      import Dict, List, Tuple
-from osbot_utils.type_safe.primitives.domains.identifiers.Random_Guid                            import Random_Guid
+from osbot_utils.type_safe.primitives.domains.identifiers.Cache_Id                               import Cache_Id
 from osbot_utils.utils.Misc                                                                      import random_string, random_bytes, str_to_bytes
 from osbot_utils.type_safe.Type_Safe                                                             import Type_Safe
 from osbot_utils.type_safe.type_safe_core.decorators.type_safe                                   import type_safe
@@ -211,7 +211,7 @@ class Cache_Client_Test_Helpers(Type_Safe):
                                     json_count     : int = 2    ,
                                     binary_count   : int = 1    ,
                                     use_data_keys  : bool = False
-                               ) -> Tuple[Random_Guid, Schema__Cache__Store__Response, List[str]]:
+                               ) -> Tuple[Cache_Id, Schema__Cache__Store__Response, List[str]]:
         """
         Create a cache entry with multiple data files attached
 

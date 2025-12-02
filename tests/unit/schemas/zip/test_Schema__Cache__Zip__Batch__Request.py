@@ -6,7 +6,7 @@ from osbot_utils.type_safe.type_safe_core.collections.Type_Safe__List           
 from mgraph_ai_service_cache_client.schemas.cache.zip.Schema__Cache__Zip__Batch__Request                import Schema__Cache__Zip__Batch__Request,Schema__Zip__Batch__Operation
 from mgraph_ai_service_cache_client.schemas.cache.consts__Cache_Service                                 import DEFAULT_CACHE__NAMESPACE
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Strategy                    import Enum__Cache__Store__Strategy
-from osbot_utils.type_safe.primitives.domains.identifiers.Random_Guid                                   import Random_Guid
+from osbot_utils.type_safe.primitives.domains.identifiers.Cache_Id                                      import Cache_Id
 from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id                         import Safe_Str__Id
 from mgraph_ai_service_cache_client.schemas.cache.zip.safe_str.Safe_Str__Cache__Zip__Operation__Pattern import Safe_Str__Cache__Zip__Operation__Pattern
 
@@ -66,7 +66,7 @@ class test_Schema__Cache__Zip__Batch__Request(TestCase):
             assert _.atomic == False
 
     def test_complex_batch(self):                                                         # Test complex batch configuration
-        cache_id = Random_Guid()
+        cache_id = Cache_Id()
 
         operations = [
             Schema__Zip__Batch__Operation(action    = "add"              ,
@@ -105,7 +105,7 @@ class test_Schema__Cache__Zip__Batch__Request(TestCase):
                                                     path    = "test.txt"  ,
                                                     content = b"test"     )]
 
-        cache_id =  Random_Guid()
+        cache_id =  Cache_Id()
         with Schema__Cache__Zip__Batch__Request(cache_id   = cache_id           ,
                                                 operations = operations         ,
                                                 namespace  = "test") as original:
@@ -186,7 +186,7 @@ class test_Schema__Cache__Zip__Batch__Request(TestCase):
             assert _.strategy == Enum__Cache__Store__Strategy.TEMPORAL
 
     def test_empty_operations(self):                                                      # Test with no operations
-        with Schema__Cache__Zip__Batch__Request(cache_id   = Random_Guid() ,
+        with Schema__Cache__Zip__Batch__Request(cache_id   = Cache_Id() ,
                                                 operations = []            ,              # Empty list
                                                 namespace  = "test"       ) as _:
             assert len(_.operations) == 0
