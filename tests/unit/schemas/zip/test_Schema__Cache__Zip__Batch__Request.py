@@ -30,7 +30,7 @@ class test_Schema__Cache__Zip__Batch__Request(TestCase):
             assert _.strategy      is None
 
             # Operations list is empty but Type_Safe
-            assert _.operations == []
+            assert _.operations        == []
             assert type(_.operations) is Type_Safe__List
 
     def test_operations_list(self):                                                       # Test operations list handling
