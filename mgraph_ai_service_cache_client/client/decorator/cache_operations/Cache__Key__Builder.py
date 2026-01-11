@@ -6,8 +6,8 @@ from osbot_utils.type_safe.Type_Safe                                            
 from osbot_utils.type_safe.Type_Safe__Primitive                                                 import Type_Safe__Primitive
 from osbot_utils.type_safe.primitives.domains.cryptography.safe_str.Safe_Str__Cache_Hash        import Safe_Str__Cache_Hash
 from osbot_utils.type_safe.primitives.domains.files.safe_str.Safe_Str__File__Path               import Safe_Str__File__Path
-from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Python__Identifier import Safe_Str__Python__Identifier
 from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Json__Field_Path   import Safe_Str__Json__Field_Path
+from osbot_utils.type_safe.primitives.domains.python.safe_str.Safe_Str__Python__Identifier      import Safe_Str__Python__Identifier
 from osbot_utils.type_safe.type_safe_core.decorators.type_safe                                  import type_safe
 from osbot_utils.helpers.cache.Cache__Hash__Generator                                           import Cache__Hash__Generator
 from mgraph_ai_service_cache_client.client.decorator.schemas.Schema__Cache__Decorator__Config   import Schema__Cache__Decorator__Config
