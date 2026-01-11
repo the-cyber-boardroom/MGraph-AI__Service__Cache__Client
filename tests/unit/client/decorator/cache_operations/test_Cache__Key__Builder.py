@@ -1,9 +1,10 @@
 from unittest                                                                                     import TestCase
 from osbot_utils.type_safe.primitives.domains.cryptography.safe_str.Safe_Str__Cache_Hash          import Safe_Str__Cache_Hash
 from osbot_utils.type_safe.primitives.domains.files.safe_str.Safe_Str__File__Path                 import Safe_Str__File__Path
+from osbot_utils.type_safe.primitives.domains.python.safe_str.Safe_Str__Python__Identifier        import Safe_Str__Python__Identifier
 from osbot_utils.utils.Objects                                                                    import base_classes
 from osbot_utils.type_safe.Type_Safe                                                              import Type_Safe
-from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Python__Identifier   import Safe_Str__Python__Identifier
+
 from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Json__Field_Path     import Safe_Str__Json__Field_Path
 from mgraph_ai_service_cache_client.client.decorator.cache_operations.Cache__Key__Builder         import Cache__Key__Builder
 from mgraph_ai_service_cache_client.client.decorator.schemas.Schema__Cache__Decorator__Config     import Schema__Cache__Decorator__Config

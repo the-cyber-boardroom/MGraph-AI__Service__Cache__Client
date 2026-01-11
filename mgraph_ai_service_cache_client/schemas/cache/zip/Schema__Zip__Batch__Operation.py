@@ -6,8 +6,8 @@ from mgraph_ai_service_cache_client.schemas.cache.zip.safe_str.Safe_Str__Cache__
 
 
 class Schema__Zip__Batch__Operation(Type_Safe):                                         # Individual operation in batch
-    action       : Enum__Cache__Zip__Operation                                          # Operation type
-    path         : Safe_Str__File__Path                                                 # File path in zip
+    action       : Enum__Cache__Zip__Operation              = None                      # Operation type
+    path         : Safe_Str__File__Path                     = None                      # File path in zip
     content      : bytes                                    = None                                   # Content for add/replace
     new_path     : Safe_Str__File__Path                     = None                                   # New path for rename/move
     condition    : Enum__Cache__Zip__Condition              = Enum__Cache__Zip__Condition.ALWAYS     # Conditional execution

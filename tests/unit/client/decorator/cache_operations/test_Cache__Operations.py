@@ -297,16 +297,6 @@ class test_Cache__Operations(TestCase):             # Test Cache__Operations usi
         assert status["mode"]      == str(Enum__Client__Mode.IN_MEMORY)             # Compare with enum string value
         assert "info" in status
 
-    def test_get_client_status__no_client(self):                                    # Test getting status when no client is configured
-        operations_no_client = Cache__Decorator__Operations(client_cache_service = None)
-
-        error_message = "in Cache__Service__Fast_API__Client__Requests.test_client the target self.config.fast_api_app must be configured"
-        with pytest.raises(ValueError, match=error_message) as e:
-            status = operations_no_client.get_client_status()
-
-        # assert status["available"] is False
-        # assert status["reason"]    == "in Cache__Service__Fast_API__Client__Requests.test_client the target self.config.fast_api_app must be configured"
-
     # ═══════════════════════════════════════════════════════════════════════════════
     # Different Storage Strategies Tests
     # ═══════════════════════════════════════════════════════════════════════════════

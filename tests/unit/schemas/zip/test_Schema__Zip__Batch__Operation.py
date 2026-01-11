@@ -15,7 +15,7 @@ class test_Schema__Zip__Batch__Operation(TestCase):
 
             # Verify field types
             assert _.action     is None                                                    # Literal type
-            assert type(_.path) is Safe_Str__File__Path
+            assert _.path       is None
             assert _.content    is None
             assert _.new_path   is None
             assert _.condition  == "always"                                                # Default value
