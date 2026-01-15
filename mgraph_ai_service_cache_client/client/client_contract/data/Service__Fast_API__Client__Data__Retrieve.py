@@ -21,7 +21,8 @@ class Service__Fast_API__Client__Data__Retrieve(Type_Safe):
             body   = body
         )
         if result.status_code == 200:                                                                            # Return response data
-            return result.json
+            if result.json:
+                return result.json
         return None
 
     def data__json__with__id_and_key(self, cache_id: str, namespace: str, data_key: str, data_file_id: str) -> Dict:                              # Auto-generated from endpoint get__data__json__with__id_and_key
@@ -54,7 +55,8 @@ class Service__Fast_API__Client__Data__Retrieve(Type_Safe):
             body   = body
         )
         if result.status_code == 200:
-            return result.text
+            if result.text:                                                                 # handle case when result.text == '' (which happens when the file doesn't exist)
+                return result.text
         return None
 
     def data__string__with__id_and_key(self,
@@ -72,7 +74,10 @@ class Service__Fast_API__Client__Data__Retrieve(Type_Safe):
             body   = body
         )
                                                                                     # Return response data
-        return result.json if result.json else result.text
+        if result.status_code == 200:
+            if result.text:                                                         # handle case when result.text == '' (which happens when the file doesn't exist)
+                return result.text
+        return None
 
     def data__binary__with__id(self, cache_id: str, namespace: str, data_file_id: str) -> Dict:                              # Auto-generated from endpoint get__data__binary__with__id
                                                                                     # Build path
@@ -85,7 +90,8 @@ class Service__Fast_API__Client__Data__Retrieve(Type_Safe):
             body   = body
         )
         if result.status_code == 200:                                                                                       # Return response data
-            return result.content
+            if result.content:
+                return result.content
         return None
 
     def data__binary__with__id_and_key(self, cache_id: str, namespace: str, data_key: str, data_file_id: str) -> Dict:                              # Auto-generated from endpoint get__data__binary__with__id_and_key
