@@ -4,7 +4,7 @@ from osbot_utils.type_safe.primitives.domains.files.safe_str.Safe_Str__File__Pat
 from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id             import Safe_Str__Id
 from mgraph_ai_service_cache_client.schemas.cache.data.Schema__Cache__Data__Store__Response import Schema__Cache__Data__Store__Response
 
-
+# todo: this class should be refactored to the ./data folder (together with all the other *_Client__Data_* classes)
 class Service__Fast_API__Client__Data__Store(Type_Safe):
     _client: Any                                                                    # Reference to main client
 
