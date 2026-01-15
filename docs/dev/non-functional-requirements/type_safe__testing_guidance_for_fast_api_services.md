@@ -1235,17 +1235,16 @@ def test_complete_safe_type_validation(self):                          # Compreh
         ("max length"        , "x" * 100)
     ]
     
-    for description, input_value in test_cases:
-        with self.subTest(description):
-            if description in ["with special chars", "empty"]:
-                # Should reject invalid values
-                with pytest.raises(ValueError):
-                    Schema__Test(id=input_value)
-            else:
-                # Should accept and preserve valid values
-                with Schema__Test(id=input_value) as _:
-                    expected = input_value[:50] if len(str(input_value)) > 50 else input_value
-                    assert _.id == expected
+    for description, input_value in test_cases:        
+        if description in ["with special chars", "empty"]:
+            # Should reject invalid values
+            with pytest.raises(ValueError):
+                Schema__Test(id=input_value)
+        else:
+            # Should accept and preserve valid values
+            with Schema__Test(id=input_value) as _:
+                expected = input_value[:50] if len(str(input_value)) > 50 else input_value
+                assert _.id == expected
 ```
 
 ---
