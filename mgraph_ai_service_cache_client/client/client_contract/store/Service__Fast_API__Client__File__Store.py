@@ -1,8 +1,12 @@
-from typing                                                                          import Any, Optional, Dict
-from osbot_utils.type_safe.Type_Safe                                                 import Type_Safe
-from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id      import Safe_Str__Id
-from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Store__Response     import Schema__Cache__Store__Response
-from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Strategy import Enum__Cache__Store__Strategy
+from typing                                                                                   import Any, Dict
+from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__File__Cache_Key   import Safe_Str__Cache__File__Cache_Key
+from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__File__File_Id     import Safe_Str__Cache__File__File_Id
+from osbot_utils.type_safe.Type_Safe                                                          import Type_Safe
+from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id               import Safe_Str__Id
+from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Store__Response              import Schema__Cache__Store__Response
+from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Strategy          import Enum__Cache__Store__Strategy
+from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Json__Field_Path import Safe_Str__Json__Field_Path
+from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Namespace        import Safe_Str__Namespace
 
 
 class Service__Fast_API__Client__File__Store(Type_Safe):
@@ -19,13 +23,12 @@ class Service__Fast_API__Client__File__Store(Type_Safe):
                                                                                     # Build path
         path = f"/{namespace}/{strategy}/store/string"
                                                                                     # Execute request
-        result = self.requests.execute(
-            method = "POST",
-            path   = path,
-            body   = body
-        )
-        return Schema__Cache__Store__Response.from_json(result.json)                # Return response data
-        return result.json if result.json else result.text
+        result = self.requests.execute(method = "POST",
+                                       path   = path  ,
+                                       body   = body  )
+        if result.status_code == 200:
+            return Schema__Cache__Store__Response.from_json(result.json)                # Return response data
+        return None
 
     def store__string__cache_key(self, namespace: str                           ,
                                        strategy : Enum__Cache__Store__Strategy  ,
@@ -57,22 +60,24 @@ class Service__Fast_API__Client__File__Store(Type_Safe):
         )
         return Schema__Cache__Store__Response.from_json(result.text)              # Return response data
 
-    def store__json__cache_key(self, namespace: str,
-                                     strategy : Enum__Cache__Store__Strategy,
-                                     cache_key: str,
-                                     body     : dict ,
-                                     file_id  : str  = '',
-                                     json_field_path = ''                               # todo: add new json_field_path
-                                 ) -> Schema__Cache__Store__Response:                          # Auto-generated from endpoint post__store__json__cache_key
+    def store__json__cache_key(self,
+                               namespace      : Safe_Str__Namespace             ,
+                               strategy       : Enum__Cache__Store__Strategy    ,
+                               cache_key      : Safe_Str__Cache__File__Cache_Key,
+                               body           : dict                            ,
+                               file_id        : Safe_Str__Cache__File__File_Id  ,
+                               json_field_path: Safe_Str__Json__Field_Path      = ''
+                          ) -> Schema__Cache__Store__Response:                          # Auto-generated from endpoint post__store__json__cache_key
                                                                                     # Build path
         path = f"/{namespace}/{strategy}/store/json/{cache_key}?file_id={file_id}&json_field_path={json_field_path}"
-        #body = None
                                                                                     # Execute request
-        result = self.requests.execute(method = "POST",
-                                      path   = path,
-                                      body   = body)
-        return Schema__Cache__Store__Response.from_json(result.text)                # Return response data
-        #return result.json if result.json else result.text
+        result = self.requests.execute(method = "POST"  ,
+                                       path   = path    ,
+                                       body   = body    )
+        if result.status_code == 200:                                                   # todo: add this check to the other store methods
+            return Schema__Cache__Store__Response.from_json(result.json)                # Return response data
+        return None
+
 
     def store__binary(self, strategy : Enum__Cache__Store__Strategy,
                             namespace: Safe_Str__Id                ,

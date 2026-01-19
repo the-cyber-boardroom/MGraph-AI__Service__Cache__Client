@@ -1,8 +1,14 @@
-from typing                                                                                 import Any, Dict
+from typing                                                                                 import Any
+from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__File__Data_Key  import Safe_Str__Cache__File__Data_Key
+from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__File__File_Id   import Safe_Str__Cache__File__File_Id
+from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__Namespace       import Safe_Str__Cache__Namespace
 from osbot_utils.type_safe.Type_Safe                                                        import Type_Safe
 from osbot_utils.type_safe.primitives.domains.files.safe_str.Safe_Str__File__Path           import Safe_Str__File__Path
+from osbot_utils.type_safe.primitives.domains.identifiers.Cache_Id                          import Cache_Id
 from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id             import Safe_Str__Id
 from mgraph_ai_service_cache_client.schemas.cache.data.Schema__Cache__Data__Store__Response import Schema__Cache__Data__Store__Response
+from osbot_utils.type_safe.type_safe_core.decorators.type_safe                              import type_safe
+
 
 # todo: this class should be refactored to the ./data folder (together with all the other *_Client__Data_* classes)
 class Service__Fast_API__Client__Data__Store(Type_Safe):
@@ -26,8 +32,11 @@ class Service__Fast_API__Client__Data__Store(Type_Safe):
             path   = path,
             body   = body
         )
-        return Schema__Cache__Data__Store__Response.from_json(result.json)          # Return response data
-        return result.json if result.json else result.text
+        if result.status_code == 200:
+            return Schema__Cache__Data__Store__Response.from_json(result.json)          # Return response data
+        else:
+            return None
+
 
     def data__store_binary__with__id(self,
                                      cache_id    : str ,
@@ -44,8 +53,11 @@ class Service__Fast_API__Client__Data__Store(Type_Safe):
             path   = path,
             body   = body
         )
-        return Schema__Cache__Data__Store__Response.from_json(result.json)              # Return response data
-        #return result.json if result.json else result.text
+        if result.status_code == 200:
+            return Schema__Cache__Data__Store__Response.from_json(result.json)              # Return response data
+        else:
+            return None
+
 
     def data__store_binary__with__id_and_key(self,
                                              cache_id    : str ,
@@ -63,8 +75,10 @@ class Service__Fast_API__Client__Data__Store(Type_Safe):
             path   = path,
             body   = body
         )
-        return Schema__Cache__Data__Store__Response.from_json(result.json)         # Return response data
-        #return result.json if result.json else result.text
+        if result.status_code == 200:
+            return Schema__Cache__Data__Store__Response.from_json(result.json)         # Return response data
+        else:
+            return None
 
     def data__store_json(self,
                          cache_id : str,
@@ -81,8 +95,11 @@ class Service__Fast_API__Client__Data__Store(Type_Safe):
             path   = path,
             body   = body
         )
-        return Schema__Cache__Data__Store__Response.from_json(result.json)              # Return response data
-        #return result.json if result.json else result.text
+        if result.status_code == 200:
+            return Schema__Cache__Data__Store__Response.from_json(result.json)              # Return response data
+        else:
+            return None
+
 
     def data__store_json__with__id(self,
                                    cache_id: str,
@@ -98,13 +115,18 @@ class Service__Fast_API__Client__Data__Store(Type_Safe):
             path   = path,
             body   = body
         )
-        return Schema__Cache__Data__Store__Response.from_json(result.json)                # Return response data
-        #return result.json if result.json else result.text
+        if result.status_code == 200:
+            return Schema__Cache__Data__Store__Response.from_json(result.json)                # Return response data
+        else:
+            return None
 
-    def data__store_json__with__id_and_key(self, cache_id: str,
-                                           namespace: str, data_key: str,
-                                           data_file_id: str,
-                                           body: dict
+    @type_safe
+    def data__store_json__with__id_and_key(self,
+                                           cache_id    : Cache_Id,
+                                           namespace   : Safe_Str__Cache__Namespace,
+                                           data_key    : Safe_Str__Cache__File__Data_Key,
+                                           data_file_id: Safe_Str__Cache__File__File_Id,
+                                           body        : dict
                                       ) -> Schema__Cache__Data__Store__Response:                              # Auto-generated from endpoint post__data__store_json__with__id_and_key
                                                                                     # Build path
         path = f"/{namespace}/cache/{cache_id}/data/store/json/{data_key}/{data_file_id}"
@@ -115,8 +137,10 @@ class Service__Fast_API__Client__Data__Store(Type_Safe):
             path   = path,
             body   = body
         )
-        return Schema__Cache__Data__Store__Response.from_json(result.json)          # Return response data
-        #return result.json if result.json else result.text
+        if result.status_code == 200:
+            return Schema__Cache__Data__Store__Response.from_json(result.json)          # Return response data
+        else:
+            return None
 
     def data__store_string(self, cache_id: str,
                            namespace: Safe_Str__Id,
@@ -129,8 +153,10 @@ class Service__Fast_API__Client__Data__Store(Type_Safe):
             path   = path,
             body   = body
         )
-        return Schema__Cache__Data__Store__Response.from_json(result.json)
-        #return result.json if result.json else result.text
+        if result.status_code == 200:
+            return Schema__Cache__Data__Store__Response.from_json(result.json)
+        else:
+            return None
 
     def data__store_string__with__id(self, cache_id     : str,
                                            namespace    : Safe_Str__Id,
@@ -145,8 +171,10 @@ class Service__Fast_API__Client__Data__Store(Type_Safe):
             path   = path,
             body   = body
         )
-        return Schema__Cache__Data__Store__Response.from_json(result.json)  # Return response data
-        return result.json if result.json else result.text
+        if result.status_code == 200:
+            return Schema__Cache__Data__Store__Response.from_json(result.json)  # Return response data
+        else:
+            return None
 
     def data__store_string__with__id_and_key(self, cache_id     : str                   ,
                                                    namespace    : Safe_Str__Id          ,
@@ -156,12 +184,11 @@ class Service__Fast_API__Client__Data__Store(Type_Safe):
                                              ) -> Schema__Cache__Data__Store__Response:                              # Auto-generated from endpoint post__data__store_string__with__id_and_key
 
         path = f"/{namespace}/cache/{cache_id}/data/store/string/{data_key}/{data_file_id}"  # Build path
-        #body = None
-                                                                                    # Execute request
-        result = self.requests.execute(
-            method = "POST",
-            path   = path,
-            body   = body
-        )
-        return Schema__Cache__Data__Store__Response.from_json(result.json)                         # Return response data
-        #return result.json if result.json else result.text
+                                                                                             # Execute request
+        result = self.requests.execute(method = "POST",
+                                       path   = path   ,
+                                       body   = body   )
+        if result.status_code == 200:
+            return Schema__Cache__Data__Store__Response.from_json(result.json)                         # Return response data
+        else:
+            return None

@@ -1,8 +1,9 @@
-from typing                                                                          import Any
-from osbot_utils.type_safe.Type_Safe                                                 import Type_Safe
-from osbot_utils.type_safe.primitives.domains.identifiers.Cache_Id                   import Cache_Id
-from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id      import Safe_Str__Id
-from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Update__Response    import Schema__Cache__Update__Response
+from typing                                                                           import Any
+from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__Namespace import Safe_Str__Cache__Namespace
+from osbot_utils.type_safe.Type_Safe                                                  import Type_Safe
+from osbot_utils.type_safe.primitives.domains.identifiers.Cache_Id                    import Cache_Id
+from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id       import Safe_Str__Id
+from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Update__Response     import Schema__Cache__Update__Response
 
 
 class Service__Fast_API__Client__File__Update(Type_Safe):
@@ -20,13 +21,13 @@ class Service__Fast_API__Client__File__Update(Type_Safe):
                                                                                     # Build path
         path = f"/{namespace}/update/{cache_id}/string"
                                                                                     # Execute request
-        result = self.requests.execute(
-            method = "POST",
-            path   = path,
-            body   = body
-        )
-                                                                                    # Return response data
-        return Schema__Cache__Update__Response.from_json(result.json)
+        result = self.requests.execute(method = "POST",
+                                       path   = path  ,
+                                       body   = body  )
+        if result.status_code == 200:
+            return Schema__Cache__Update__Response.from_json(result.json)
+        else:
+            return None
 
     def update__json(self,
                      cache_id : Cache_Id   ,
@@ -36,26 +37,27 @@ class Service__Fast_API__Client__File__Update(Type_Safe):
                                                                                     # Build path
         path = f"/{namespace}/update/{cache_id}/json"
                                                                                     # Execute request
-        result = self.requests.execute(
-            method = "POST",
-            path   = path,
-            body   = body
-        )
-                                                                                    # Return response data
-        return Schema__Cache__Update__Response.from_json(result.text)
+        result = self.requests.execute(method = "POST",
+                                       path   = path  ,
+                                       body   = body  )
+        if result.status_code == 200:
+            return Schema__Cache__Update__Response.from_json(result.json)
+        else:
+            return None
+
 
     def update__binary(self,
                        cache_id : Cache_Id   ,
-                       namespace: Safe_Str__Id  ,
+                       namespace: Safe_Str__Cache__Namespace  ,
                        body     : bytes
                   ) -> Schema__Cache__Update__Response:                            # Update binary data in existing cache entry
                                                                                     # Build path
         path = f"/{namespace}/update/{cache_id}/binary"
                                                                                     # Execute request
-        result = self.requests.execute(
-            method = "POST",
-            path   = path,
-            body   = body
-        )
-                                                                                    # Return response data
-        return Schema__Cache__Update__Response.from_json(result.json)
+        result = self.requests.execute(method = "POST",
+                                       path   = path,
+                                       body   = body)
+        if result.status_code == 200:
+            return Schema__Cache__Update__Response.from_json(result.json)
+        else:
+            return None

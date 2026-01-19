@@ -1,5 +1,6 @@
 from unittest                                                                                              import TestCase
 from mgraph_ai_service_cache_client.client.client_contract.namespace.Service__Fast_API__Client__Namespace  import Service__Fast_API__Client__Namespace
+from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__File__Cache_Hash               import Safe_Str__Cache__File__Cache_Hash
 from tests.unit.Cache_Client__Fast_API__Test_Objs                                                          import client_cache_service
 
 
@@ -25,6 +26,7 @@ class test_Service__Fast_API__Client__Namespace(TestCase):
 
     def test_cache_hashes(self):
         with self.client__namespace as _:
+            assert type(self.cache_hash) is Safe_Str__Cache__File__Cache_Hash
             assert _.cache_hashes(namespace = self.namespace) == [self.cache_hash]
 
     def test_cache_ids(self):

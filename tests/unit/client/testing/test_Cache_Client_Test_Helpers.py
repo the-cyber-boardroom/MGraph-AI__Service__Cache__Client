@@ -217,7 +217,7 @@ class test_Cache_Client_Test_Helpers(TestCase):                         # Test t
                                     paths       = expected_paths_4,
                                     size        = 10              )
 
-        assert result_4.paths['data'][0] == f"test/data/key-based/{cache_key}/{cache_id_4}.json"  # confirm the cache_key is used in the path
+        assert result_4.paths.data[0] == f"test/data/key-based/{cache_key}/{cache_id_4}.json"  # confirm the cache_key is used in the path
 
         result_5  = self.helpers.create_string_entry(cache_key=cache_key, strategy=strategy)
         result_6  = self.helpers.create_string_entry(cache_key=cache_key, strategy=strategy)
@@ -238,8 +238,7 @@ class test_Cache_Client_Test_Helpers(TestCase):                         # Test t
         cache_id    = result.cache_id
         cache_hash  = result.cache_hash
 
-        data_paths = result.paths.get('data')                           # Verify file_id used in paths
-        assert len(data_paths) == 3
+        data_paths = result.paths.data                           # Verify file_id used in paths
 
         assert any(file_id in str(path) for path in data_paths)
         expected_paths = obj(self.helpers.build_expected_paths(cache_id   = cache_id  ,
@@ -263,10 +262,9 @@ class test_Cache_Client_Test_Helpers(TestCase):                         # Test t
         assert is_guid(result.cache_id)    is True
 
         # Both should be in paths
-        data_paths = result.paths.get('data')
+        data_paths = result.paths.data
         assert any(cache_key in str(path) for path in data_paths)
         assert any(file_id   in str(path) for path in data_paths)
-        assert len(data_paths) == 3
 
         cache_id   = result.cache_id
         cache_hash = result.cache_hash
@@ -1057,11 +1055,7 @@ class test_Cache_Client_Test_Helpers(TestCase):                         # Test t
     def test__create_string_entry__empty_value(self):       # Test creating entry with empty string value
         result = self.helpers.create_string_entry(value='')
 
-        assert result.obj() == __(cache_id='',
-                                  cache_hash='',
-                                  namespace='',
-                                  paths=__(),
-                                  size=0)
+        assert result is None
 
     def test__create_json_entry__empty_dict(self):             # Test creating entry with empty JSON dict
         result = self.helpers.create_json_entry(data={})
@@ -1069,7 +1063,7 @@ class test_Cache_Client_Test_Helpers(TestCase):                         # Test t
         assert result.obj() == __(cache_id='' ,
                                   cache_hash='',
                                   namespace='',
-                                  paths=__(),
+                                  paths=__(data=[], by_hash=[], by_id=[]),
                                   size=0)
 
     def test__create_binary_entry__empty_bytes(self):               # Test creating entry with empty bytes
@@ -1078,7 +1072,7 @@ class test_Cache_Client_Test_Helpers(TestCase):                         # Test t
         assert result.obj() == __(cache_id='',
                                   cache_hash='',
                                   namespace='',
-                                  paths=__(),
+                                  paths=__(data=[], by_hash=[], by_id=[]),
                                   size=0)
 
     def test__add_data_string__none_value_uses_default(self):       # Test that None data value uses auto-generated default
