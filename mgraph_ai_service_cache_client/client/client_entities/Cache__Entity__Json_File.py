@@ -5,7 +5,6 @@
 from mgraph_ai_service_cache_client.client.client_entities.Cache__Entity__Data_File         import Cache__Entity__Data_File
 from mgraph_ai_service_cache_client.schemas.cache.data.Schema__Cache__Data__Store__Response import Schema__Cache__Data__Store__Response
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Data_Type              import Enum__Cache__Data_Type
-from osbot_utils.type_safe.type_safe_core.decorators.type_safe                              import type_safe
 
 
 class Cache__Entity__Json_File(Cache__Entity__Data_File):                   # JSON-focused data file
