@@ -60,7 +60,7 @@ class test_Service__Fast_API__Client__Admin__Storage(TestCase):                 
                                                               strategy     = "direct"   ,
                                                               namespace    = namespace  )
         cache_id      = store_result.cache_id
-        content_files = store_result.paths.get('data', [])
+        content_files = store_result.paths.data
         expected_path = f'test-admin-storage/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/{cache_id}.json'
         file_path     = content_files[0]
         result        = self.admin_storage.file__exists(file_path)
@@ -80,7 +80,7 @@ class test_Service__Fast_API__Client__Admin__Storage(TestCase):                 
                                                               cache_hash   = cache_hash ,
                                                               strategy     = "direct"   ,
                                                               namespace    = namespace  )
-        file_path = store_result.paths['data'][0]
+        file_path = store_result.paths.data[0]
         result    = self.admin_storage.file__bytes(file_path)
         assert type(result) is bytes
         assert len(result)   > 0
@@ -94,7 +94,7 @@ class test_Service__Fast_API__Client__Admin__Storage(TestCase):                 
                                                               cache_hash   = cache_hash ,
                                                               strategy     = "direct"   ,
                                                               namespace    = namespace  )
-        file_path    = store_result.paths['data'][0]
+        file_path    = store_result.paths.data[0]
         result       = self.admin_storage.file__json(file_path)
         assert type(result) is dict
         assert result       == test_data
@@ -215,7 +215,7 @@ class test_Service__Fast_API__Client__Admin__Storage(TestCase):                 
                                                               cache_hash   = cache_hash ,
                                                               strategy     = "direct"   ,
                                                               namespace    = namespace  )
-        file_path     = store_result.paths['data'][0]
+        file_path     = store_result.paths.data[0]
         exists_result = self.admin_storage.file__exists(file_path)
         assert exists_result == { 'exists': True,
                                   'path'  : file_path}
@@ -258,7 +258,7 @@ class test_Service__Fast_API__Client__Admin__Storage(TestCase):                 
                                                               cache_hash   = cache_hash ,
                                                               strategy     = "direct"   ,
                                                               namespace    = namespace  )
-        file_path      = store_result.paths['data'][0]
+        file_path      = store_result.paths.data[0]
         exists_result  = self.admin_storage.file__exists(file_path)
         assert exists_result['exists'] is True
         json_result    = self.admin_storage.file__json(file_path)

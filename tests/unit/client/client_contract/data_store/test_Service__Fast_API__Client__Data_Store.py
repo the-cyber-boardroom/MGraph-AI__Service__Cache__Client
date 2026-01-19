@@ -458,12 +458,7 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
                                                     namespace = namespace ,
                                                     data      = ''        )
 
-        # Verify: Stored successfully
-        assert store_result.file_size is None
-
-        # Verify: Can retrieve empty string
-        data_file_id = store_result.file_id
-        assert data_file_id is None
+        assert store_result is None
 
     def test__data_store__empty_json(self):
         """Test storing empty JSON object"""
@@ -477,15 +472,7 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
                                                   namespace = namespace ,
                                                   data      = {}        )
 
-        # Verify: Stored successfully
-        assert store_result.file_size is None
-
-        # Verify: Retrieve empty dict
-        data_file_id = store_result.file_id
-        retrieved    = self.data_retrieve.data__json__with__id(cache_id     = cache_id     ,
-                                                               namespace    = namespace    ,
-                                                               data_file_id = data_file_id )
-        assert retrieved is None
+        assert store_result is None
 
     def test__data_store__empty_binary(self):
         """Test storing empty binary data"""
@@ -499,15 +486,8 @@ class test_Service__Fast_API__Client__Data_Store__Comprehensive(TestCase):      
                                                     namespace = namespace ,
                                                     data      = b''       )
 
-        # Verify: Stored successfully
-        assert store_result.file_size is None
+        assert store_result is None
 
-        # Verify: Retrieve empty bytes
-        data_file_id = store_result.file_id
-        retrieved    = self.data_retrieve.data__binary__with__id(cache_id     = cache_id     ,
-                                                                 namespace    = namespace    ,
-                                                                 data_file_id = data_file_id )
-        assert retrieved == None
 
     def test__data_store__large_string(self):
         """Test storing large string data (1MB+)"""

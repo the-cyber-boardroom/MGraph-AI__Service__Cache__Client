@@ -290,7 +290,6 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
             assert is_guid(result.cache_id) is True
             assert result.namespace         == namespace
             assert result.size              == 21
-            assert len(result.paths)        == 3
 
     def test_retrieve__string(self):
         strategy   = Enum__Cache__Store__Strategy.DIRECT
@@ -663,12 +662,14 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
             strategy   = Enum__Cache__Store__Strategy.DIRECT
             namespace  = 'pytests'
             cache_key  = 'test/json/cache/key'
+            file_id    = 'an-file'
             body       = {'answer': 42, 'question': 'meaning of life', 'cache_key': cache_key}
 
             result     = _.store__json__cache_key(namespace  = namespace,
                                                   strategy   = strategy ,
                                                   cache_key  = cache_key,
-                                                  body       = body     )
+                                                  body       = body     ,
+                                                  file_id    = file_id  )
 
             cache_id   = result.cache_id
             cache_hash = result.cache_hash
@@ -686,6 +687,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
             strategy        = Enum__Cache__Store__Strategy.DIRECT
             namespace       = 'pytests'
             cache_key       = 'test/json/cache/key'
+            file_id         = 'an-file'
             body            = {'answer': 42, 'question': 'meaning of life', 'cache_key': cache_key}
             json_field_path = "answer"
 
@@ -693,7 +695,8 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                                                   strategy        = strategy       ,
                                                   cache_key       = cache_key      ,
                                                   body            = body           ,
-                                                  json_field_path = json_field_path)
+                                                  json_field_path = json_field_path,
+                                                  file_id         = file_id        )
 
             cache_id   = result.cache_id
             cache_hash = result.cache_hash
@@ -784,13 +787,15 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
             namespace = 'pytests'
             cache_key = 'temporal/test/key'
             body      = {'test': 'temporal data', 'timestamp': random_string()}
+            file_id   = 'an-file'
 
             # Test TEMPORAL strategy
             result_temporal = _.store__json__cache_key(
                 namespace = namespace,
                 strategy  = Enum__Cache__Store__Strategy.TEMPORAL,
                 cache_key = cache_key,
-                body      = body
+                body      = body     ,
+                file_id   = file_id
             )
 
             # Test TEMPORAL_LATEST strategy
@@ -798,7 +803,8 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                 namespace = namespace,
                 strategy  = Enum__Cache__Store__Strategy.TEMPORAL_LATEST,
                 cache_key = cache_key,
-                body      = body
+                body      = body     ,
+                file_id   = file_id
             )
 
             assert is_guid(result_temporal.cache_id) is True
@@ -828,7 +834,8 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                 namespace = namespace,
                 strategy  = strategy,
                 cache_key = json_key,
-                body      = json_body
+                body      = json_body,
+                file_id   = 'an-file'
             )
 
             # Store binary
@@ -984,7 +991,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
             assert result.size > 0
 
             # Verify that the file_id is used in the data path instead of cache_id
-            data_paths = paths.get('data', [])
+            data_paths = paths.data
             assert len(data_paths) == 3  # .json, .config, .metadata
 
             # Check that file_id appears in the data paths
@@ -1020,7 +1027,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
             assert is_guid(cache_id) is True
 
             # Verify file_id is used in paths
-            data_paths = paths.get('data', [])
+            data_paths = paths.data
             assert any(file_id in path for path in data_paths)
             assert f'{cache_key}/{file_id}.json' in data_paths[0]
 
@@ -1055,7 +1062,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
             assert is_guid(cache_id) is True
 
             # Verify file_id is used in paths
-            data_paths = paths.get('data', [])
+            data_paths = paths.data
             assert any(file_id in path for path in data_paths)
             assert f'{cache_key}/{file_id}.bin' in data_paths[0]
 
@@ -1144,7 +1151,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                 )
 
                 cache_id   = result.cache_id
-                data_paths = result.paths.get('data', [])
+                data_paths = result.paths.data
 
                 assert is_guid(cache_id) is True
                 assert any(file_id in path for path in data_paths)
@@ -1178,14 +1185,14 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
             paths    = result.paths
 
             # Verify data paths use file_id
-            data_paths = paths.get('data', [])
+            data_paths = paths.data
             expected_data_base = f'{namespace}/data/key-based/{cache_key}/{file_id}.json'
             assert expected_data_base in data_paths[0]
             assert f'{expected_data_base}.config' in data_paths[1]
             assert f'{expected_data_base}.metadata' in data_paths[2]
 
             # Verify by_id paths still use cache_id (first 2 and next 2 chars for sharding)
-            by_id_paths = paths.get('by_id', [])
+            by_id_paths = paths.by_id
             cache_id_prefix = f'{cache_id[0:2]}/{cache_id[2:4]}'
             assert any(cache_id_prefix in path for path in by_id_paths)
 
@@ -1221,7 +1228,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                 }
 
                 # Verify each file is stored with the correct file_id
-                data_paths = result.paths.get('data', [])
+                data_paths = result.paths.data
                 assert any(file_id in path for path in data_paths)
 
             # All should have different cache_ids
@@ -1266,7 +1273,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
                 results[strategy.value] = cache_id
 
                 # Verify file_id is in the paths
-                data_paths = result.paths.get('data', [])
+                data_paths = result.paths.data
                 assert any(file_id in path for path in data_paths)
 
                 # Verify retrieval
@@ -1339,7 +1346,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
             )
 
             json_cache_id = json_result.cache_id
-            json_paths    = json_result.paths.get('data', [])
+            json_paths    = json_result.paths.data
 
             assert is_guid(json_cache_id) is True
             assert any(json_file_id in path for path in json_paths)
@@ -1358,7 +1365,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
             )
 
             binary_cache_id = binary_result.cache_id
-            binary_paths    = binary_result.paths.get('data', [])
+            binary_paths    = binary_result.paths.data
 
             assert is_guid(binary_cache_id) is True
             assert any(binary_file_id in path for path in binary_paths)

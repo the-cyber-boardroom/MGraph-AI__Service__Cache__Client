@@ -1,3 +1,6 @@
+from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__File__Cache_Key import Safe_Str__Cache__File__Cache_Key
+from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__File__File_Id import Safe_Str__Cache__File__File_Id
+from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__Namespace import Safe_Str__Cache__Namespace
 from osbot_utils.type_safe.Type_Safe                                                        import Type_Safe
 from osbot_utils.type_safe.primitives.core.Safe_UInt                                        import Safe_UInt
 from osbot_utils.type_safe.primitives.domains.common.safe_str.Safe_Str__Text                import Safe_Str__Text
@@ -11,16 +14,16 @@ from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Stra
 
 # Base response metadata that all responses share
 class Schema__Cache__Metadata(Type_Safe):                                             # Metadata about cached entry
-    cache_id         : Cache_Id                  = None                            # Unique ID of this cache entry
-    cache_hash       : Safe_Str__Cache_Hash         = None                            # Content hash
-    cache_key        : Safe_Str__Text               = None                            # Optional semantic key
-    file_id          : Safe_Str__Id                 = None                            # Optional file ID
-    namespace        : Safe_Str__Id                 = None                            # Namespace for isolation
-    strategy         : Enum__Cache__Store__Strategy = None                            # Storage strategy used
-    stored_at        : Timestamp_Now                = None                            # When stored (timestamp)
-    file_type        : Enum__Cache__Data_Type       = None                            # Type of data
-    content_encoding : Safe_Str__Id                 = None                            # e.g., gzip
-    content_size     : Safe_UInt                    = None                            # Size in bytes
+    cache_id         : Cache_Id                         = None                        # Unique ID of this cache entry
+    cache_hash       : Safe_Str__Cache_Hash             = None                        # Content hash
+    cache_key        : Safe_Str__Cache__File__Cache_Key = None                        # Optional semantic key
+    file_id          : Safe_Str__Cache__File__File_Id   = None                        # Optional file ID
+    namespace        : Safe_Str__Cache__Namespace       = None                        # Namespace for isolation
+    strategy         : Enum__Cache__Store__Strategy     = None                        # Storage strategy used
+    stored_at        : Timestamp_Now                    = None                        # When stored (timestamp)
+    file_type        : Enum__Cache__Data_Type           = None                        # Type of data
+    content_encoding : Safe_Str__Id                     = None                        # e.g., gzip
+    content_size     : Safe_UInt                        = None                        # Size in bytes
 
 
 

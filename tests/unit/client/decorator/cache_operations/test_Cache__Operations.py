@@ -4,7 +4,6 @@ from osbot_fast_api_serverless.fast_api.Serverless__Fast_API__Config            
 from osbot_utils.helpers.cache.Cache__Hash__Generator                                               import Cache__Hash__Generator
 from osbot_utils.testing.__                                                                         import __, __SKIP__
 from osbot_utils.testing.__helpers                                                                  import obj
-from osbot_utils.type_safe.primitives.domains.common.safe_str.Safe_Str__Text                        import Safe_Str__Text
 from osbot_utils.utils.Objects                                                                      import base_classes
 from osbot_utils.type_safe.Type_Safe                                                                import Type_Safe
 from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id                     import Safe_Str__Id
@@ -85,7 +84,7 @@ class test_Cache__Operations(TestCase):             # Test Cache__Operations usi
         assert type(metadata) is Schema__Cache__Metadata
         assert metadata.obj() == __(cache_id    = cache_id,
                                     cache_hash  = cache_hash,
-                                    cache_key   = Safe_Str__Text(cache_key),
+                                    cache_key   = cache_key,
                                     file_id     ='test-string',
                                     namespace   ='test-operations',
                                     strategy    ='key_based',

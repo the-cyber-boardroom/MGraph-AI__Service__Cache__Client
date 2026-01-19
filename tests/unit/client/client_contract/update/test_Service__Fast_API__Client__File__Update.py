@@ -1,13 +1,12 @@
 from unittest                                                                                               import TestCase
+from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__File__Cache_Hash                import Safe_Str__Cache__File__Cache_Hash
+from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__Namespace                       import Safe_Str__Cache__Namespace
 from osbot_utils.testing.__                                                                                 import __, __SKIP__
 from osbot_utils.type_safe.Type_Safe                                                                        import Type_Safe
 from osbot_utils.type_safe.primitives.core.Safe_UInt                                                        import Safe_UInt
-from osbot_utils.type_safe.primitives.domains.cryptography.safe_str.Safe_Str__Cache_Hash                    import Safe_Str__Cache_Hash
 from osbot_utils.type_safe.primitives.domains.identifiers.Cache_Id                                          import Cache_Id
-from osbot_utils.type_safe.primitives.domains.identifiers.Obj_Id import Obj_Id
-from osbot_utils.type_safe.primitives.domains.identifiers.Random_Guid import Random_Guid
+from osbot_utils.type_safe.primitives.domains.identifiers.Random_Guid                                       import Random_Guid
 from osbot_utils.type_safe.primitives.domains.identifiers.safe_int.Timestamp_Now                            import Timestamp_Now
-from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id                             import Safe_Str__Id
 from osbot_utils.utils.Objects                                                                              import base_classes
 from mgraph_ai_service_cache_client.client.client_contract.update.Service__Fast_API__Client__File__Update   import Service__Fast_API__Client__File__Update
 from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Update__Response                           import Schema__Cache__Update__Response
@@ -26,7 +25,7 @@ class test_Service__Fast_API__Client__File__Update(TestCase):
         cls.update_client   = cls.client_cache_service.update()
         cls.store_client    = cls.client_cache_service.store()                                 # Store client for creating test entries
         cls.retrieve_client = cls.client_cache_service.retrieve()
-        cls.test_namespace  = Safe_Str__Id("test-client-update")
+        cls.test_namespace  = "test-client-update"
 
         # Test data versions
         cls.test_string_v1 = "original string data"
@@ -83,14 +82,14 @@ class test_Service__Fast_API__Client__File__Update(TestCase):
                                             body      = self.test_string_v2   )
 
             assert type(update_result) is Schema__Cache__Update__Response
-            assert update_result.cache_id         == cache_id                       # Same ID
-            assert update_result.cache_hash       == cache_hash                     # V1: hash unchanged
-            assert type(update_result.cache_hash) is Safe_Str__Cache_Hash
+            assert update_result.cache_id         == cache_id                               # Same ID
+            assert update_result.cache_hash       == cache_hash                             # V1: hash unchanged
+            assert type(update_result.cache_hash) is Safe_Str__Cache__File__Cache_Hash
             assert update_result.namespace        == self.test_namespace
-            assert update_result.updated_content  == True                           # Content updated
-            assert update_result.updated_hash     == False                          # V1: hash not updated
-            assert update_result.updated_metadata == False                          # V1: metadata not updated
-            assert update_result.updated_id_ref   == False                          # V1: ID ref not updated
+            assert update_result.updated_content  == True                                   # Content updated
+            assert update_result.updated_hash     == False                                  # V1: hash not updated
+            assert update_result.updated_metadata == False                                  # V1: metadata not updated
+            assert update_result.updated_id_ref   == False                                  # V1: ID ref not updated
 
             # Verify content actually updated
             retrieve_result = self.retrieve_client.retrieve__cache_id(cache_id  = str(cache_id),
@@ -125,8 +124,8 @@ class test_Service__Fast_API__Client__File__Update(TestCase):
             cache_hash    = create_result.cache_hash
 
             update_result = _.update__binary(cache_id  = cache_id             ,    # Update entry
-                                            namespace = self.test_namespace   ,
-                                            body      = self.test_binary_v2   )
+                                             namespace = self.test_namespace   ,
+                                             body      = self.test_binary_v2   )
 
             assert type(update_result) is Schema__Cache__Update__Response
             assert update_result.cache_id   == cache_id                             # Same ID
@@ -176,19 +175,7 @@ class test_Service__Fast_API__Client__File__Update(TestCase):
             result = _.update__string(cache_id  = nonexistent_id       ,
                                       namespace = self.test_namespace   ,
                                       body      = "some data"           )
-            assert type(result) is Schema__Cache__Update__Response
-            assert result.obj() == __( cache_id=__SKIP__,                           # todo: BUG at least this should be the cache_id provided, but look at a better way to handle this (maybe add the status and message variables)
-                                       cache_hash='',
-                                       namespace='',
-                                       paths=[],
-                                       size=0,
-                                       timestamp=__SKIP__,
-                                       updated_content=False,
-                                       updated_hash=False,
-                                       updated_metadata=False,
-                                       updated_id_ref=False)
-
-            assert result.cache_id != nonexistent_id                                # todo: BUG: see why this is happening
+            assert result is None
 
 
     def test_update__multiple_sequential_updates(self):                              # Test multiple updates on same entry
@@ -246,7 +233,7 @@ class test_Service__Fast_API__Client__File__Update(TestCase):
 
         with self.update_client as _:
             for strategy in strategies:
-                namespace = Safe_Str__Id(f"upd-client-{strategy.value}")
+                namespace = f"upd-client-{strategy.value}"
 
                 # Create with strategy
                 if isinstance(self.test_string_v1, bytes):
@@ -299,8 +286,8 @@ class test_Service__Fast_API__Client__File__Update(TestCase):
 
             # Verify field types
             assert type(update_result.cache_id)         is Cache_Id
-            assert type(update_result.cache_hash)       is Safe_Str__Cache_Hash
-            assert type(update_result.namespace)        is Safe_Str__Id
+            assert type(update_result.cache_hash)       is Safe_Str__Cache__File__Cache_Hash
+            assert type(update_result.namespace)        is Safe_Str__Cache__Namespace
             assert type(update_result.size)             is Safe_UInt
             assert type(update_result.timestamp)        is Timestamp_Now
             assert type(update_result.updated_content)  is bool
