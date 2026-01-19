@@ -121,11 +121,11 @@ class test_Cache__Entity__Data_File(TestCase):
 
             assert result is None
 
-    def test_exists(self):                                                                  # Test checking content existence
+    def test_exists__string(self):                                                                  # Test checking content existence
         with self.data_file() as _:
             _.store_string(self.sample_html)
 
-            result = _.exists()
+            result = _.exists__string()
 
             assert result is True
 
@@ -135,7 +135,7 @@ class test_Cache__Entity__Data_File(TestCase):
                                namespace    = self.namespace   ,
                                data_key     = 'nonexistent'    ,
                                data_file_id = 'file'           ) as _:
-            result = _.exists()
+            result = _.exists__string()
 
             assert result is False
 
@@ -207,19 +207,19 @@ class test_Cache__Entity__Data_File(TestCase):
             assert result is True
             assert _.json() == {'v': 2}
 
-    def test_delete(self):                                                                  # Test deleting content
+    def test_delete__data_type(self):                                                                  # Test deleting content
         with Cache__Entity__Data_File(cache_client = self.cache_client,
-                               cache_id     = self.cache_id    ,
-                               namespace    = self.namespace   ,
-                               data_key     = 'delete-test'    ,
-                               data_file_id = 'data'           ) as _:
+                                      cache_id     = self.cache_id    ,
+                                      namespace    = self.namespace   ,
+                                      data_key     = 'delete-test'    ,
+                                      data_file_id = 'data'           ) as _:
             _.store_string('to delete')
-            assert _.exists() is True
+            assert _.exists__string() is True
 
-            result = _.delete()
+            result = _.delete__data_type()
 
             assert result is True
-            assert _.exists() is False
+            assert _.exists__string() is False
 
 
     # ═══════════════════════════════════════════════════════════════════════════

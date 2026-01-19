@@ -52,8 +52,8 @@ class Cache__Entity__Data_File(Type_Safe):                                      
                                                                                 data_file_id = self.data_file_id)
 
     @type_safe
-    def exists(self                                                    ,                    # Check if content exists
-               data_type: Enum__Cache__Data_Type = Enum__Cache__Data_Type.STRING
+    def exists__data_type(self                                                    ,                    # Check if content exists
+               data_type: Enum__Cache__Data_Type
           ) -> bool:
         result = self.cache_client.data().exists().data__exists__with__id_and_key(cache_id     = self.cache_id    ,
                                                                                   namespace    = self.namespace   ,
@@ -63,6 +63,12 @@ class Cache__Entity__Data_File(Type_Safe):                                      
         if result:
             return result.exists
         return False
+
+    def exists__json(self) -> bool:
+       return self.exists__data_type(data_type=Enum__Cache__Data_Type.JSON)
+
+    def exists__string(self) -> bool:
+       return self.exists__data_type(data_type= Enum__Cache__Data_Type.STRING)
 
     @type_safe
     def store_string(self, content: str) -> Schema__Cache__Data__Store__Response:           # Store string content
@@ -103,9 +109,9 @@ class Cache__Entity__Data_File(Type_Safe):                                      
         return False
 
     @type_safe
-    def delete(self                                                    ,                    # Delete content
-               data_type: Enum__Cache__Data_Type = Enum__Cache__Data_Type.STRING
-          ) -> bool:
+    def delete__data_type(self                                                    ,                    # Delete content
+                          data_type: Enum__Cache__Data_Type = Enum__Cache__Data_Type.STRING
+                     ) -> bool:
         result = self.cache_client.data().delete().delete__data__file__with__id_and_key(cache_id     = self.cache_id    ,
                                                                                         namespace    = self.namespace   ,
                                                                                         data_key     = self.data_key    ,
