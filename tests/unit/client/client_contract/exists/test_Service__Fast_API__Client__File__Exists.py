@@ -1,8 +1,8 @@
-from types import NoneType
+from types                                                                                                import NoneType
 from unittest                                                                                             import TestCase
 from mgraph_ai_service_cache_client.schemas.cache.file.Schema__Cache__Exists__Response                    import Schema__Cache__Exists__Response
+from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__File__Cache_Hash              import Safe_Str__Cache__File__Cache_Hash
 from osbot_utils.type_safe.primitives.domains.identifiers.Cache_Id                                        import Cache_Id
-from osbot_utils.type_safe.primitives.domains.cryptography.safe_str.Safe_Str__Cache_Hash                  import Safe_Str__Cache_Hash
 from mgraph_ai_service_cache_client.client.client_contract.exists.Service__Fast_API__Client__File__Exists import Service__Fast_API__Client__File__Exists
 from tests.unit.Cache_Client__Fast_API__Test_Objs                                                         import client_cache_service
 
@@ -38,7 +38,7 @@ class test_Service__Fast_API__Client__File__Exists(TestCase):
 
         # Non-existent test data
         cls.non_existent_cache_id = Cache_Id()
-        cls.non_existent_hash     = Safe_Str__Cache_Hash("0000000000000000")
+        cls.non_existent_hash     = Safe_Str__Cache__File__Cache_Hash("0000000000000000")
 
     def test__setUpClass(self):
         with self.client__exists as _:
