@@ -313,7 +313,7 @@ Note: The default Safe_Str is quite restrictive (only letters and numbers), so y
 
 ```python
 from osbot_utils.type_safe.primitives.safe_int.Safe_Int   import Safe_Int
-from osbot_utils.type_safe.primitives.safe_uint.Safe_UInt import Safe_UInt
+from osbot_utils.type_safe.primitives.core.Safe_UInt.Safe_UInt import Safe_UInt
 
 # Age with realistic bounds
 class Safe_UInt__Age(Safe_UInt):
@@ -812,7 +812,7 @@ from osbot_utils.type_safe.primitives.safe_str.web.Safe_Str__IP_Address         
 
 # Safe Numbers  
 from osbot_utils.type_safe.primitives.safe_int.Safe_Int                             import Safe_Int
-from osbot_utils.type_safe.primitives.safe_uint.Safe_UInt__Port                     import Safe_UInt__Port
+from osbot_utils.type_safe.primitives.core.Safe_UInt.Safe_UInt__Port                     import Safe_UInt__Port
 from osbot_utils.type_safe.primitives.safe_float.Safe_Float__Money                  import Safe_Float__Money
 
 # Identifiers

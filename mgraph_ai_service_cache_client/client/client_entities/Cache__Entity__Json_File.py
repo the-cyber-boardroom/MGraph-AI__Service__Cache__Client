@@ -16,10 +16,10 @@ class Cache__Entity__Json_File(Cache__Entity__Data_File):                   # JS
         return self.json()
 
     def store(self, data: dict) -> Schema__Cache__Data__Store__Response:    # Store JSON content
-        return self.store_json(data)
+        return self.store__json(data)
 
     def update(self, data: dict) -> bool:                                   # Update JSON content
-        return self.update_json(data)
+        return self.update__json(data)
 
     def delete(self) -> bool:                                               # Delete JSON file
         return super().delete__data_type(data_type=Enum__Cache__Data_Type.JSON)

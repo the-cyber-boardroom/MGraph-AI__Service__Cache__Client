@@ -78,7 +78,7 @@ class test_Cache__Entity__Data_File(TestCase):
 
     def test_store_string(self):                                                            # Test storing string content
         with self.data_file() as _:
-            result = _.store_string(self.sample_html)
+            result = _.store__string(self.sample_html)
 
             assert type(result)      is Schema__Cache__Data__Store__Response
             assert result.cache_id   == self.cache_id
@@ -98,7 +98,7 @@ class test_Cache__Entity__Data_File(TestCase):
 
     def test_string(self):                                                                  # Test retrieving string content
         with self.data_file() as _:
-            result = _.store_string(self.sample_html)
+            result = _.store__string(self.sample_html)
             assert _.string()    == self.sample_html
             assert result.obj()  == __(cache_id=self.cache_id,
                                        data_files_created=['test-cache-data-file/data/key-based/test/data-file/root/data/html/raw.txt'],
@@ -123,7 +123,7 @@ class test_Cache__Entity__Data_File(TestCase):
 
     def test_exists__string(self):                                                                  # Test checking content existence
         with self.data_file() as _:
-            _.store_string(self.sample_html)
+            _.store__string(self.sample_html)
 
             result = _.exists__string()
 
@@ -146,7 +146,7 @@ class test_Cache__Entity__Data_File(TestCase):
                                data_key     = 'test-json'      ,
                                data_file_id = 'data'           ) as _:
             data   = {'key': 'value', 'count': 42}
-            result = _.store_json(data)
+            result = _.store__json(data)
 
             assert type(result)     is Schema__Cache__Data__Store__Response
             assert result.data_type == 'json'
@@ -167,7 +167,7 @@ class test_Cache__Entity__Data_File(TestCase):
                                data_key     = 'test-json-get'  ,
                                data_file_id = 'data'           ) as _:
             data  = {'key': 'value', 'count': 42}
-            result = _.store_json(data)
+            result = _.store__json(data)
 
             assert _.json() == data
 
@@ -187,9 +187,9 @@ class test_Cache__Entity__Data_File(TestCase):
                                namespace    = self.namespace   ,
                                data_key     = 'update-str'     ,
                                data_file_id = 'data'           ) as _:
-            _.store_string('original')
+            _.store__string('original')
 
-            result = _.update_string('updated')
+            result = _.update__string('updated')
 
             assert result is True
             assert _.string() == 'updated'
@@ -200,9 +200,9 @@ class test_Cache__Entity__Data_File(TestCase):
                                namespace    = self.namespace   ,
                                data_key     = 'update-json'    ,
                                data_file_id = 'data'           ) as _:
-            _.store_json({'v': 1})
+            _.store__json({'v': 1})
 
-            result = _.update_json({'v': 2})
+            result = _.update__json({'v': 2})
 
             assert result is True
             assert _.json() == {'v': 2}
@@ -213,7 +213,7 @@ class test_Cache__Entity__Data_File(TestCase):
                                       namespace    = self.namespace   ,
                                       data_key     = 'delete-test'    ,
                                       data_file_id = 'data'           ) as _:
-            _.store_string('to delete')
+            _.store__string('to delete')
             assert _.exists__string() is True
 
             result = _.delete__data_type()
@@ -240,7 +240,7 @@ class test_Cache__Entity__Data_File(TestCase):
         assert data_file.data_file_id == 'test'
 
         # Use it
-        data_file.store_string('via factory')
+        data_file.store__string('via factory')
         assert data_file.string() == 'via factory'
 
     def test_chained_factory_usage(self):                                                   # Test chained entity → data_file usage
@@ -249,7 +249,7 @@ class test_Cache__Entity__Data_File(TestCase):
                                namespace    = self.namespace   )
 
         # One-liner to store and retrieve
-        entity.data_file('chained', 'test').store_string('chained content')
+        entity.data_file('chained', 'test').store__string('chained content')
         content = entity.data_file('chained', 'test').string()
 
         assert content == 'chained content'
