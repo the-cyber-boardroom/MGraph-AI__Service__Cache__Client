@@ -3,10 +3,10 @@ from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__File
 from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__File__File_Id   import Safe_Str__Cache__File__File_Id
 from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__Namespace       import Safe_Str__Cache__Namespace
 from osbot_utils.type_safe.Type_Safe                                                        import Type_Safe
-from osbot_utils.type_safe.primitives.domains.files.safe_str.Safe_Str__File__Path           import Safe_Str__File__Path
 from osbot_utils.type_safe.primitives.domains.identifiers.Cache_Id                          import Cache_Id
 from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id             import Safe_Str__Id
 from mgraph_ai_service_cache_client.schemas.cache.data.Schema__Cache__Data__Store__Response import Schema__Cache__Data__Store__Response
+from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Namespace      import Safe_Str__Namespace
 from osbot_utils.type_safe.type_safe_core.decorators.type_safe                              import type_safe
 
 
@@ -176,10 +176,10 @@ class Service__Fast_API__Client__Data__Store(Type_Safe):
         else:
             return None
 
-    def data__store_string__with__id_and_key(self, cache_id     : str                   ,
-                                                   namespace    : Safe_Str__Id          ,
-                                                   data_key     : Safe_Str__File__Path  ,
-                                                   data_file_id : Safe_Str__Id          ,
+    def data__store_string__with__id_and_key(self, cache_id     : Cache_Id                         ,
+                                                   namespace    : Safe_Str__Namespace              ,
+                                                   data_key     : Safe_Str__Cache__File__Data_Key  ,
+                                                   data_file_id : Safe_Str__Cache__File__File_Id   ,
                                                    body: str
                                              ) -> Schema__Cache__Data__Store__Response:                              # Auto-generated from endpoint post__data__store_string__with__id_and_key
 

@@ -14,21 +14,24 @@
 # ═══════════════════════════════════════════════════════════════════════════════
 from typing import List
 
-from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client import Cache__Service__Fast_API__Client
-from mgraph_ai_service_cache_client.client.client_entities.Cache__Entity__Data_File         import Cache__Entity__Data_File
-from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Retrieve__Success          import Schema__Cache__Retrieve__Success
-from mgraph_ai_service_cache_client.schemas.cache.data.Schema__Cache__Data__List__Response  import Schema__Cache__Data__List__Response
-from mgraph_ai_service_cache_client.schemas.cache.data.Schema__Cache__Data__Store__Response import Schema__Cache__Data__Store__Response
-from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Data_Type              import Enum__Cache__Data_Type
-from mgraph_ai_service_cache_client.schemas.cache.file.Schema__Cache__File__Metadata        import Schema__Cache__File__Metadata
-from mgraph_ai_service_cache_client.schemas.cache.file.Schema__Cache__File__Refs            import Schema__Cache__File__Refs
-from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__File__Data_Key  import Safe_Str__Cache__File__Data_Key
-from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__File__File_Id   import Safe_Str__Cache__File__File_Id
-from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__Namespace       import Safe_Str__Cache__Namespace
-from osbot_utils.type_safe.Type_Safe                                                        import Type_Safe
-from osbot_utils.type_safe.primitives.domains.files.safe_str.Safe_Str__File__Path           import Safe_Str__File__Path
-from osbot_utils.type_safe.primitives.domains.identifiers.Cache_Id                          import Cache_Id
-from osbot_utils.type_safe.type_safe_core.decorators.type_safe                              import type_safe
+from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client  import Cache__Service__Fast_API__Client
+from mgraph_ai_service_cache_client.client.client_entities.Cache__Entity__Data_File          import Cache__Entity__Data_File
+from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Retrieve__Success           import Schema__Cache__Retrieve__Success
+from mgraph_ai_service_cache_client.schemas.cache.data.Schema__Cache__Data__List__Response   import Schema__Cache__Data__List__Response
+from mgraph_ai_service_cache_client.schemas.cache.data.Schema__Cache__Data__Store__Response  import Schema__Cache__Data__Store__Response
+from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Data_Type               import Enum__Cache__Data_Type
+from mgraph_ai_service_cache_client.schemas.cache.file.Schema__Cache__File__Metadata         import Schema__Cache__File__Metadata
+from mgraph_ai_service_cache_client.schemas.cache.file.Schema__Cache__File__Refs             import Schema__Cache__File__Refs
+from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__File__Cache_Hash import Safe_Str__Cache__File__Cache_Hash
+from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__File__Data_Key   import Safe_Str__Cache__File__Data_Key
+from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__File__File_Id    import Safe_Str__Cache__File__File_Id
+from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__Namespace        import Safe_Str__Cache__Namespace
+from osbot_utils.testing.__                                                                  import __
+from osbot_utils.testing.__helpers                                                           import obj
+from osbot_utils.type_safe.Type_Safe                                                         import Type_Safe
+from osbot_utils.type_safe.primitives.domains.files.safe_str.Safe_Str__File__Path            import Safe_Str__File__Path
+from osbot_utils.type_safe.primitives.domains.identifiers.Cache_Id                           import Cache_Id
+from osbot_utils.type_safe.type_safe_core.decorators.type_safe                               import type_safe
 
 
 class Cache__Entity(Type_Safe):                                                             # Bound client for entity operations
@@ -46,6 +49,9 @@ class Cache__Entity(Type_Safe):                                                 
     def entry__json(self) -> dict:                                                                # Get entry data as dict
         return self.cache_client.retrieve().retrieve__cache_id__json(cache_id  = self.cache_id ,
                                                                      namespace = self.namespace)
+
+    def entry__json__obj(self) -> __:                                                                # Get entry data as dict
+        return obj(self.entry__json())
 
     @type_safe
     def entry__with_metadata(self) -> Schema__Cache__Retrieve__Success:                            # Get full entry with metadata
@@ -222,3 +228,23 @@ class Cache__Entity(Type_Safe):                                                 
                                         namespace    = self.namespace   ,
                                         data_key     = data_key         ,
                                         data_file_id = data_file_id     )
+
+    # ═══════════════════════════════════════════════════════════════════════════
+    # Cache Operations (direct access to cache raw files)
+    # ═══════════════════════════════════════════════════════════════════════════
+
+    @type_safe
+    def cache__hash(self) -> Safe_Str__Cache__File__Cache_Hash:                             # Get the cache has from the refs file
+        refs       = self.refs()
+        if refs:
+            return refs.cache_hash
+        else:
+            return None
+
+    @type_safe
+    def cache__file__hash(self) -> dict:                                                    # get the contents of the hash value for this cache_id
+        cache_hash = self.cache__hash()
+        return self.cache_client.retrieve().retrieve__hash__cache_hash__refs_hash(cache_hash = cache_hash    ,
+                                                                                  namespace  = self.namespace)
+    def cache__file__hash__obj(self) -> __:
+        return obj(self.cache__file__hash())

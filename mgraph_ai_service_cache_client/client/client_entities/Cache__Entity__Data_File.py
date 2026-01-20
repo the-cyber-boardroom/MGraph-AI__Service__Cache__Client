@@ -71,7 +71,7 @@ class Cache__Entity__Data_File(Type_Safe):                                      
        return self.exists__data_type(data_type= Enum__Cache__Data_Type.STRING)
 
     @type_safe
-    def store_string(self, content: str) -> Schema__Cache__Data__Store__Response:           # Store string content
+    def store__string(self, content: str) -> Schema__Cache__Data__Store__Response:           # Store string content
         return self.cache_client.data_store().data__store_string__with__id_and_key(cache_id     = self.cache_id    ,
                                                                                    namespace    = self.namespace   ,
                                                                                    data_key     = self.data_key    ,
@@ -79,7 +79,7 @@ class Cache__Entity__Data_File(Type_Safe):                                      
                                                                                    body         = content          )
 
     @type_safe
-    def store_json(self, data: dict) -> Schema__Cache__Data__Store__Response:               # Store JSON content
+    def store__json(self, data: dict) -> Schema__Cache__Data__Store__Response:               # Store JSON content
         return self.cache_client.data_store().data__store_json__with__id_and_key(cache_id     = self.cache_id    ,
                                                                                  namespace    = self.namespace   ,
                                                                                  data_key     = self.data_key    ,
@@ -87,7 +87,7 @@ class Cache__Entity__Data_File(Type_Safe):                                      
                                                                                  body         = data             )
 
     @type_safe
-    def update_string(self, content: str) -> bool:                                          # Update string content
+    def update__string(self, content: str) -> bool:                                          # Update string content
         result = self.cache_client.data().update().data__update_string__with__id_and_key(cache_id     = self.cache_id    ,
                                                                                          namespace    = self.namespace   ,
                                                                                          data_key     = self.data_key    ,
@@ -98,7 +98,7 @@ class Cache__Entity__Data_File(Type_Safe):                                      
         return False
 
     @type_safe
-    def update_json(self, data: dict) -> bool:                                              # Update JSON content
+    def update__json(self, data: dict) -> bool:                                              # Update JSON content
         result = self.cache_client.data().update().data__update_json__with__id_and_key(cache_id     = self.cache_id    ,
                                                                                        namespace    = self.namespace   ,
                                                                                        data_key     = self.data_key    ,
