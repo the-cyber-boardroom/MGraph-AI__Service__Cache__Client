@@ -1060,20 +1060,11 @@ class test_Cache_Client_Test_Helpers(TestCase):                         # Test t
     def test__create_json_entry__empty_dict(self):             # Test creating entry with empty JSON dict
         result = self.helpers.create_json_entry(data={})
 
-        assert result.obj() == __(cache_id='' ,
-                                  cache_hash='',
-                                  namespace='',
-                                  paths=__(data=[], by_hash=[], by_id=[]),
-                                  size=0)
+        assert result is None
 
     def test__create_binary_entry__empty_bytes(self):               # Test creating entry with empty bytes
         result = self.helpers.create_binary_entry(data=b'')
-
-        assert result.obj() == __(cache_id='',
-                                  cache_hash='',
-                                  namespace='',
-                                  paths=__(data=[], by_hash=[], by_id=[]),
-                                  size=0)
+        assert result is None
 
     def test__add_data_string__none_value_uses_default(self):       # Test that None data value uses auto-generated default
         # Setup

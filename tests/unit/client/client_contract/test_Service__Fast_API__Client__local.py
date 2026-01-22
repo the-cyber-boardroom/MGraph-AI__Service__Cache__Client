@@ -113,6 +113,7 @@ oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
             assert list_set(paths) == [
                                         '/admin/storage/bucket-name',
                                         '/admin/storage/file/bytes/{path}',
+                                        '/admin/storage/file/content/{path}',
                                         '/admin/storage/file/delete/{path}',
                                         '/admin/storage/file/exists/{path}',
                                         '/admin/storage/file/html/{path}',
