@@ -1,10 +1,10 @@
 from unittest                                                                                                       import TestCase
+from osbot_fast_api.services.schemas.registry.enums.Enum__Fast_API__Service__Registry__Client__Mode                 import Enum__Fast_API__Service__Registry__Client__Mode
 from osbot_utils.testing.__                                                                                         import __, __SKIP__
 from mgraph_ai_service_cache_client.client.Client__Cache__Service                                                   import Client__Cache__Service
 from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client                         import Cache__Service__Fast_API__Client
 from mgraph_ai_service_cache_client.client.client_contract.admin_storage.Service__Fast_API__Client__Admin__Storage  import Service__Fast_API__Client__Admin__Storage
 from mgraph_ai_service_cache_client.client.requests.Cache__Service__Fast_API__Client__Requests                      import Cache__Service__Fast_API__Client__Requests
-from mgraph_ai_service_cache_client.client.requests.schemas.enums.Enum__Client__Mode                                import Enum__Client__Mode
 from mgraph_ai_service_cache_client.schemas.routes.admin.Schema__Routes__Admin__Storage__Files_All__Response        import Schema__Routes__Admin__Storage__Files_All__Response
 from tests.unit.Cache_Client__Fast_API__Test_Objs                                                                   import cache__service__fast_api_app
 
@@ -20,7 +20,7 @@ class test_Service__Fast_API__Client__Admin__Storage(TestCase):                 
         cls.admin_storage                    = cls.cache_service_client.admin_storage()
 
     def test__setup(self):                                                        # Verify test setup is correct
-        assert self.cache_service_config.mode == Enum__Client__Mode.IN_MEMORY
+        assert self.cache_service_config.mode == Enum__Fast_API__Service__Registry__Client__Mode.IN_MEMORY
         assert self.cache_service_config.fast_api_app is not None
         assert type(self.cache_service_client)  is Cache__Service__Fast_API__Client
         assert type(self.admin_storage)         is Service__Fast_API__Client__Admin__Storage

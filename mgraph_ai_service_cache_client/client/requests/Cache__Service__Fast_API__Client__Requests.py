@@ -1,11 +1,11 @@
 import requests
 from typing                                                                                                             import Any, Optional, Dict
+from osbot_fast_api.services.schemas.registry.enums.Enum__Fast_API__Service__Registry__Client__Mode                     import Enum__Fast_API__Service__Registry__Client__Mode
 from osbot_utils.decorators.methods.cache_on_self                                                                       import cache_on_self
 from osbot_utils.type_safe.Type_Safe                                                                                    import Type_Safe
 from starlette.testclient                                                                                               import TestClient
 from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client__Config                     import Cache__Service__Fast_API__Client__Config
 from mgraph_ai_service_cache_client.client.requests.schemas.Schema__Cache__Service__Fast_API__Client__Requests__Result  import Schema__Cache__Service__Fast_API__Client__Requests__Result
-from mgraph_ai_service_cache_client.client.requests.schemas.enums.Enum__Client__Mode                                    import Enum__Client__Mode
 
 
 
@@ -25,32 +25,6 @@ class Cache__Service__Fast_API__Client__Requests(Type_Safe):
             session.headers['Authorization'] = f'Bearer {self.config.api_key}'
         return session
 
-
-    # def _setup_mode(self):                                                         # Initialize the appropriate execution backend
-    #
-    #     if self.mode == Enum__Client__Mode.IN_MEMORY:                              # In-memory mode with TestClient
-    #     if self._app:
-    #         self.mode = Enum__Client__Mode.IN_MEMORY
-    #         from fastapi.testclient import TestClient
-    #         self._test_client = TestClient(self._app)
-    #
-    #     # elif self._server:                                                         # Local server mode
-    #     #     self.mode = Enum__Client__Mode.LOCAL_SERVER
-    #     #     from osbot_fast_api.utils.Fast_API_Server import Fast_API_Server
-    #     #     if not isinstance(self._server, Fast_API_Server):
-    #     #         self._server = Fast_API_Server(app=self._server)
-    #     #         self._server.start()
-    #
-    #     else:                                                                      # Remote mode
-    #         self.mode     = Enum__Client__Mode.REMOTE
-    #         self._session = requests.Session()
-    #         self._configure_session()
-
-    # def _configure_session(self):                                                  # Configure session for remote calls
-    #     if self._session:                                                          # Add any auth headers from config
-    #         if hasattr(self.config, 'api_key') and self.config.api_key:
-    #             self._session.headers['Authorization'] = f'Bearer {self.config.api_key}'
-
     def execute(self, method  : str              ,                                 # HTTP method (GET, POST, etc)
                       path     : str              ,                                 # Endpoint path
                       body     : Any        = None,                                 # Request body
@@ -59,7 +33,7 @@ class Cache__Service__Fast_API__Client__Requests(Type_Safe):
                                                                                     # Merge headers
         request_headers = {**self.auth_headers(), **(headers or {})}
                                                                                     # Execute based on mode
-        if self.config.mode == Enum__Client__Mode.IN_MEMORY:
+        if self.config.mode == Enum__Fast_API__Service__Registry__Client__Mode.IN_MEMORY:
 
             response = self._execute_in_memory(method, path, body, request_headers)
         else:
