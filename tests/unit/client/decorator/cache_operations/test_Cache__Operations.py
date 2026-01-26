@@ -1,5 +1,6 @@
 import pytest
 from unittest                                                                                       import TestCase
+from osbot_fast_api.services.schemas.registry.enums.Enum__Fast_API__Service__Registry__Client__Mode import Enum__Fast_API__Service__Registry__Client__Mode
 from osbot_fast_api_serverless.fast_api.Serverless__Fast_API__Config                                import Serverless__Fast_API__Config
 from osbot_utils.helpers.cache.Cache__Hash__Generator                                               import Cache__Hash__Generator
 from osbot_utils.testing.__                                                                         import __, __SKIP__
@@ -19,7 +20,6 @@ from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Data_Type  
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Strategy                import Enum__Cache__Store__Strategy
 from mgraph_ai_service_cache_client.client.Client__Cache__Service                                   import Client__Cache__Service
 from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client__Config import Cache__Service__Fast_API__Client__Config
-from mgraph_ai_service_cache_client.client.requests.schemas.enums.Enum__Client__Mode                import Enum__Client__Mode
 
 
 class test_Cache__Operations(TestCase):             # Test Cache__Operations using actual in-memory cache service
@@ -32,7 +32,7 @@ class test_Cache__Operations(TestCase):             # Test Cache__Operations usi
         cls.fast_api_app        = cache_service__fast_api.app()
         cls.cache_service       = cache_service__fast_api.cache_service
 
-        client_config            = Cache__Service__Fast_API__Client__Config(mode         = Enum__Client__Mode.IN_MEMORY,           # Create client config for in-memory mode
+        client_config            = Cache__Service__Fast_API__Client__Config(mode         = Enum__Fast_API__Service__Registry__Client__Mode.IN_MEMORY,           # Create client config for in-memory mode
                                                                             fast_api_app = cls.fast_api_app            ,
                                                                             service_name = "test-cache-service"        )
         cls.client_cache_service = Client__Cache__Service(config=client_config)                                           # Create cache client
@@ -293,7 +293,7 @@ class test_Cache__Operations(TestCase):             # Test Cache__Operations usi
         status = self.cache_operations.get_client_status()
 
         assert status["available"] is True
-        assert status["mode"]      == str(Enum__Client__Mode.IN_MEMORY)             # Compare with enum string value
+        assert status["mode"]      == 'in_memory'
         assert "info" in status
 
     # ═══════════════════════════════════════════════════════════════════════════════

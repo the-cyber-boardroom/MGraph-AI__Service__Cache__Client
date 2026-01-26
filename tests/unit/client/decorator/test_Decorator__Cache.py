@@ -1,4 +1,5 @@
 from unittest                                                                                       import TestCase
+from osbot_fast_api.services.schemas.registry.enums.Enum__Fast_API__Service__Registry__Client__Mode import Enum__Fast_API__Service__Registry__Client__Mode
 from osbot_utils.type_safe.primitives.domains.python.safe_str.Safe_Str__Python__Identifier          import Safe_Str__Python__Identifier
 from osbot_utils.utils.Objects                                                                      import base_classes
 from osbot_utils.type_safe.Type_Safe                                                                import Type_Safe
@@ -9,7 +10,6 @@ from mgraph_ai_service_cache_client.client.decorator.Decorator__Cache           
 from mgraph_ai_service_cache_client.client.decorator.schemas.Schema__Cache__Decorator__Config       import Schema__Cache__Decorator__Config
 from mgraph_ai_service_cache_client.client.Client__Cache__Service                                   import Client__Cache__Service
 from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client__Config import Cache__Service__Fast_API__Client__Config
-from mgraph_ai_service_cache_client.client.requests.schemas.enums.Enum__Client__Mode                import Enum__Client__Mode
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Data_Type                      import Enum__Cache__Data_Type
 from mgraph_ai_service_cache.fast_api.Cache_Service__Fast_API                                       import Cache_Service__Fast_API
 from osbot_fast_api_serverless.fast_api.Serverless__Fast_API__Config                                import Serverless__Fast_API__Config
@@ -23,7 +23,7 @@ class test_Decorator__Cache(TestCase):                                          
         cls.cache_service__fast_api = Cache_Service__Fast_API(config=cls.serverless_config).setup()
         cls.fast_api_app            = cls.cache_service__fast_api.app()
         cls.cache_service           = cls.cache_service__fast_api.cache_service
-        cls.client_config           = Cache__Service__Fast_API__Client__Config(mode         = Enum__Client__Mode.IN_MEMORY,   # Create client config for in-memory mode
+        cls.client_config           = Cache__Service__Fast_API__Client__Config(mode         = Enum__Fast_API__Service__Registry__Client__Mode.IN_MEMORY,   # Create client config for in-memory mode
                                                                                fast_api_app = cls.fast_api_app            ,
                                                                                service_name = "test-decorator-cache"      )
         cls.client_cache_service = Client__Cache__Service(config=cls.client_config)                     # Create cache client
@@ -88,7 +88,7 @@ class test_Decorator__Cache(TestCase):                                          
 
         assert status["available"] is True
         assert "mode" in status
-        assert status["mode"] == str(Enum__Client__Mode.IN_MEMORY)                                  # Compare with enum string value
+        assert status["mode"] == 'in_memory'
         assert "info" in status
 
     def test_get_status__without_client(self):                                                      # Test getting status when no client is configured

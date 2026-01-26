@@ -155,6 +155,6 @@ class Cache__Decorator__Operations(Type_Safe):                                  
 
         with self.client_cache_service.client() as cache_client:        # Try to get server info
             info = cache_client.info().status()
-            return { "available": True                                      ,
-                     "mode"     : str(self.client_cache_service.config.mode),
-                     "info"     : info                                      }
+            return { "available": True                                       ,
+                     "mode"     : self.client_cache_service.config.mode.value,
+                     "info"     : info                                       }

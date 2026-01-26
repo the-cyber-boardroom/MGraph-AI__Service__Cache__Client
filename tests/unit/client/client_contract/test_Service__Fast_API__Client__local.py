@@ -1,4 +1,5 @@
 from unittest                                                                                       import TestCase
+from osbot_fast_api.services.schemas.registry.enums.Enum__Fast_API__Service__Registry__Client__Mode import Enum__Fast_API__Service__Registry__Client__Mode
 from osbot_fast_api.utils.Fast_API_Server                                                           import Fast_API_Server
 from osbot_fast_api_serverless.fast_api.Serverless__Fast_API__Config                                import Serverless__Fast_API__Config
 from osbot_utils.helpers.duration.decorators.capture_duration                                       import capture_duration
@@ -10,7 +11,6 @@ from mgraph_ai_service_cache.utils.Version                                      
 from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client         import Cache__Service__Fast_API__Client
 from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client__Config import Cache__Service__Fast_API__Client__Config
 from mgraph_ai_service_cache_client.client.requests.Cache__Service__Fast_API__Client__Requests      import Cache__Service__Fast_API__Client__Requests, Schema__Cache__Service__Fast_API__Client__Requests__Result
-from mgraph_ai_service_cache_client.client.requests.schemas.enums.Enum__Client__Mode                import Enum__Client__Mode
 from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Store__Response                    import Schema__Cache__Store__Response
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Strategy                import Enum__Cache__Store__Strategy
 from mgraph_ai_service_cache_client.utils.Version                                                   import version__mgraph_ai_service_cache_client
@@ -27,8 +27,8 @@ class test_Service__Fast_API__Client__local(TestCase):
             cls.server_url              = cls.fast_api_server.url().rstrip("/")                              # note: the trailing / was causing issues with the auto-generated request code
 
 
-            cls.server_config           = Cache__Service__Fast_API__Client__Config(base_url = cls.server_url           ,
-                                                                                   mode     = Enum__Client__Mode.REMOTE)
+            cls.server_config           = Cache__Service__Fast_API__Client__Config(base_url = cls.server_url                                        ,
+                                                                                   mode     = Enum__Fast_API__Service__Registry__Client__Mode.REMOTE)
             cls.fast_api_client         = Cache__Service__Fast_API__Client        (config=cls.server_config)
 
             cls.fast_api_server.start()

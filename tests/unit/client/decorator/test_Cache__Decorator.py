@@ -1,5 +1,6 @@
 from unittest                                                                                       import TestCase
 from typing                                                                                         import Optional
+from osbot_fast_api.services.schemas.registry.enums.Enum__Fast_API__Service__Registry__Client__Mode import Enum__Fast_API__Service__Registry__Client__Mode
 from osbot_utils.testing.__                                                                         import __
 from osbot_utils.type_safe.Type_Safe                                                                import Type_Safe
 from osbot_utils.utils.Misc                                                                         import random_string
@@ -10,7 +11,6 @@ from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Stra
 from mgraph_ai_service_cache_client.client.decorator.exceptions.Cache__Decorator__Exceptions        import Cache__Invalid__Config
 from mgraph_ai_service_cache_client.client.Client__Cache__Service                                   import Client__Cache__Service
 from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client__Config import Cache__Service__Fast_API__Client__Config
-from mgraph_ai_service_cache_client.client.requests.schemas.enums.Enum__Client__Mode                import Enum__Client__Mode
 from mgraph_ai_service_cache.fast_api.Cache_Service__Fast_API                                       import Cache_Service__Fast_API
 from osbot_fast_api_serverless.fast_api.Serverless__Fast_API__Config                                import Serverless__Fast_API__Config
 
@@ -23,7 +23,7 @@ class test_Cache__Decorator(TestCase):                                          
         cache_service__fast_api = Cache_Service__Fast_API(config=serverless_config).setup()
         cls.fast_api_app        = cache_service__fast_api.app()
 
-        client_config            = Cache__Service__Fast_API__Client__Config(mode         = Enum__Client__Mode.IN_MEMORY,    # Create client
+        client_config            = Cache__Service__Fast_API__Client__Config(mode         = Enum__Fast_API__Service__Registry__Client__Mode.IN_MEMORY,    # Create client
                                                                             fast_api_app = cls.fast_api_app            )
 
         cls.client_cache_service = Client__Cache__Service(config=client_config)
