@@ -1,6 +1,6 @@
 [tool.poetry]
 name        = "mgraph_ai_service_cache__client"
-version     = "v0.31.0"
+version     = "v0.31.1"
 description = "MGraph-AI__Service__Cache__Client"
 authors     = ["Dinis Cruz <dinis.cruz@owasp.org>"]
 license     = "Apache 2.0"
@@ -10,6 +10,7 @@ repository  = "https://github.com/the-cyber-boardroom/MGraph-AI__Service__Cache_
 
 [tool.poetry.dependencies]
 python                     = "^3.12"
+osbot-fast-api             = "*"
 osbot-fast-api-serverless  = "*"
 
 [build-system]
