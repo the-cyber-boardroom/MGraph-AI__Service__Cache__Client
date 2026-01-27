@@ -1,27 +1,21 @@
-from unittest                                                                                              import TestCase
-from mgraph_ai_service_cache_client.client.client_contract.namespaces.Service__Fast_API__Client__Namespace import Service__Fast_API__Client__Namespaces
-from tests.unit.Cache_Client__Fast_API__Test_Objs                                                          import client_cache_service
+from unittest                                                                                           import TestCase
+from mgraph_ai_service_cache_client.client.cache_client.Cache__Service__Client                          import Cache__Service__Client
+from osbot_fast_api.services.registry.Fast_API__Service__Registry                                       import fast_api__service__registry
+from mgraph_ai_service_cache_client.client.cache_service.register_cache_service                         import register_cache_service__in_memory
+from mgraph_ai_service_cache_client.client.client_contract.namespace.Cache__Service__Client__Namespaces import Cache__Service__Client__Namespaces
 
 
 class test_Service__Fast_API__Client__Namespaces(TestCase):
     @classmethod
     def setUpClass(cls) -> None:                                                 # Setup in-memory FastAPI client for testing
-
-        # cls.serverless_config       = Serverless__Fast_API__Config              (enable_api_key = False                            )
-        # cls.cache_service__fast_api = Cache_Service__Fast_API                   (config         = cls.serverless_config            ).setup()
-        # cls.server_config           = Cache__Service__Fast_API__Client__Config  ()
-        # cls.requests                = Cache__Service__Fast_API__Client__Requests(config    = cls.server_config                ,
-        #                                                                          _app      = cls.cache_service__fast_api.app())
-        # cls.fast_api_client         = Cache__Service__Fast_API__Client          (config    = cls.server_config,
-        #                                                                          _requests = cls.requests)
-        # cls.cache_service           = cls.cache_service__fast_api.cache_service
-
-        cls.client_cache_service, cls.cache_service    = client_cache_service()
-        cls.namespaces                                 = cls.client_cache_service.namespaces()
+        cls.cache_service_client  = register_cache_service__in_memory(return_client=True)
+        cls.namespaces            = cls.cache_service_client.namespaces()
+        cls.service_config        = fast_api__service__registry.config(Cache__Service__Client)
+        cls.cache_service         = cls.service_config.fast_api.cache_service
 
     def test__setUpClass(self):
         with self.namespaces as _:
-            assert type(_) is Service__Fast_API__Client__Namespaces
+            assert type(_) is Cache__Service__Client__Namespaces
 
     def test_list(self):
         with self.namespaces as _:

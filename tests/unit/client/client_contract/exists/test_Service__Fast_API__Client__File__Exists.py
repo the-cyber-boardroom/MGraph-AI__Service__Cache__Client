@@ -1,19 +1,23 @@
-from types                                                                                                import NoneType
-from unittest                                                                                             import TestCase
-from mgraph_ai_service_cache_client.schemas.cache.file.Schema__Cache__Exists__Response                    import Schema__Cache__Exists__Response
-from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__File__Cache_Hash              import Safe_Str__Cache__File__Cache_Hash
-from osbot_utils.type_safe.primitives.domains.identifiers.Cache_Id                                        import Cache_Id
-from mgraph_ai_service_cache_client.client.client_contract.exists.Service__Fast_API__Client__File__Exists import Service__Fast_API__Client__File__Exists
-from tests.unit.Cache_Client__Fast_API__Test_Objs                                                         import client_cache_service
+from types                                                                                              import NoneType
+from unittest                                                                                           import TestCase
+from mgraph_ai_service_cache_client.client.cache_client.Cache__Service__Client                          import Cache__Service__Client
+from mgraph_ai_service_cache_client.client.client_contract.file.Cache__Service__Client__File__Exists    import Cache__Service__Client__File__Exists
+from osbot_fast_api.services.registry.Fast_API__Service__Registry                                       import fast_api__service__registry
+from mgraph_ai_service_cache_client.client.cache_service.register_cache_service                         import register_cache_service__in_memory
+from mgraph_ai_service_cache_client.schemas.cache.file.Schema__Cache__Exists__Response                  import Schema__Cache__Exists__Response
+from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__File__Cache_Hash            import Safe_Str__Cache__File__Cache_Hash
+from osbot_utils.type_safe.primitives.domains.identifiers.Cache_Id                                      import Cache_Id
 
 
 class test_Service__Fast_API__Client__File__Exists(TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:                                                    # Setup in-memory FastAPI client for testing
-        cls.client_cache_service, cls.cache_service = client_cache_service()
-        cls.client__exists                          = cls.client_cache_service.exists()
-        cls.client__delete                          = cls.client_cache_service.delete()
+        cls.cache_service_client  = register_cache_service__in_memory(return_client=True)
+        cls.client__exists        = cls.cache_service_client.exists()
+        cls.client__delete        = cls.cache_service_client.delete()
+        cls.service_config        = fast_api__service__registry.config(Cache__Service__Client)
+        cls.cache_service         = cls.service_config.fast_api.cache_service
 
         # Test data - create entries in test namespace
         cls.test_namespace     = "test-exists"
@@ -42,7 +46,7 @@ class test_Service__Fast_API__Client__File__Exists(TestCase):
 
     def test__setUpClass(self):
         with self.client__exists as _:
-            assert type(_) is Service__Fast_API__Client__File__Exists
+            assert type(_) is Cache__Service__Client__File__Exists
 
     # ═══════════════════════════════════════════════════════════════════════════
     # exists__cache_id tests

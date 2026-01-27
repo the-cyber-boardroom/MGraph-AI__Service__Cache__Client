@@ -11,20 +11,19 @@ Usage:
 """
 
 from typing                                                                                      import Dict, List, Tuple
+from mgraph_ai_service_cache_client.client.cache_client.Cache__Service__Client                   import Cache__Service__Client
 from osbot_utils.type_safe.primitives.domains.identifiers.Cache_Id                               import Cache_Id
 from osbot_utils.utils.Misc                                                                      import random_string, random_bytes, str_to_bytes
 from osbot_utils.type_safe.Type_Safe                                                             import Type_Safe
 from osbot_utils.type_safe.type_safe_core.decorators.type_safe                                   import type_safe
-from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client      import Cache__Service__Fast_API__Client
 from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Store__Response                 import Schema__Cache__Store__Response
 from mgraph_ai_service_cache_client.schemas.cache.data.Schema__Cache__Data__Store__Response      import Schema__Cache__Data__Store__Response
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Strategy             import Enum__Cache__Store__Strategy
 
 
-class Cache_Client_Test_Helpers(Type_Safe):
-    """Helper methods to create and verify test state using only client API"""
+class Cache_Client_Test_Helpers(Type_Safe):         # Helper methods to create and verify test state using only client API
 
-    client: Cache__Service__Fast_API__Client
+    cache_service_client: Cache__Service__Client
 
     # ═══════════════════════════════════════════════════════════════════════════════
     # Store Operations - Create test entries
@@ -41,7 +40,7 @@ class Cache_Client_Test_Helpers(Type_Safe):
         if value is None:
             value = random_string('test_value_')
 
-        with self.client.store() as _:
+        with self.cache_service_client.store() as _:
             if cache_key or file_id:
                 return _.store__string__cache_key(namespace  = namespace  ,
                                                   strategy   = strategy   ,
@@ -67,7 +66,7 @@ class Cache_Client_Test_Helpers(Type_Safe):
         if data is None:
             data = {'test': 'data', 'random': random_string()}
 
-        with self.client.store() as _:
+        with self.cache_service_client.store() as _:
             if cache_key or file_id:
                 return _.store__json__cache_key(namespace  = namespace  ,
                                                strategy   = strategy   ,
@@ -93,7 +92,7 @@ class Cache_Client_Test_Helpers(Type_Safe):
         if data is None:
             data = random_bytes()
 
-        with self.client.store() as _:
+        with self.cache_service_client.store() as _:
             if cache_key or file_id:
                 return _.store__binary__cache_key(namespace  = namespace  ,
                                                   strategy   = strategy   ,
@@ -125,7 +124,7 @@ class Cache_Client_Test_Helpers(Type_Safe):
         if data is None:
             data = random_string('data_value_')
 
-        with self.client.data_store() as _:
+        with self.cache_service_client.data_store() as _:
             if data_key and data_file_id:
                 return _.data__store_string__with__id_and_key(cache_id     = cache_id     ,
                                                               namespace    = namespace    ,
@@ -156,7 +155,7 @@ class Cache_Client_Test_Helpers(Type_Safe):
         if data is None:
             data = {'data': 'value', 'random': random_string()}
 
-        with self.client.data_store() as _:
+        with self.cache_service_client.data_store() as _:
             if data_key and data_file_id:
                 return _.data__store_json__with__id_and_key(cache_id     = cache_id     ,
                                                             namespace    = namespace    ,
@@ -187,7 +186,7 @@ class Cache_Client_Test_Helpers(Type_Safe):
         if data is None:
             data = random_bytes()
 
-        with self.client.data_store() as _:
+        with self.cache_service_client.data_store() as _:
             if data_key and data_file_id:
                 return _.data__store_binary__with__id_and_key(cache_id     = cache_id     ,
                                                               namespace    = namespace    ,
@@ -265,7 +264,7 @@ class Cache_Client_Test_Helpers(Type_Safe):
         Verify cache entry exists by trying to retrieve it
         Returns True if exists, False otherwise
         """
-        with self.client.retrieve() as _:
+        with self.cache_service_client.retrieve() as _:
             result = _.retrieve__cache_id(cache_id  = cache_id  ,
                                          namespace = namespace )
             return result is not None
@@ -278,7 +277,7 @@ class Cache_Client_Test_Helpers(Type_Safe):
         """
         Verify cache entry exists by hash
         """
-        with self.client.retrieve() as _:
+        with self.cache_service_client.retrieve() as _:
             result = _.retrieve__hash__cache_hash(cache_hash = cache_hash ,
                                                  namespace  = namespace  )
             return result is not None
@@ -294,7 +293,7 @@ class Cache_Client_Test_Helpers(Type_Safe):
         Verify data file exists by trying to retrieve it
         """
 
-        with self.client.data().retrieve() as _:
+        with self.cache_service_client.data().retrieve() as _:
             if data_key:
                 result = _.data__string__with__id_and_key(cache_id     = cache_id     ,
                                                           namespace    = namespace    ,
@@ -315,7 +314,7 @@ class Cache_Client_Test_Helpers(Type_Safe):
         NOTE: Uses admin_storage() which might not be available in production
         """
 
-        with self.client.admin_storage() as _:
+        with self.cache_service_client.admin_storage() as _:
             result = _.files__all__path(path = namespace)
             return result.file_count if result else 0
 
@@ -326,7 +325,7 @@ class Cache_Client_Test_Helpers(Type_Safe):
         Returns empty list if none exist
         """
         try:
-            with self.client.namespaces() as _:
+            with self.cache_service_client.namespaces() as _:
                 return _.list()
         except:
             return []
@@ -431,7 +430,7 @@ class Cache_Client_Test_Helpers(Type_Safe):
 
         Returns: Delete result dict
         """
-        with self.client.delete() as _:
+        with self.cache_service_client.delete() as _:
             return _.delete__cache_id(cache_id  = cache_id  ,
                                       namespace = namespace )
 
@@ -445,7 +444,7 @@ class Cache_Client_Test_Helpers(Type_Safe):
 
         Returns: Delete result dict
         """
-        with self.client.data().delete() as _:
+        with self.cache_service_client.data().delete() as _:
             return _.delete__all__data__files(cache_id  = cache_id  ,
                                              namespace = namespace )
 
@@ -573,8 +572,8 @@ class Cache_Client_Test_Helpers(Type_Safe):
     def admin__get_files_in_folder__by_cache_id__direct(self, namespace, cache_id):
         path            = f'{namespace}/data/direct/{cache_id[0:2]}/{cache_id[2:4]}/'                          # Verify data files created
         recursive       = True
-        files_full_path = self.client.admin_storage().files__in__path(path      = path,
-                                                                      recursive = recursive)
+        files_full_path = self.cache_service_client.admin_storage().files__in__path(path      = path,
+                                                                                    recursive = recursive)
         files           = []
         for file_full_path in files_full_path:
             files.append(file_full_path.replace(path, ""))

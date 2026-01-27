@@ -1,4 +1,6 @@
 from unittest                                                                                       import TestCase
+from mgraph_ai_service_cache_client.client.cache_client.Cache__Service__Client                      import Cache__Service__Client
+from mgraph_ai_service_cache_client.client.cache_service.register_cache_service                     import register_cache_service__in_memory
 from osbot_utils.testing.__                                                                         import __, __SKIP__
 from osbot_utils.testing.__helpers                                                                  import obj
 from osbot_utils.type_safe.type_safe_core.collections.Type_Safe__Dict                               import Type_Safe__Dict
@@ -9,8 +11,6 @@ from osbot_utils.type_safe.Type_Safe                                            
 from mgraph_ai_service_cache_client.client.testing.Cache_Client_Test_Helpers                        import Cache_Client_Test_Helpers
 from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Store__Response                    import Schema__Cache__Store__Response
 from mgraph_ai_service_cache_client.schemas.cache.data.Schema__Cache__Data__Store__Response         import Schema__Cache__Data__Store__Response
-from tests.unit.Cache_Client__Fast_API__Test_Objs                                                   import client_cache_service
-from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client         import Cache__Service__Fast_API__Client
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Strategy                import Enum__Cache__Store__Strategy
 
 
@@ -18,8 +18,8 @@ class test_Cache_Client_Test_Helpers(TestCase):                         # Test t
 
     @classmethod
     def setUpClass(cls) -> None:                                        # Setup in-memory client for testing helpers
-        cls.client_cache_service, cls.cache_service = client_cache_service()
-        cls.helpers                                 = Cache_Client_Test_Helpers(client=cls.client_cache_service)
+        cls.cache_service_client = register_cache_service__in_memory(return_client=True)
+        cls.helpers              = Cache_Client_Test_Helpers(cache_service_client=cls.cache_service_client)
 
     # ═════════════════════════════════════════════════════════════════════════════
     # Initialization & Setup
@@ -27,19 +27,18 @@ class test_Cache_Client_Test_Helpers(TestCase):                         # Test t
 
     def test__init__helper_class(self):                                             # Test helper class initialization
         with self.helpers as _:
-            assert type(_)                    is Cache_Client_Test_Helpers
-            assert base_classes(_)            == [Type_Safe, object]
-            assert type(_.client)             is Cache__Service__Fast_API__Client
-            assert _.client                   is not None
-            assert _.client                   == self.client_cache_service
+            assert type(_)                      is Cache_Client_Test_Helpers
+            assert base_classes(_)              == [Type_Safe, object]
+            assert type(_.cache_service_client) is Cache__Service__Client
+            assert _.cache_service_client       == self.cache_service_client
 
     def test__init__creates_new_instance(self):                                         # Test creating new helper instance
-        new_helpers = Cache_Client_Test_Helpers(client=self.client_cache_service)
+        new_helpers = Cache_Client_Test_Helpers(cache_service_client=self.cache_service_client)
 
-        assert new_helpers                    is not None
-        assert type(new_helpers)              is Cache_Client_Test_Helpers
-        assert new_helpers.client             == self.client_cache_service
-        assert new_helpers                    is not self.helpers                  # Different instance
+        assert new_helpers                      is not None
+        assert type(new_helpers)                is Cache_Client_Test_Helpers
+        assert new_helpers.cache_service_client == self.cache_service_client
+        assert new_helpers                      is not self.helpers                  # Different instance
 
     # ═════════════════════════════════════════════════════════════════════════════
     # String Entry Creation - Basic Tests
@@ -142,7 +141,7 @@ class test_Cache_Client_Test_Helpers(TestCase):                         # Test t
         cache_id  = result_1.cache_id                             # Verify stored by retrieving
         namespace = result_1.namespace
 
-        retrieved = self.client_cache_service.retrieve().retrieve__cache_id__string(cache_id  = cache_id  ,
+        retrieved = self.cache_service_client.retrieve().retrieve__cache_id__string(cache_id  = cache_id  ,
                                                                                     namespace = namespace)
 
         assert retrieved                      == custom_value
@@ -309,7 +308,7 @@ class test_Cache_Client_Test_Helpers(TestCase):                         # Test t
         cache_id  = result.cache_id                                             # Verify by retrieving
         namespace = result.namespace
 
-        retrieved = self.client_cache_service.retrieve().retrieve__cache_id__json(cache_id  = cache_id  ,
+        retrieved = self.cache_service_client.retrieve().retrieve__cache_id__json(cache_id  = cache_id  ,
                                                                                   namespace = namespace )
 
         assert retrieved                      == custom_data
@@ -379,7 +378,7 @@ class test_Cache_Client_Test_Helpers(TestCase):                         # Test t
         cache_id  = result.cache_id
         namespace = result.namespace
 
-        retrieved = self.client_cache_service.retrieve().retrieve__cache_id__binary(cache_id  = cache_id ,
+        retrieved = self.cache_service_client.retrieve().retrieve__cache_id__binary(cache_id  = cache_id ,
                                                                                     namespace = namespace)
 
         assert type(retrieved)                is bytes
@@ -396,7 +395,7 @@ class test_Cache_Client_Test_Helpers(TestCase):                         # Test t
         cache_id  = result.cache_id
         namespace = result.namespace
 
-        retrieved = self.client_cache_service.retrieve().retrieve__cache_id__binary(cache_id  = cache_id ,
+        retrieved = self.cache_service_client.retrieve().retrieve__cache_id__binary(cache_id  = cache_id ,
                                                                                     namespace = namespace)
 
         assert type(retrieved)                is bytes

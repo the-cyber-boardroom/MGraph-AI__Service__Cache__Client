@@ -35,8 +35,8 @@ from osbot_fast_api_serverless.fast_api.Serverless__Fast_API__Config            
 from osbot_utils.type_safe.type_safe_core.decorators.type_safe                              import type_safe
 from mgraph_ai_service_cache.fast_api.Cache_Service__Fast_API                               import Cache_Service__Fast_API
 from mgraph_ai_service_cache.service.cache.Cache__Service                                   import Cache__Service
-from mgraph_ai_service_cache_client.client.Client__Cache__Service                           import Client__Cache__Service
-from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client import Cache__Service__Fast_API__Client
+# from mgraph_ai_service_cache_client.client.Client__Cache__Service                           import Client__Cache__Service
+# from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client import Cache__Service__Fast_API__Client
 
 # todo: refactor code below to a helper class that we can reuse across (since the idea is not to add a dependency on the cache_service here, see if we can add this helper class to the mgraph_ai_service_cache package)
 #       since this will be useful for the projects that want to easily run the cache service in memory
@@ -47,8 +47,8 @@ def cache__service__fast_api_app() -> Tuple[FastAPI, Cache__Service]:
     fast_api_app            = cache_service__fast_api.app()
     return fast_api_app, cache_service__fast_api.cache_service
 
-@type_safe
-def client_cache_service() -> Tuple[Cache__Service__Fast_API__Client, Cache__Service]:
-    fast_api_app, cache_service  = cache__service__fast_api_app()
-    client__cache_service        = Client__Cache__Service().set__fast_api_app(fast_api_app).client()
-    return client__cache_service, cache_service
+# @type_safe
+# def client_cache_service() -> Tuple[Cache__Service__Fast_API__Client, Cache__Service]:
+#     fast_api_app, cache_service  = cache__service__fast_api_app()
+#     client__cache_service        = Client__Cache__Service().set__fast_api_app(fast_api_app).client()
+#     return client__cache_service, cache_service

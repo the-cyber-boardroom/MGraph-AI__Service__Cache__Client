@@ -14,7 +14,7 @@
 # ═══════════════════════════════════════════════════════════════════════════════
 from typing import List
 
-from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client  import Cache__Service__Fast_API__Client
+from mgraph_ai_service_cache_client.client.cache_client.Cache__Service__Client import Cache__Service__Client
 from mgraph_ai_service_cache_client.client.client_entities.Cache__Entity__Data_File          import Cache__Entity__Data_File
 from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Retrieve__Success           import Schema__Cache__Retrieve__Success
 from mgraph_ai_service_cache_client.schemas.cache.data.Schema__Cache__Data__List__Response   import Schema__Cache__Data__List__Response
@@ -35,9 +35,9 @@ from osbot_utils.type_safe.type_safe_core.decorators.type_safe                  
 
 
 class Cache__Entity(Type_Safe):                                                             # Bound client for entity operations
-    cache_client : Cache__Service__Fast_API__Client                                         # Cache service client
+    cache_client : Cache__Service__Client                                                   # Cache service client
     cache_id     : Cache_Id                                                                 # Entity cache_id
-    namespace    : Safe_Str__Cache__Namespace                                                      # Cache namespace
+    namespace    : Safe_Str__Cache__Namespace                                               # Cache namespace
 
     # ═══════════════════════════════════════════════════════════════════════════
     # Entry Operations (Tier 1 - the root entity)

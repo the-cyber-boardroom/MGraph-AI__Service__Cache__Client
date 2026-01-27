@@ -3,6 +3,7 @@
 # ═══════════════════════════════════════════════════════════════════════════════
 
 from unittest                                                                               import TestCase
+from mgraph_ai_service_cache_client.client.cache_service.register_cache_service             import register_cache_service__in_memory
 from mgraph_ai_service_cache_client.client.client_entities.Cache__Entity__Data_File         import Cache__Entity__Data_File
 from mgraph_ai_service_cache_client.client.client_entities.Cache__Entity__Json_File         import Cache__Entity__Json_File
 from mgraph_ai_service_cache_client.schemas.cache.data.Schema__Cache__Data__Store__Response import Schema__Cache__Data__Store__Response
@@ -10,14 +11,13 @@ from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Stra
 from osbot_utils.testing.__                                                                 import __, __SKIP__
 from osbot_utils.type_safe.Type_Safe                                                        import Type_Safe
 from osbot_utils.utils.Objects                                                              import base_types
-from tests.unit.Cache_Client__Fast_API__Test_Objs                                           import client_cache_service
 
 
 class test_Cache__Entity__Json_File(TestCase):
 
     @classmethod
     def setUpClass(cls):                                                                    # Shared test objects
-        cls.cache_client, cls.cache_service = client_cache_service()
+        cls.cache_client  = register_cache_service__in_memory(return_client=True)
         cls.namespace     = 'test-cache-entity-json-file'
         cls.cache_key     = 'test/json-file'
         cls.file_id       = 'root'
