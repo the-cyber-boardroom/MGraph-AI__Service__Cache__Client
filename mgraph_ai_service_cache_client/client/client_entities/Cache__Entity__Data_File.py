@@ -7,10 +7,9 @@
 #                                  data_key='html', data_file_id='raw')
 #   content = data_file.string()           # Get content
 #   data_file.store_string(html)           # Store content
-
+from mgraph_ai_service_cache_client.client.cache_client.Cache__Service__Client import Cache__Service__Client
 # ═══════════════════════════════════════════════════════════════════════════════
 
-from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client import Cache__Service__Fast_API__Client
 from mgraph_ai_service_cache_client.schemas.cache.data.Schema__Cache__Data__Store__Response import Schema__Cache__Data__Store__Response
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Data_Type              import Enum__Cache__Data_Type
 from mgraph_ai_service_cache_client.schemas.cache.safe_str.Safe_Str__Cache__File__Data_Key  import Safe_Str__Cache__File__Data_Key
@@ -22,7 +21,7 @@ from osbot_utils.type_safe.type_safe_core.decorators.type_safe                  
 
 
 class Cache__Entity__Data_File(Type_Safe):                                                                  # Bound client for data file operations
-    cache_client : Cache__Service__Fast_API__Client                                                         # Cache service client
+    cache_client : Cache__Service__Client                                                                   # Cache service client
     cache_id     : Cache_Id                                                                                 # Entity cache_id
     namespace    : Safe_Str__Cache__Namespace                                                               # Cache namespace
     data_key     : Safe_Str__Cache__File__Data_Key                                                          # Data layer path

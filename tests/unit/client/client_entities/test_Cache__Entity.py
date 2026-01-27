@@ -3,8 +3,10 @@
 # ═══════════════════════════════════════════════════════════════════════════════
 
 from unittest                                                                               import TestCase
+
+from mgraph_ai_service_cache_client.client.cache_client.Cache__Service__Client import Cache__Service__Client
+from mgraph_ai_service_cache_client.client.cache_service.register_cache_service             import register_cache_service__in_memory
 from mgraph_ai_service_cache_client.utils.Version                                           import version__mgraph_ai_service_cache_client
-from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client import Cache__Service__Fast_API__Client
 from mgraph_ai_service_cache_client.client.client_entities.Cache__Entity                    import Cache__Entity
 from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Retrieve__Success          import Schema__Cache__Retrieve__Success
 from mgraph_ai_service_cache_client.schemas.cache.data.Schema__Cache__Data__List__Response  import Schema__Cache__Data__List__Response
@@ -18,19 +20,18 @@ from osbot_utils.testing.__                                                     
 from osbot_utils.type_safe.Type_Safe                                                        import Type_Safe
 from osbot_utils.type_safe.primitives.domains.identifiers.Cache_Id                          import Cache_Id
 from osbot_utils.utils.Objects                                                              import base_types
-from tests.unit.Cache_Client__Fast_API__Test_Objs                                           import client_cache_service
 
 
 class test_Cache__Entity(TestCase):
 
     @classmethod
     def setUpClass(cls):                                                                    # Shared test objects
-        cls.cache_client, cls.cache_service = client_cache_service()
-        cls.namespace   = 'test-cache-entity'
-        cls.cache_key   = 'test/entity'
-        cls.file_id     = 'root'
-        cls.sample_data = {'cache_key': cls.cache_key, 'name': 'test entity'}
-        cls.cache_id    = cls.create_test_entity()
+        cls.cache_client  = register_cache_service__in_memory(return_client=True)
+        cls.namespace     = 'test-cache-entity'
+        cls.cache_key     = 'test/entity'
+        cls.file_id       = 'root'
+        cls.sample_data   = {'cache_key': cls.cache_key, 'name': 'test entity'}
+        cls.cache_id      = cls.create_test_entity()
 
     @classmethod
     def create_test_entity(cls):                                                            # Create entity for tests
@@ -55,19 +56,10 @@ class test_Cache__Entity(TestCase):
         with Cache__Entity() as _:
             assert type(_)              is Cache__Entity
             assert base_types(_)        == [Type_Safe, object]
-            assert type(_.cache_client) is Cache__Service__Fast_API__Client
+            assert type(_.cache_client) is Cache__Service__Client
             assert type(_.cache_id)     is Cache_Id
             assert type(_.namespace)    is Safe_Str__Cache__Namespace
-            assert _.obj()              == __(cache_client=__(config=__(base_url=None,
-                                                                         api_key=None,
-                                                                         api_key_header=None,
-                                                                         mode='in_memory',
-                                                                         fast_api_app=None,
-                                                                         timeout=30,
-                                                                         service_name='Cache__Service__Fast_API',
-                                                                         service_version=version__mgraph_ai_service_cache_client)),
-                                               cache_id='',
-                                               namespace='')
+            assert _.obj()              == __(cache_client=__(), cache_id='', namespace='')
 
     def test__init____with_values(self):                                                    # Test with values provided
         with self.entity() as _:

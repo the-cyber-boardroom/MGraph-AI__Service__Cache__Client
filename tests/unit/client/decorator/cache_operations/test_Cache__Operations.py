@@ -1,7 +1,6 @@
 import pytest
 from unittest                                                                                       import TestCase
-from osbot_fast_api.services.schemas.registry.enums.Enum__Fast_API__Service__Registry__Client__Mode import Enum__Fast_API__Service__Registry__Client__Mode
-from osbot_fast_api_serverless.fast_api.Serverless__Fast_API__Config                                import Serverless__Fast_API__Config
+from mgraph_ai_service_cache_client.client.cache_service.register_cache_service                     import register_cache_service__in_memory
 from osbot_utils.helpers.cache.Cache__Hash__Generator                                               import Cache__Hash__Generator
 from osbot_utils.testing.__                                                                         import __, __SKIP__
 from osbot_utils.testing.__helpers                                                                  import obj
@@ -10,16 +9,13 @@ from osbot_utils.type_safe.Type_Safe                                            
 from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id                     import Safe_Str__Id
 from osbot_utils.type_safe.primitives.domains.cryptography.safe_str.Safe_Str__Cache_Hash            import Safe_Str__Cache_Hash
 from osbot_utils.type_safe.primitives.domains.files.safe_str.Safe_Str__File__Path                   import Safe_Str__File__Path
-from osbot_utils.utils.Misc                                                                         import random_string, random_bytes
-from mgraph_ai_service_cache.fast_api.Cache_Service__Fast_API                                       import Cache_Service__Fast_API
+from osbot_utils.utils.Misc                                                                         import random_string
 from mgraph_ai_service_cache_client.client.decorator.cache_operations.Cache__Decorator__Operations  import Cache__Decorator__Operations
 from mgraph_ai_service_cache_client.client.decorator.schemas.Schema__Cache__Decorator__Config       import Schema__Cache__Decorator__Config
 from mgraph_ai_service_cache_client.client.decorator.schemas.Schema__Cache__Decorator__Data         import Schema__Cache__Decorator__Data
 from mgraph_ai_service_cache_client.schemas.cache.Schema__Cache__Metadata                           import Schema__Cache__Metadata
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Data_Type                      import Enum__Cache__Data_Type
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Strategy                import Enum__Cache__Store__Strategy
-from mgraph_ai_service_cache_client.client.Client__Cache__Service                                   import Client__Cache__Service
-from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client__Config import Cache__Service__Fast_API__Client__Config
 
 
 class test_Cache__Operations(TestCase):             # Test Cache__Operations using actual in-memory cache service
@@ -27,16 +23,17 @@ class test_Cache__Operations(TestCase):             # Test Cache__Operations usi
     @classmethod
     def setUpClass(cls):                            # Set up in-memory cache service for all tests
 
-        serverless_config       = Serverless__Fast_API__Config(enable_api_key=False)                # Create in-memory cache service
-        cache_service__fast_api = Cache_Service__Fast_API(config=serverless_config).setup()
-        cls.fast_api_app        = cache_service__fast_api.app()
-        cls.cache_service       = cache_service__fast_api.cache_service
-
-        client_config            = Cache__Service__Fast_API__Client__Config(mode         = Enum__Fast_API__Service__Registry__Client__Mode.IN_MEMORY,           # Create client config for in-memory mode
-                                                                            fast_api_app = cls.fast_api_app            ,
-                                                                            service_name = "test-cache-service"        )
-        cls.client_cache_service = Client__Cache__Service(config=client_config)                                           # Create cache client
-        cls.cache_operations     = Cache__Decorator__Operations(client_cache_service = cls.client_cache_service)  # Create Cache__Operations instance
+        # serverless_config       = Serverless__Fast_API__Config(enable_api_key=False)                # Create in-memory cache service
+        # cache_service__fast_api = Cache_Service__Fast_API(config=serverless_config).setup()
+        # cls.fast_api_app        = cache_service__fast_api.app()
+        # cls.cache_service       = cache_service__fast_api.cache_service
+        #
+        # client_config            = Cache__Service__Fast_API__Client__Config(mode         = Enum__Fast_API__Service__Registry__Client__Mode.IN_MEMORY,           # Create client config for in-memory mode
+        #                                                                     fast_api_app = cls.fast_api_app            ,
+        #                                                                     service_name = "test-cache-service"        )
+        # cls.client_cache_service = Client__Cache__Service(config=client_config)                                           # Create cache client
+        cls.cache_service_client  = register_cache_service__in_memory(return_client=True)
+        cls.cache_operations     = Cache__Decorator__Operations(cache_service_client = cls.cache_service_client)  # Create Cache__Operations instance
         cls.test_namespace       = Safe_Str__Id("test-operations")          # Test namespace
         cls.hash_generator       = Cache__Hash__Generator()     # todo: see if we shouldn't move this to the Cache__Operations
 
@@ -44,7 +41,7 @@ class test_Cache__Operations(TestCase):             # Test Cache__Operations usi
         with self.cache_operations as _:
             assert type(_) is Cache__Decorator__Operations
             assert base_classes(_)           == [Type_Safe, object]
-            assert _.client_cache_service    is not None
+            assert _.cache_service_client    is not None
 
     # ═══════════════════════════════════════════════════════════════════════════════
     # Store and Retrieve Tests (using real cache)
@@ -69,16 +66,14 @@ class test_Cache__Operations(TestCase):             # Test Cache__Operations usi
         retrieved = self.cache_operations.retrieve(namespace   = namespace                    ,       # Retrieve data from Cache Operations
                                                    cache_hash  = cache_hash                   )       # for this hash
 
-        direct    = (self.client_cache_service.client ()                            # Retrieve data directly from cache
-                                              .retrieve()
+        direct    = (self.cache_service_client.retrieve()                                             # Retrieve data directly from cache
                                               .retrieve__hash__cache_hash__json(cache_hash=cache_hash, namespace=namespace))
         assert stored    is True
         assert retrieved == data
         assert retrieved == direct.get('data')
 
         # check metadata
-        metadata    = (self.client_cache_service.client ()                            # Retrieve data directly from cache
-                                                .retrieve()
+        metadata    = (self.cache_service_client.retrieve()                                             # Retrieve data directly from cache
                                                 .retrieve__hash__cache_hash__metadata(cache_hash=cache_hash, namespace=namespace))
         cache_id = metadata.cache_id
         assert type(metadata) is Schema__Cache__Metadata
@@ -94,9 +89,8 @@ class test_Cache__Operations(TestCase):             # Test Cache__Operations usi
                                     content_size     = 0)
 
         # check refs_hash
-        refs_hash = (self.client_cache_service.client ()                            # Retrieve data directly from cache
-                                                .retrieve()
-                                                .retrieve__hash__cache_hash__refs_hash(cache_hash=cache_hash, namespace=namespace))
+        refs_hash =  (self.cache_service_client.retrieve()                                             # Retrieve data directly from cache
+                                               .retrieve__hash__cache_hash__refs_hash(cache_hash=cache_hash, namespace=namespace))
         assert type(refs_hash) is dict
         assert obj(refs_hash) == __(cache_hash     = cache_hash,
                                     cache_ids      = [__(cache_id=cache_id,
@@ -105,9 +99,8 @@ class test_Cache__Operations(TestCase):             # Test Cache__Operations usi
                                     total_versions = 1)
 
         # check cache_id
-        cache_id_data = (self.client_cache_service.client ()                            # Retrieve data directly from cache
-                                                  .retrieve()
-                                                  .retrieve__hash__cache_hash__cache_id(cache_hash=cache_hash, namespace=namespace))
+        cache_id_data =  (self.cache_service_client.retrieve()                                             # Retrieve data directly from cache
+                                                   .retrieve__hash__cache_hash__cache_id(cache_hash=cache_hash, namespace=namespace))
         assert type(cache_id_data) is dict
         assert obj(cache_id_data) == __(cache_hash     = cache_hash,
                                         cache_id      = cache_id,
@@ -133,9 +126,8 @@ class test_Cache__Operations(TestCase):             # Test Cache__Operations usi
         retrieved = self.cache_operations.retrieve(namespace   = namespace                      ,       # Retrieve data
                                                    cache_hash  = cache_hash                     )       # from this hash
 
-        direct    = (self.client_cache_service.client ()                                        # Retrieve data directly from cache
-                                             .retrieve()
-                                             .retrieve__hash__cache_hash__json(cache_hash=cache_hash, namespace=namespace))
+        direct    = (self.cache_service_client.retrieve()                                               # Retrieve data directly from cache
+                                              .retrieve__hash__cache_hash__json(cache_hash=cache_hash, namespace=namespace))
         assert stored           is True
         assert type(retrieved)  is dict
         assert type(data     )  is dict
@@ -171,9 +163,8 @@ class test_Cache__Operations(TestCase):             # Test Cache__Operations usi
         retrieved   = self.cache_operations.retrieve(namespace       = namespace  ,   # Retrieve data via cache_operations
                                                      cache_hash      = cache_hash )      # for this hash
 
-        direct_json = (self.client_cache_service.client ()                                          # Retrieve data directly from cache
-                                                .retrieve()
-                                                .retrieve__hash__cache_hash__json(cache_hash=cache_hash, namespace=namespace))
+        direct_json =  (self.cache_service_client.retrieve()                                             # Retrieve data directly from cache
+                                                 .retrieve__hash__cache_hash__json(cache_hash=cache_hash, namespace=namespace))
 
         assert stored is True
         assert isinstance(retrieved, Type_Safe)

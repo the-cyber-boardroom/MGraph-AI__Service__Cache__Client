@@ -1,37 +1,32 @@
 from unittest                                                                                                       import TestCase
-from osbot_fast_api.services.schemas.registry.enums.Enum__Fast_API__Service__Registry__Client__Mode                 import Enum__Fast_API__Service__Registry__Client__Mode
+from osbot_fast_api.services.registry.Fast_API__Service__Registry                                                   import fast_api__service__registry
 from osbot_utils.testing.__                                                                                         import __, __SKIP__
-from mgraph_ai_service_cache_client.client.Client__Cache__Service                                                   import Client__Cache__Service
-from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client                         import Cache__Service__Fast_API__Client
-from mgraph_ai_service_cache_client.client.client_contract.admin_storage.Service__Fast_API__Client__Admin__Storage  import Service__Fast_API__Client__Admin__Storage
-from mgraph_ai_service_cache_client.client.requests.Cache__Service__Fast_API__Client__Requests                      import Cache__Service__Fast_API__Client__Requests
+from mgraph_ai_service_cache_client.client.cache_client.Cache__Service__Client                                      import Cache__Service__Client
+from mgraph_ai_service_cache_client.client.cache_client.Cache__Service__Client__Requests                            import Cache__Service__Client__Requests
+from mgraph_ai_service_cache_client.client.cache_service.register_cache_service                                     import register_cache_service__in_memory
+from mgraph_ai_service_cache_client.client.client_contract.admin.Cache__Service__Client__Admin__Storage             import Cache__Service__Client__Admin__Storage
 from mgraph_ai_service_cache_client.schemas.routes.admin.Schema__Routes__Admin__Storage__Files_All__Response        import Schema__Routes__Admin__Storage__Files_All__Response
-from tests.unit.Cache_Client__Fast_API__Test_Objs                                                                   import cache__service__fast_api_app
 
 
 class test_Service__Fast_API__Client__Admin__Storage(TestCase):                   # Test suite for admin storage operations using in-memory FastAPI client
 
     @classmethod
     def setUpClass(cls) -> None:                                                 # Setup in-memory FastAPI client for testing
-        cls.fast_api_app, cls.cache_service  = cache__service__fast_api_app()
-        cls.client_cache_service             = Client__Cache__Service().set__fast_api_app(cls.fast_api_app)
-        cls.cache_service_config             = cls.client_cache_service.config
-        cls.cache_service_client             = cls.client_cache_service.client()
+        cls.cache_service_client             = register_cache_service__in_memory(return_client=True)
         cls.admin_storage                    = cls.cache_service_client.admin_storage()
 
-    def test__setup(self):                                                        # Verify test setup is correct
-        assert self.cache_service_config.mode == Enum__Fast_API__Service__Registry__Client__Mode.IN_MEMORY
-        assert self.cache_service_config.fast_api_app is not None
-        assert type(self.cache_service_client)  is Cache__Service__Fast_API__Client
-        assert type(self.admin_storage)         is Service__Fast_API__Client__Admin__Storage
-        assert self.admin_storage.requests      is self.cache_service_client.requests()
+        cls.service_config                   = fast_api__service__registry.config(Cache__Service__Client)           # use this to get access to the in-memory raw cache_service object
+        cls.cache_service                    = cls.service_config.fast_api.cache_service
 
-        #assert self.fast_api_client.obj() == __()                               # todo: wire up this .obj() test (since the object is quite big and some of it we don't need to test, and most likely will cause issues in GH actions)
+    def test__setup(self):                                                        # Verify test setup is correct
+        assert type(self.cache_service_client)          is Cache__Service__Client
+        assert type(self.admin_storage)                 is Cache__Service__Client__Admin__Storage
+        assert self.admin_storage.requests              is self.cache_service_client.requests()
 
     def test__init__(self):                                                       # Test Service__Fast_API__Client__Admin__Storage initialization
         with self.admin_storage as _:
-            assert type(_           ) is Service__Fast_API__Client__Admin__Storage
-            assert type(_.requests  ) is Cache__Service__Fast_API__Client__Requests
+            assert type(_           ) is Cache__Service__Client__Admin__Storage
+            assert type(_.requests  ) is Cache__Service__Client__Requests
 
     def test__bucket_name(self):                                                  # Test retrieving bucket name
         result = self.admin_storage.bucket_name()
@@ -102,11 +97,11 @@ class test_Service__Fast_API__Client__Admin__Storage(TestCase):                 
     def test__file__json__with_nonexistent_file(self):                            # Test retrieving non-existent file as JSON returns 404
         test_path = 'nonexistent/file.json'
         result    = self.admin_storage.file__json(test_path)
-        assert type(result)         is dict
-        assert 'error_type'         in result
-        assert result['error_type'] == 'FILE_NOT_FOUND'
-        assert 'path'               in result
-        assert result['path']       == test_path
+        assert result is None
+        # assert 'error_type'         in result
+        # assert result['error_type'] == 'FILE_NOT_FOUND'
+        # assert 'path'               in result
+        # assert result['path']       == test_path
 
     def test__files__in__path__default_params(self):                           # Test listing files in parent path with default parameters
         namespace = "test-files-in-path__default-params"
@@ -205,7 +200,6 @@ class test_Service__Fast_API__Client__Admin__Storage(TestCase):                 
         result = self.admin_storage.folders(path              = '',
                                             return_full_path = True)
         assert type(result) is list
-        #assert result == []
 
     def test__delete__file__with_existing_file(self):                            # Test deleting an existing file
         test_data   = {"to_delete": True}

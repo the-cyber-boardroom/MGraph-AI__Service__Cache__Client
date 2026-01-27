@@ -4,28 +4,28 @@
 # ═══════════════════════════════════════════════════════════════════════════════
 
 from unittest                                                                                               import TestCase
-from osbot_utils.testing.__                                                                                 import __, __SKIP__
-from osbot_utils.type_safe.Type_Safe                                                                        import Type_Safe
-from osbot_utils.type_safe.primitives.domains.identifiers.Cache_Id                                          import Cache_Id
-from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id                             import Safe_Str__Id
+from mgraph_ai_service_cache_client.client.cache_client.Cache__Service__Client__Requests                    import Cache__Service__Client__Requests
+from mgraph_ai_service_cache_client.client.client_contract.data.Cache__Service__Client__Data__Update        import Cache__Service__Client__Data__Update
 from osbot_utils.utils.Objects                                                                              import base_classes
 from osbot_utils.utils.Misc                                                                                 import random_string
-from mgraph_ai_service_cache_client.client.client_contract.data.Service__Fast_API__Client__Data__Update     import Service__Fast_API__Client__Data__Update
+from mgraph_ai_service_cache_client.client.cache_service.register_cache_service                             import register_cache_service__in_memory
+from osbot_utils.type_safe.Type_Safe                                                                        import Type_Safe
+from osbot_utils.type_safe.primitives.domains.identifiers.Cache_Id                                          import Cache_Id
 from mgraph_ai_service_cache_client.schemas.cache.data.Schema__Cache__Data__Update__Response                import Schema__Cache__Data__Update__Response
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Data_Type                              import Enum__Cache__Data_Type
-from tests.unit.Cache_Client__Fast_API__Test_Objs                                                           import client_cache_service
+
 
 
 class test_Service__Fast_API__Client__Data__Update(TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:                                                                            # Setup in-memory client
-        cls.client_cache_service, cls.cache_service = client_cache_service()
-        cls.data_update                             = cls.client_cache_service.data().update()
-        cls.data_store                              = cls.client_cache_service.data_store()
-        cls.data_retrieve                           = cls.client_cache_service.data().retrieve()
-        cls.store_client                            = cls.client_cache_service.store()
-        cls.test_namespace                          = Safe_Str__Id("test-data-update")
+        cls.cache_service_client  = register_cache_service__in_memory(return_client=True)
+        cls.data_update           = cls.cache_service_client.data().update()
+        cls.data_store            = cls.cache_service_client.data_store()
+        cls.data_retrieve         = cls.cache_service_client.data().retrieve()
+        cls.store_client          = cls.cache_service_client.store()
+        cls.test_namespace        = "test-data-update"
 
         # Test data versions
         cls.string_v1      = "original string content"
@@ -88,13 +88,12 @@ class test_Service__Fast_API__Client__Data__Update(TestCase):
 
     def test__setUpClass(self):                                                                             # Verify test setup
         with self.data_update as _:
-            assert type(_)         is Service__Fast_API__Client__Data__Update
+            assert type(_) is Cache__Service__Client__Data__Update
             assert base_classes(_) == [Type_Safe, object]
 
     def test__init__(self):                                                                                 # Test initialization
         with self.data_update as _:
-            assert _._client is self.client_cache_service
-            assert _.obj()   == __(_client = __SKIP__)
+            assert type(_.requests) is Cache__Service__Client__Requests
 
     def test_requests(self):                                                                                # Test requests property
         with self.data_update as _:

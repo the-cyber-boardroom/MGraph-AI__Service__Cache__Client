@@ -1,11 +1,11 @@
 import inspect
 from typing                                                                                             import Any, Callable, Optional, Type, Tuple
+from mgraph_ai_service_cache_client.client.cache_client.Cache__Service__Client                          import Cache__Service__Client
 from osbot_utils.type_safe.Type_Safe                                                                    import Type_Safe
 from osbot_utils.type_safe.primitives.domains.cryptography.safe_str.Safe_Str__Cache_Hash                import Safe_Str__Cache_Hash
 from osbot_utils.type_safe.primitives.domains.files.safe_str.Safe_Str__File__Path                       import Safe_Str__File__Path
 from osbot_utils.type_safe.type_safe_core.decorators.type_safe                                          import type_safe
 from osbot_utils.decorators.methods.cache_on_self                                                       import cache_on_self
-from mgraph_ai_service_cache_client.client.Client__Cache__Service                                       import Client__Cache__Service
 from mgraph_ai_service_cache_client.client.decorator.cache_operations.Cache__Decorator__Operations      import Cache__Decorator__Operations
 from mgraph_ai_service_cache_client.client.decorator.cache_operations.Cache__Key__Builder               import Cache__Key__Builder
 from mgraph_ai_service_cache_client.client.decorator.schemas.Schema__Cache__Decorator__Config           import Schema__Cache__Decorator__Config
@@ -14,14 +14,14 @@ from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Data_Type  
 
 class Decorator__Cache(Type_Safe):                                                              # Helper class for cache decoration - contains all caching logic
     
-    client_cache_service : Client__Cache__Service = None
+    cache_service_client : Cache__Service__Client = None
     _operations          : Cache__Decorator__Operations      = None
     _key_builder         : Cache__Key__Builder    = None
 
     @cache_on_self
     def operations(self) -> Cache__Decorator__Operations:                                                  # Get or create cache operations handler
         if not self._operations:
-            self._operations = Cache__Decorator__Operations(client_cache_service = self.client_cache_service)
+            self._operations = Cache__Decorator__Operations(cache_service_client = self.cache_service_client)
         return self._operations
 
     @cache_on_self
@@ -32,7 +32,7 @@ class Decorator__Cache(Type_Safe):                                              
 
     @type_safe
     def is_available(self) -> bool:                                                             # Check if cache is available and configured
-        return self.client_cache_service is not None
+        return self.cache_service_client is not None
 
     @type_safe
     def get_status(self) -> dict:                                                               # Get cache status information

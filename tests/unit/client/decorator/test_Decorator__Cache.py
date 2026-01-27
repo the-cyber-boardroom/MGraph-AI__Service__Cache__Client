@@ -1,329 +1,546 @@
 from unittest                                                                                       import TestCase
-from osbot_fast_api.services.schemas.registry.enums.Enum__Fast_API__Service__Registry__Client__Mode import Enum__Fast_API__Service__Registry__Client__Mode
-from osbot_utils.type_safe.primitives.domains.python.safe_str.Safe_Str__Python__Identifier          import Safe_Str__Python__Identifier
-from osbot_utils.utils.Objects                                                                      import base_classes
+from typing                                                                                         import Optional
+from mgraph_ai_service_cache_client.client.cache_service.register_cache_service                     import register_cache_service__in_memory
+from osbot_utils.testing.__                                                                         import __
 from osbot_utils.type_safe.Type_Safe                                                                import Type_Safe
-from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id                     import Safe_Str__Id
-from osbot_utils.type_safe.primitives.domains.files.safe_str.Safe_Str__File__Path                   import Safe_Str__File__Path
 from osbot_utils.utils.Misc                                                                         import random_string
-from mgraph_ai_service_cache_client.client.decorator.Decorator__Cache                               import Decorator__Cache, _extract_type_hint, _determine_cache_data_type
+from mgraph_ai_service_cache_client.client.decorator.Cache__Decorator                               import cache_response, disable_cache_for_method, get_cache_config, is_cache_decorated
+from mgraph_ai_service_cache_client.client.decorator.Decorator__Cache                               import Decorator__Cache
 from mgraph_ai_service_cache_client.client.decorator.schemas.Schema__Cache__Decorator__Config       import Schema__Cache__Decorator__Config
-from mgraph_ai_service_cache_client.client.Client__Cache__Service                                   import Client__Cache__Service
-from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client__Config import Cache__Service__Fast_API__Client__Config
-from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Data_Type                      import Enum__Cache__Data_Type
-from mgraph_ai_service_cache.fast_api.Cache_Service__Fast_API                                       import Cache_Service__Fast_API
-from osbot_fast_api_serverless.fast_api.Serverless__Fast_API__Config                                import Serverless__Fast_API__Config
+from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Store__Strategy                import Enum__Cache__Store__Strategy
+from mgraph_ai_service_cache_client.client.decorator.exceptions.Cache__Decorator__Exceptions        import Cache__Invalid__Config
 
 
-class test_Decorator__Cache(TestCase):                                                              # Test Decorator__Cache helper class using actual in-memory cache service
+class test_Decorator__Cache(TestCase):                                                              # Test Cache__Decorator functionality with real cache service
 
     @classmethod
-    def setUpClass(cls):                                                                            # Set up in-memory cache service for all tests
-        cls.serverless_config       = Serverless__Fast_API__Config(enable_api_key=False)                # Create in-memory cache service
-        cls.cache_service__fast_api = Cache_Service__Fast_API(config=cls.serverless_config).setup()
-        cls.fast_api_app            = cls.cache_service__fast_api.app()
-        cls.cache_service           = cls.cache_service__fast_api.cache_service
-        cls.client_config           = Cache__Service__Fast_API__Client__Config(mode         = Enum__Fast_API__Service__Registry__Client__Mode.IN_MEMORY,   # Create client config for in-memory mode
-                                                                               fast_api_app = cls.fast_api_app            ,
-                                                                               service_name = "test-decorator-cache"      )
-        cls.client_cache_service = Client__Cache__Service(config=cls.client_config)                     # Create cache client
-        cls.decorator_cache      = Decorator__Cache(client_cache_service = cls.client_cache_service)# Create Decorator__Cache instance
-
-    def test__init__(self):                                                                         # Test Decorator__Cache initialization
-        with self.decorator_cache as _:
-            assert type(_)                 is Decorator__Cache
-            assert base_classes(_)         == [Type_Safe, object]
-            assert _.client_cache_service  is not None
-            assert _._operations           is None                                                  # Lazy loaded
-            assert _._key_builder          is None                                                  # Lazy loaded
+    def setUpClass(cls):                                                                            # Set up in-memory cache service
+        cls.cache_service_client = register_cache_service__in_memory(return_client=True)
+        cls.admin_storage        = cls.cache_service_client.admin_storage()
+        cls.decorator_cache      = Decorator__Cache(cache_service_client=cls.cache_service_client)
 
     # ═══════════════════════════════════════════════════════════════════════════════
-    # Component Lazy Loading Tests
+    # Configuration Validation Tests
     # ═══════════════════════════════════════════════════════════════════════════════
 
-    def test_operations__lazy_loading(self):                                                        # Test that operations is created on first access
-        decorator = Decorator__Cache(client_cache_service = self.client_cache_service)              # Create fresh instance
+    def test_invalid_config__none(self):                                                            # Test that None config raises appropriate error
+        with self.assertRaises(Cache__Invalid__Config) as context:
+            @cache_response(None)
+            def test_method():
+                pass
 
-        assert decorator._operations is None                                                        # Initially None
+        assert "Configuration cannot be None" in str(context.exception)
 
-        operations = decorator.operations()                                                         # Access operations
+    def test_invalid_config__no_namespace(self):                                                    # Test that missing namespace raises error
+        with self.assertRaises(Cache__Invalid__Config) as context:
+            config = Schema__Cache__Decorator__Config(namespace=None)
 
-        assert operations              is not None                                                  # Now created
-        assert decorator._operations   is not None
+            @cache_response(config)
+            def test_method():
+                pass
 
-        operations2 = decorator.operations()                                                        # Same instance on subsequent calls (cached)
-        assert operations2 is operations
+    def test_valid_config__minimal(self):                                                           # Test minimal valid configuration
+        config = Schema__Cache__Decorator__Config(namespace="test")
 
-    def test_key_builder__lazy_loading(self):                                                       # Test that key_builder is created on first access
-        decorator = Decorator__Cache(client_cache_service = self.client_cache_service)              # Create fresh instance
+        @cache_response(config)
+        def test_method():
+            return "test"
 
-        assert decorator._key_builder is None                                                       # Initially None
-
-        key_builder = decorator.key_builder()                                                       # Access key_builder
-
-        assert key_builder              is not None                                                 # Now created
-        assert decorator._key_builder   is not None
-
-        key_builder2 = decorator.key_builder()                                                      # Same instance on subsequent calls (cached)
-        assert key_builder2 is key_builder
-
-    # ═══════════════════════════════════════════════════════════════════════════════
-    # Availability Tests
-    # ═══════════════════════════════════════════════════════════════════════════════
-
-    def test_is_available__with_client(self):                                                       # Test availability check when client is configured
-        assert self.decorator_cache.is_available() is True
-
-    def test_is_available__without_client(self):                                                    # Test availability check when no client is configured
-        decorator_no_client = Decorator__Cache(client_cache_service = None)
-
-        assert decorator_no_client.is_available() is False
+        assert hasattr(test_method, '_cache_config')                                                # Should decorate without error
+        assert test_method._cache_config == config
 
     # ═══════════════════════════════════════════════════════════════════════════════
-    # Status Tests
+    # Decorator Metadata Tests
     # ═══════════════════════════════════════════════════════════════════════════════
 
-    def test_get_status__with_client(self):                                                         # Test getting status when client is configured
-        status = self.decorator_cache.get_status()
+    def test_decorator_adds_metadata(self):                                                         # Test that decorator adds metadata attributes
+        config = Schema__Cache__Decorator__Config(namespace="test-metadata")
 
-        assert status["available"] is True
-        assert "mode" in status
-        assert status["mode"] == 'in_memory'
-        assert "info" in status
+        @cache_response(config)
+        def test_method():
+            return "test"
 
-    def test_get_status__without_client(self):                                                      # Test getting status when no client is configured
-        decorator_no_client = Decorator__Cache(client_cache_service = None)
+        assert hasattr(test_method, '_cache_config'  )                                              # Check metadata attributes
+        assert hasattr(test_method, '_cache_enabled' )
+        assert hasattr(test_method, '_original_func' )
 
-        status = decorator_no_client.get_status()
+        assert test_method._cache_config  == config
+        assert test_method._cache_enabled is True
+        assert test_method._original_func is not None
 
-        assert status["available"] is False
-        assert status["reason"]    == "No cache service configured"
+    def test_functools_wraps_preserves_attributes(self):                                            # Test that @functools.wraps preserves original function attributes
+        config = Schema__Cache__Decorator__Config(namespace="test-wraps")
 
+        def original_function():
+            """This is the docstring"""
+            return "test"
 
-    # ═══════════════════════════════════════════════════════════════════════════════
-    # Component Integration Tests
-    # ═══════════════════════════════════════════════════════════════════════════════
+        original_function.custom_attr = "custom_value"
 
-    def test_all_components_work_together(self):                                                    # Test that all components can be accessed and work together
-        operations  = self.decorator_cache.operations()                                             # Access all components
-        key_builder = self.decorator_cache.key_builder()
+        decorated = cache_response(config)(original_function)
 
-        assert operations  is not None                                                              # Verify they exist
-        assert key_builder is not None
-
-        config = Schema__Cache__Decorator__Config(namespace  = "test-integration",                  # Build a cache key
-                                                  key_fields = ["param1"]        )
-
-        cache_key = key_builder.build_cache_key(config      = config                                    ,
-                                                class_name  = Safe_Str__Python__Identifier("TestClass") ,
-                                                method_name = Safe_Str__Python__Identifier("test_method"),
-                                                params      = {"param1": "value1"}                      )
-
-        assert cache_key is not None
-
-        class TestData(Type_Safe):                                                                  # Store using operations
-            field: str = "test"
-
-        test_data = TestData()
-        namespace = Safe_Str__Id("test-integration")
-        stored    = operations.store(namespace = namespace                                   ,
-                                     cache_key = Safe_Str__File__Path(f"integration/{random_string()}"),
-                                     data      = test_data                                   ,
-                                     config    = config                                      )
-
-        assert stored is True
-
-    # ═══════════════════════════════════════════════════════════════════════════════
-    # Type_Safe Integration Tests
-    # ═══════════════════════════════════════════════════════════════════════════════
-
-    def test_decorator_cache_as_attribute(self):                                                    # Test using Decorator__Cache as an attribute in another Type_Safe class
-        class ServiceWithCache(Type_Safe):
-            decorator__cache: Decorator__Cache
-            service_name    : str = "test-service"
-
-        service = ServiceWithCache(decorator__cache = self.decorator_cache)
-
-        assert service.decorator__cache                is not None
-        assert service.decorator__cache.is_available() is True
-        assert service.service_name                    == "test-service"
-
-    # ═══════════════════════════════════════════════════════════════════════════════
-    # Error Handling Tests
-    # ═══════════════════════════════════════════════════════════════════════════════
-
-
-    def test_status_with_exception(self):                                                           # Test status handling when operations raise exceptions
-        decorator = Decorator__Cache(client_cache_service = self.client_cache_service)
-
-        status = decorator.get_status()
-
-        assert isinstance(status, dict)                                                             # Should still return a valid status dict
-        assert "available" in status
-
-    # ═══════════════════════════════════════════════════════════════════════════════
-    # Real Cache Operations Through Decorator__Cache
-    # ═══════════════════════════════════════════════════════════════════════════════
-
-    def test_real_cache_operations(self):                                                           # Test performing real cache operations through Decorator__Cache
-        namespace = "test-real-ops"
-        cache_key = f"test/{random_string()}"
-        data      = {"test": "data", "value": 42}
-
-        config    = Schema__Cache__Decorator__Config(namespace = namespace                             ,
-                                                     file_id   = "test-real"                           )
-
-        stored    = self.decorator_cache.operations().store(namespace = namespace,                     # Store data
-                                                            cache_key = cache_key,
-                                                            data      = data     ,
-                                                            config    = config   )
-
-        cache_hash = self.decorator_cache.key_builder().build_cache_hash(cache_key)                              # Build cache hash
-        retrieved = self.decorator_cache.operations().retrieve(namespace  = namespace             ,         # Retrieve data
-                                                               cache_hash = cache_hash            )
-
-        exists_before = self.decorator_cache.operations().exists(namespace  = namespace ,                   # Check exists
-                                                                 cache_hash = cache_hash)
-
-        invalidated   = self.decorator_cache.operations().invalidate(namespace  = namespace ,               # Invalidate
-                                                                     cache_hash = cache_hash)
-        exists_after  = self.decorator_cache.operations().exists(namespace  = namespace ,                   # Verify gone
-                                                                 cache_hash = cache_hash)
-
-        assert stored           is True
-        assert retrieved        == data
-        assert exists_before    is True
-        assert invalidated      is True
-        assert exists_after     is False
-
-
-    # ═══════════════════════════════════════════════════════════════════════════════
-    # execute_cached Tests
-    # ═══════════════════════════════════════════════════════════════════════════════
-
-    def test_execute_cached__basic(self):                                                           # Test execute_cached method with basic function
-        call_count = 0
-
-        class TestService(Type_Safe):
-            def test_method(self, value: str) -> str:
-                nonlocal call_count
-                call_count += 1
-                return f"result_{value}_{call_count}"
-
-        service = TestService()
-        config  = Schema__Cache__Decorator__Config(namespace  = f"test-exec-{random_string()}",
-                                                   key_fields = ["value"]                     )
-
-        result1 = self.decorator_cache.execute_cached(func   = TestService.test_method,             # First call
-                                                      args   = (service, "test")      ,
-                                                      kwargs = {}                     ,
-                                                      config = config                 )
-
-        assert result1    == "result_test_1"
-        assert call_count == 1
-
-        result2 = self.decorator_cache.execute_cached(func   = TestService.test_method,             # Second call - should hit cache
-                                                      args   = (service, "test")      ,
-                                                      kwargs = {}                     ,
-                                                      config = config                 )
-
-        assert result2    == "result_test_1"                                                        # Cached result
-        assert call_count == 1                                                                      # Function not called again
-
-
-
-    def test_execute_cached__different_params(self):                                                # Test execute_cached with different parameters
-        call_count = 0
-
-        class TestService(Type_Safe):
-            def test_method(self, value: str) -> str:
-                nonlocal call_count
-                call_count += 1
-                return f"result_{value}_{call_count}"
-
-        service = TestService()
-        config  = Schema__Cache__Decorator__Config(namespace  = f"test-exec-diff-{random_string()}",
-                                                   key_fields = ["value"]                          )
-
-        result1 = self.decorator_cache.execute_cached(func   = TestService.test_method,
-                                                      args   = (service, "value1")    ,
-                                                      kwargs = {}                     ,
-                                                      config = config                 )
-
-        result2 = self.decorator_cache.execute_cached(func   = TestService.test_method,
-                                                      args   = (service, "value2")    ,
-                                                      kwargs = {}                     ,
-                                                      config = config                 )
-
-        assert result1    == "result_value1_1"
-        assert result2    == "result_value2_2"
-        assert call_count == 2                                                                      # Both called (different params)
+        assert decorated.__name__    == "original_function"                                         # Original attributes preserved
+        assert decorated.__doc__     == "This is the docstring"
+        assert decorated.custom_attr == "custom_value"
 
     # ═══════════════════════════════════════════════════════════════════════════════
     # Helper Function Tests
     # ═══════════════════════════════════════════════════════════════════════════════
 
-    def test__extract_type_hint__with_return_type(self):                                            # Test _extract_type_hint with annotated function
-        def func_with_hint() -> str:
+    def test_disable_cache_for_method(self):                                                        # Test disable_cache_for_method helper
+        config = Schema__Cache__Decorator__Config(namespace="test-disable")
+
+        @cache_response(config)
+        def test_method():
             return "test"
 
-        result = _extract_type_hint(func_with_hint)
-        assert result is str
+        assert test_method._cache_enabled is True                                                   # Initially enabled
 
-    def test__extract_type_hint__without_return_type(self):                                         # Test _extract_type_hint without annotation
-        def func_no_hint():
+        disable_cache_for_method(test_method)
+
+        assert test_method._cache_enabled is False                                                  # Now disabled
+
+    def test_get_cache_config(self):                                                                # Test get_cache_config helper
+        config = Schema__Cache__Decorator__Config(namespace="test-get-config")
+
+        @cache_response(config)
+        def test_method():
             return "test"
 
-        result = _extract_type_hint(func_no_hint)
-        assert result is None
+        retrieved_config = get_cache_config(test_method)
 
-    def test__extract_type_hint__type_safe_return(self):                                            # Test _extract_type_hint with Type_Safe return
-        class MySchema(Type_Safe):
-            field: str
+        assert retrieved_config == config
 
-        def func_type_safe() -> MySchema:
-            return MySchema(field="test")
+    def test_get_cache_config__not_decorated(self):                                                 # Test get_cache_config on non-decorated function
+        def regular_function():
+            return "test"
 
-        result = _extract_type_hint(func_type_safe)
-        assert result is MySchema
+        retrieved_config = get_cache_config(regular_function)
 
-    def test__determine_cache_data_type__string(self):                                              # Test _determine_cache_data_type for str
-        data_type, type_safe_class = _determine_cache_data_type(str)
+        assert retrieved_config is None
 
-        assert data_type       == Enum__Cache__Data_Type.STRING
-        assert type_safe_class is None
+    def test_is_cache_decorated(self):                                                              # Test is_cache_decorated helper
+        config = Schema__Cache__Decorator__Config(namespace="test-is-decorated")
 
-    def test__determine_cache_data_type__bytes(self):                                               # Test _determine_cache_data_type for bytes
-        data_type, type_safe_class = _determine_cache_data_type(bytes)
+        @cache_response(config)
+        def decorated_method():
+            return "test"
 
-        assert data_type       == Enum__Cache__Data_Type.BINARY
-        assert type_safe_class is None
+        def regular_function():
+            return "test"
 
-    def test__determine_cache_data_type__dict(self):                                                # Test _determine_cache_data_type for dict
-        data_type, type_safe_class = _determine_cache_data_type(dict)
+        assert is_cache_decorated(decorated_method)  is True
+        assert is_cache_decorated(regular_function)  is False
 
-        assert data_type       == Enum__Cache__Data_Type.JSON
-        assert type_safe_class is None
+    # ═══════════════════════════════════════════════════════════════════════════════
+    # Edge Case Tests
+    # ═══════════════════════════════════════════════════════════════════════════════
 
-    def test__determine_cache_data_type__type_safe(self):                                           # Test _determine_cache_data_type for Type_Safe subclass
-        class MySchema(Type_Safe):
-            field: str
+    def test_method_with_no_arguments(self):                                                        # Test caching method with no arguments except self
+        call_count = 0
 
-        data_type, type_safe_class = _determine_cache_data_type(MySchema)
+        config = Schema__Cache__Decorator__Config(namespace  = f"test-no-args-{random_string()}",
+                                                  key_fields = []                                )
 
-        assert data_type       == Enum__Cache__Data_Type.TYPE_SAFE
-        assert type_safe_class is MySchema
+        class TestService(Type_Safe):
+            decorator__cache = self.decorator_cache
 
-    def test__determine_cache_data_type__none(self):                                                # Test _determine_cache_data_type for None
-        data_type, type_safe_class = _determine_cache_data_type(None)
+            @cache_response(config)
+            def no_args_method(self) -> str:
+                nonlocal call_count
+                call_count += 1
+                return f"result_{call_count}"
 
-        assert data_type       == Enum__Cache__Data_Type.JSON                                       # Default to JSON
-        assert type_safe_class is None
+        service = TestService()
 
-    def test__determine_cache_data_type__optional(self):                                            # Test _determine_cache_data_type for Optional type
-        from typing import Optional
+        result1 = service.no_args_method()                                                          # Multiple calls should hit cache
+        result2 = service.no_args_method()
+        result3 = service.no_args_method()
 
-        data_type, type_safe_class = _determine_cache_data_type(Optional[str])
+        assert result1    == "result_1"
+        assert result2    == "result_1"
+        assert result3    == "result_1"
+        assert call_count == 1
 
-        assert data_type       == Enum__Cache__Data_Type.STRING                                     # Should unwrap Optional
-        assert type_safe_class is None
+    def test_method_with_kwargs(self):                                                              # Test caching method called with kwargs
+        call_count = 0
+
+        config = Schema__Cache__Decorator__Config(namespace  = f"test-kwargs-{random_string()}",
+                                                  key_fields = ["param1", "param2"]             )
+
+        class TestService(Type_Safe):
+            decorator__cache = self.decorator_cache
+
+            @cache_response(config)
+            def kwargs_method(self, param1: str, param2: int = 10) -> str:
+                nonlocal call_count
+                call_count += 1
+                return f"{param1}_{param2}_{call_count}"
+
+        service = TestService()
+
+        result1 = service.kwargs_method("test", 20)                                                 # Call with positional args
+        assert result1 == "test_20_1"
+
+        result2 = service.kwargs_method(param1="test", param2=20)                                   # Call with kwargs - should hit cache
+        assert result2    == "test_20_1"
+        assert call_count == 1
+
+        result3 = service.kwargs_method("test")                                                     # Call with default value
+        assert result3    == "test_10_2"
+        assert call_count == 2
+
+    def test_method_with_mixed_args_kwargs(self):                                                   # Test caching with mixed positional and keyword arguments
+        call_count = 0
+
+        config = Schema__Cache__Decorator__Config(namespace  = f"test-mixed-{random_string()}",
+                                                  key_fields = ["pos1", "kw1"]                  )
+
+        class TestService(Type_Safe):
+            decorator__cache = self.decorator_cache
+
+            @cache_response(config)
+            def mixed_method(self, pos1, pos2="default", *, kw1, kw2="kwdefault"):
+                nonlocal call_count
+                call_count += 1
+                return f"{pos1}_{pos2}_{kw1}_{kw2}_{call_count}"
+
+        service = TestService()
+
+        result1 = service.mixed_method("a", kw1="b")                                                # First call
+        assert result1 == "a_default_b_kwdefault_1"
+
+        result2 = service.mixed_method("a", "different", kw1="b", kw2="different")                  # Same key fields - should hit cache
+        assert result2    == "a_default_b_kwdefault_1"
+        assert call_count == 1
+
+    def test_non_method_decoration(self):                                                           # Test decorating a regular function (not a method)
+        config = Schema__Cache__Decorator__Config(namespace="test-function")
+
+        @cache_response(config)
+        def regular_function(param: str) -> str:
+            return f"result_{param}"
+
+        result = regular_function("test")                                                           # Should work but without caching (no self)
+        assert result == "result_test"
+
+    def test_static_method_decoration(self):                                                        # Test decorating a static method
+        config = Schema__Cache__Decorator__Config(namespace="test-static")
+
+        class TestService(Type_Safe):
+            @staticmethod
+            @cache_response(config)
+            def static_method(param: str) -> str:
+                return f"static_{param}"
+
+        result = TestService.static_method("test")                                                  # Should work but without caching (no self)
+        assert result == "static_test"
+
+    # ═══════════════════════════════════════════════════════════════════════════════
+    # Return Type Tests
+    # ═══════════════════════════════════════════════════════════════════════════════
+
+    def test_return_type_preservation__string(self):                                                # Test that string return types are preserved
+        config = Schema__Cache__Decorator__Config(namespace  = f"test-return-str-{random_string()}",
+                                                  key_fields = ["value"]                           )
+
+        class TestService(Type_Safe):
+            decorator__cache = self.decorator_cache
+
+            @cache_response(config)
+            def string_method(self, value: str) -> str:
+                return f"string_{value}"
+
+        service = TestService()
+
+        result1 = service.string_method("test")
+        result2 = service.string_method("test")                                                     # Cached
+
+        assert isinstance(result1, str)
+        assert isinstance(result2, str)
+        assert result1 == result2
+
+    def test_return_type_preservation__dict(self):                                                  # Test that dict return types are preserved
+        config = Schema__Cache__Decorator__Config(namespace  = f"test-return-dict-{random_string()}",
+                                                  key_fields = ["value"]                            )
+
+        class TestService(Type_Safe):
+            decorator__cache = self.decorator_cache
+
+            @cache_response(config)
+            def dict_method(self, value: str) -> dict:
+                return {"key": value, "number": 42}
+
+        service = TestService()
+
+        result1 = service.dict_method("test")
+        result2 = service.dict_method("test")                                                       # Cached
+
+        assert isinstance(result1, dict)
+        assert isinstance(result2, dict)
+        assert result1 == result2
+        assert result1 == {'key': 'test', 'number': 42}
+
+    def test_return_type_preservation__type_safe(self):                                             # Test that Type_Safe return types are preserved
+
+        config = Schema__Cache__Decorator__Config(namespace  = f"test-return-ts-{random_string()}",
+                                                  key_fields = ["value"]                          )
+
+        class TestService(Type_Safe):
+            decorator__cache = self.decorator_cache
+
+            @cache_response(config)
+            def schema_method(self, value: str) -> ResultSchema:
+                return ResultSchema(message=value, count=len(value))
+
+        service = TestService()
+
+        result1 = service.schema_method("test")
+        result2 = service.schema_method("test")                                                     # Cached
+
+        assert isinstance(result1, ResultSchema)
+        assert isinstance(result2, ResultSchema)
+        assert result1.message == result2.message
+        assert result1.count   == result2.count
+        assert result1.message == "test"
+        assert result1.count   == 4
+
+    def test_return_type_preservation__optional(self):                                              # Test that Optional return types are handled correctly
+        config = Schema__Cache__Decorator__Config(namespace  = f"test-optional-{random_string()}",
+                                                  key_fields = ["value"]                         )
+
+        class TestService(Type_Safe):
+            decorator__cache = self.decorator_cache
+
+            @cache_response(config)
+            def optional_method(self, value: str) -> Optional[str]:
+                if value == "none":
+                    return None
+                return f"result_{value}"
+
+        service = TestService()
+
+        result1 = service.optional_method("test")                                                   # Test non-None
+        result2 = service.optional_method("test")                                                   # Cached
+        assert result1 == "result_test"
+        assert result2 == "result_test"
+
+        result3 = service.optional_method("none")                                                   # Test None
+        result4 = service.optional_method("none")                                                   # Cached
+        assert result3 is None
+        assert result4 is None
+
+    # ═══════════════════════════════════════════════════════════════════════════════
+    # Storage Strategy Tests
+    # ═══════════════════════════════════════════════════════════════════════════════
+
+    def test_all_storage_strategies(self):                                                          # Test that all storage strategies work
+        strategies = [Enum__Cache__Store__Strategy.DIRECT            ,
+                      Enum__Cache__Store__Strategy.TEMPORAL          ,
+                      Enum__Cache__Store__Strategy.TEMPORAL_LATEST   ,
+                      Enum__Cache__Store__Strategy.TEMPORAL_VERSIONED,
+                      Enum__Cache__Store__Strategy.KEY_BASED         ]
+
+        for strategy in strategies:
+            config = Schema__Cache__Decorator__Config(namespace  = f"test-{strategy.value}-{random_string()}",
+                                                      strategy   = strategy                                  ,
+                                                      key_fields = ["value"]                                 )
+
+            call_count = 0
+
+            class TestService(Type_Safe):
+                decorator__cache = self.decorator_cache
+
+                @cache_response(config)
+                def process(self, value: str) -> str:
+                    nonlocal call_count
+                    call_count += 1
+                    return f"{strategy.value}_{value}_{call_count}"
+
+            service = TestService()
+
+            result1 = service.process("test")                                                       # Test caching works with this strategy
+            result2 = service.process("test")
+
+            assert result1    == f"{strategy.value}_test_1"
+            assert result2    == f"{strategy.value}_test_1"                                         # Cached
+            assert call_count == 1
+
+    # ═══════════════════════════════════════════════════════════════════════════════
+    # Class and Method Name Options Tests
+    # ═══════════════════════════════════════════════════════════════════════════════
+
+    def test_without_class_name_in_key(self):                                                       # Test cache key generation without class name
+        namespace = f"test-no-class-{random_string()}"
+
+        config = Schema__Cache__Decorator__Config(namespace       = namespace,
+                                                  use_class_name  = False    ,
+                                                  use_method_name = True     ,
+                                                  key_fields      = ["value"])
+
+        class Service1(Type_Safe):
+            decorator__cache = self.decorator_cache
+
+            @cache_response(config)
+            def method(self, value: str) -> str:
+                return f"service1_{value}"
+
+        class Service2(Type_Safe):
+            decorator__cache = self.decorator_cache
+
+            @cache_response(config)
+            def method(self, value: str) -> str:
+                return f"service2_{value}"
+
+        service1 = Service1()
+        service2 = Service2()
+
+        result1 = service1.method("test")                                                           # Both should share cache (no class name differentiation)
+        result2 = service2.method("test")                                                           # Should hit cache from Service1
+
+        assert result1 == "service1_test"
+        assert result2 == "service1_test"                                                           # Same cached value!
+
+    def test_without_method_name_in_key(self):                                                      # Test cache key generation without method name
+        namespace = f"test-no-method-{random_string()}"
+
+        config = Schema__Cache__Decorator__Config(namespace       = namespace,
+                                                  use_class_name  = True     ,
+                                                  use_method_name = False    ,
+                                                  key_fields      = ["value"])
+
+        class TestService(Type_Safe):
+            decorator__cache = self.decorator_cache
+
+            @cache_response(config)
+            def method1(self, value: str) -> str:
+                return f"method1_{value}"
+
+            @cache_response(config)
+            def method2(self, value: str) -> str:
+                return f"method2_{value}"
+
+        service = TestService()
+
+        result1 = service.method1("test")                                                           # Both methods should share cache (no method name differentiation)
+        result2 = service.method2("test")                                                           # Should hit cache from method1
+
+        assert result1 == "method1_test"
+        assert result2 == "method1_test"                                                            # Same cached value!
+
+    # ═══════════════════════════════════════════════════════════════════════════════
+    # Real-world Scenario Tests
+    # ═══════════════════════════════════════════════════════════════════════════════
+
+    def test_api_response_caching_scenario(self):                                                   # Test realistic API response caching scenario
+        api_calls = 0
+
+        config = Schema__Cache__Decorator__Config(namespace  = f"test-api-{random_string()}"          ,
+                                                  strategy   = Enum__Cache__Store__Strategy.KEY_BASED ,
+                                                  key_fields = ["request.endpoint", "request.params"] ,     # Nested fields
+                                                  file_id    = "api-response"                         )
+
+        class APIService(Type_Safe):
+            decorator__cache = self.decorator_cache
+
+            @cache_response(config)
+            def fetch(self, request: APIRequest) -> APIResponse:
+                nonlocal api_calls
+                api_calls += 1
+
+                return APIResponse(status = 200                                       ,             # Simulate API call
+                                   data   = {"result": f"data_for_{request.endpoint}"},
+                                   cached = False                                     )
+
+        service = APIService()
+
+        req1 = APIRequest(endpoint = "/users"        ,                                              # First request
+                          params   = {"id": 123}     ,
+                          headers  = {"Auth": "token1"})                                            # Not in key_fields
+
+        resp1 = service.fetch(req1)
+        assert resp1.status == 200
+        assert api_calls    == 1
+
+        req2 = APIRequest(endpoint = "/users"         ,                                             # Same endpoint/params, different headers - should cache
+                          params   = {"id": 123}      ,
+                          headers  = {"Auth": "token2"})                                            # Different but ignored
+
+        resp2 = service.fetch(req2)
+        assert resp2.data == resp1.data                                                             # Same cached response
+        assert api_calls  == 1
+
+        req3 = APIRequest(endpoint = "/posts"         ,                                             # Different endpoint - new call
+                          params   = {"id": 123}      ,
+                          headers  = {"Auth": "token1"})
+
+        resp3 = service.fetch(req3)
+        assert resp3.data != resp1.data
+        assert api_calls  == 2
+
+        assert resp1.obj() == __(cached=False, status=200, data=__(result='data_for_/users'))
+        assert resp2.obj() == __(cached=False, status=200, data=__(result='data_for_/users'))
+        assert resp3.obj() == __(cached=False, status=200, data=__(result='data_for_/posts'))
+
+    def test_data_transformation_pipeline(self):                                                    # Test caching in a data transformation pipeline
+        class TransformConfig(Type_Safe):
+            normalize: bool = True
+            uppercase: bool = False
+            trim     : bool = True
+
+
+        transform_calls = 0
+
+        config = Schema__Cache__Decorator__Config(namespace  = f"test-pipeline-{random_string()}"    ,
+                                                  strategy   = Enum__Cache__Store__Strategy.KEY_BASED,
+                                                  key_fields = ["data", "config"]                    )
+
+        class DataPipeline(Type_Safe):
+            decorator__cache = self.decorator_cache
+
+            @cache_response(config)
+            def transform(self, data: str, config: TransformConfig) -> str:
+                nonlocal transform_calls
+                transform_calls += 1
+
+                result = data
+                if config.trim:
+                    result = result.strip()
+                if config.normalize:
+                    result = " ".join(result.split())
+                if config.uppercase:
+                    result = result.upper()
+
+                return result
+
+        pipeline = DataPipeline()
+
+        config1 = TransformConfig(normalize=True, uppercase=True)                                   # First transformation
+        result1 = pipeline.transform("  hello   world  ", config1)
+        assert result1         == "HELLO WORLD"
+        assert transform_calls == 1
+
+        result2 = pipeline.transform("  hello   world  ", config1)                                  # Same data and config - cached
+        assert result2         == "HELLO WORLD"
+        assert transform_calls == 1
+
+        config2 = TransformConfig(normalize=False, uppercase=False)                                 # Different config - new transformation
+        result3 = pipeline.transform("  hello   world  ", config2)
+        assert result3         == "hello   world"
+        assert transform_calls == 2
+
+# classes used in test
+
+class ResultSchema(Type_Safe):
+    message: str
+    count  : int
+
+class APIRequest(Type_Safe):
+    endpoint: str
+    params  : dict
+    headers : dict
+
+class APIResponse(Type_Safe):
+    status: int
+    data  : dict
+    cached: bool = False

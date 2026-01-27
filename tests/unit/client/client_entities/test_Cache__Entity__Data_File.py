@@ -3,7 +3,8 @@
 # ═══════════════════════════════════════════════════════════════════════════════
 
 from unittest                                                                               import TestCase
-from mgraph_ai_service_cache_client.client.client_contract.Cache__Service__Fast_API__Client import Cache__Service__Fast_API__Client
+from mgraph_ai_service_cache_client.client.cache_client.Cache__Service__Client              import Cache__Service__Client
+from mgraph_ai_service_cache_client.client.cache_service.register_cache_service             import register_cache_service__in_memory
 from mgraph_ai_service_cache_client.client.client_entities.Cache__Entity                    import Cache__Entity
 from mgraph_ai_service_cache_client.client.client_entities.Cache__Entity__Data_File         import Cache__Entity__Data_File
 from mgraph_ai_service_cache_client.schemas.cache.data.Schema__Cache__Data__Store__Response import Schema__Cache__Data__Store__Response
@@ -15,14 +16,13 @@ from osbot_utils.testing.__                                                     
 from osbot_utils.type_safe.Type_Safe                                                        import Type_Safe
 from osbot_utils.type_safe.primitives.domains.identifiers.Cache_Id                          import Cache_Id
 from osbot_utils.utils.Objects                                                              import base_types
-from tests.unit.Cache_Client__Fast_API__Test_Objs                                           import client_cache_service
 
 
 class test_Cache__Entity__Data_File(TestCase):
 
     @classmethod
     def setUpClass(cls):                                                                    # Shared test objects
-        cls.cache_client, cls.cache_service = client_cache_service()
+        cls.cache_client  = register_cache_service__in_memory(return_client=True)
         cls.namespace     = 'test-cache-data-file'
         cls.cache_key     = 'test/data-file'
         cls.file_id       = 'root'
@@ -57,7 +57,7 @@ class test_Cache__Entity__Data_File(TestCase):
         with Cache__Entity__Data_File() as _:
             assert type(_)          is Cache__Entity__Data_File
             assert base_types(_)    == [Type_Safe, object]
-            assert type(_.cache_client)   is Cache__Service__Fast_API__Client
+            assert type(_.cache_client)   is Cache__Service__Client
             assert type(_.cache_id    )   is Cache_Id
             assert type(_.namespace   )   is Safe_Str__Cache__Namespace
             assert type(_.data_key    )   is Safe_Str__Cache__File__Data_Key

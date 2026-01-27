@@ -1,11 +1,12 @@
 import logging
 from typing                                                                                      import Union, Dict, Type
+from osbot_fast_api.services.registry.Fast_API__Service__Registry                                import fast_api__service__registry
+from mgraph_ai_service_cache_client.client.cache_client.Cache__Service__Client                   import Cache__Service__Client
 from osbot_utils.type_safe.Type_Safe                                                             import Type_Safe
 from osbot_utils.type_safe.primitives.domains.identifiers.safe_str.Safe_Str__Id                  import Safe_Str__Id
 from osbot_utils.type_safe.primitives.domains.cryptography.safe_str.Safe_Str__Cache_Hash         import Safe_Str__Cache_Hash
 from osbot_utils.type_safe.primitives.domains.files.safe_str.Safe_Str__File__Path                import Safe_Str__File__Path
 from osbot_utils.type_safe.type_safe_core.decorators.type_safe                                   import type_safe
-from mgraph_ai_service_cache_client.client.Client__Cache__Service                                import Client__Cache__Service
 from mgraph_ai_service_cache_client.client.decorator.schemas.Schema__Cache__Decorator__Config    import Schema__Cache__Decorator__Config
 from mgraph_ai_service_cache_client.client.decorator.schemas.Schema__Cache__Decorator__Data      import Schema__Cache__Decorator__Data
 from mgraph_ai_service_cache_client.schemas.cache.enums.Enum__Cache__Data_Type                   import Enum__Cache__Data_Type
@@ -15,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 class Cache__Decorator__Operations(Type_Safe):                                                 # Handles all cache operations for the decorator.
 
-    client_cache_service: Client__Cache__Service
+    cache_service_client: Cache__Service__Client
 
     @type_safe
     def retrieve(self                               ,                   # Retrieve data from cache and deserialize it.
@@ -23,10 +24,10 @@ class Cache__Decorator__Operations(Type_Safe):                                  
                  cache_hash      : Safe_Str__Cache_Hash   ,             # Hash to retrieve
             ) -> Union[Type_Safe, Dict, str]:                           # Deserialized data or None if not found
 
-        if not self.client_cache_service:
+        if not self.cache_service_client:
             return None
 
-        with self.client_cache_service.client().retrieve() as _:                # Use the cache client to retrieve data
+        with self.cache_service_client.retrieve() as _:                # Use the cache client to retrieve data
 
             data_json  = _.retrieve__hash__cache_hash__json    (cache_hash = cache_hash, namespace=namespace)
             result = None
@@ -70,10 +71,10 @@ class Cache__Decorator__Operations(Type_Safe):                                  
              config         : Schema__Cache__Decorator__Config      # Cache configuration
         ) -> bool:                                                  # returns True if stored successfully, False otherwise
 
-        if not self.client_cache_service:
+        if not self.cache_service_client:
             return False
 
-        with self.client_cache_service.client() as cache_client:
+        with self.cache_service_client as cache_client:
             if isinstance(data,Type_Safe):                                          # if we received a Type_Save object
                 type_safe_class = type(data)
                 data_type       = Enum__Cache__Data_Type.TYPE_SAFE
@@ -111,10 +112,10 @@ class Cache__Decorator__Operations(Type_Safe):                                  
                   cache_hash : Safe_Str__Cache_Hash     # Hash to invalidate
                  ) -> bool:                             # True if invalidated successfully, False otherwise
 
-        if not self.client_cache_service:
+        if not self.cache_service_client:
             return False
 
-        with self.client_cache_service.client() as cache_client:        # First, we need to get the cache_id from the hash
+        with self.cache_service_client as cache_client:        # First, we need to get the cache_id from the hash
 
             result = cache_client.retrieve().retrieve__hash__cache_hash__cache_id(cache_hash = cache_hash,    # Try to retrieve to get the cache_id
                                                                                   namespace  = namespace )
@@ -136,11 +137,11 @@ class Cache__Decorator__Operations(Type_Safe):                                  
                namespace  : Safe_Str__Id        ,                       # Cache namespace
                cache_hash : Safe_Str__Cache_Hash                        # Hash to check
           ) -> bool:                                                    # True if exists, False otherwise
-        if not self.client_cache_service:
+        if not self.cache_service_client:
             return False
 
 
-        with self.client_cache_service.client() as cache_client:
+        with self.cache_service_client as cache_client:
             result = cache_client.retrieve().retrieve__hash__cache_hash(cache_hash = cache_hash,
                                                                         namespace  = namespace )
 
@@ -152,9 +153,9 @@ class Cache__Decorator__Operations(Type_Safe):                                  
         # if not self.client_cache_service:
         #     return {"available": False, "reason": "No client configured"}
 
-
-        with self.client_cache_service.client() as cache_client:        # Try to get server info
+        service_config        = fast_api__service__registry.config(Cache__Service__Client)
+        with self.cache_service_client as cache_client:        # Try to get server info
             info = cache_client.info().status()
-            return { "available": True                                       ,
-                     "mode"     : self.client_cache_service.config.mode.value,
-                     "info"     : info                                       }
+            return { "available": True                     ,
+                     "mode"     : service_config.mode.value,
+                     "info"     : info                     }
